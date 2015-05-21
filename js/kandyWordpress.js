@@ -3,7 +3,7 @@
  * KANDY SETUP AND LISTENER CALLBACK.
  */
 
-var callId, username;
+var activeContainerId;
 
 // Create audio objects to play incoming calls and outgoing calls sound
 var $audioRingIn = jQuery('<audio>', { loop: 'loop', id: 'ring-in' });
@@ -37,12 +37,7 @@ setup = function () {
 
         remoteVideoContainer: jQuery('#theirVideo')[0],
         localVideoContainer: jQuery('#myVideo')[0],
-        pstnOutNumber: '71',
-        fcsConfig: {
-            restPlatform: 'kandy', // 'spidr' or 'kandy'
-            kandyApiUrl: 'https://api.kandy.io/v1.1/users/gateway',
-            useInternalJquery: true
-        },
+
         // Respond to Kandy events.
         listeners: {
 
@@ -54,13 +49,9 @@ setup = function () {
             callanswered: kandyCallAnsweredCallback,
             callended: kandyCallEndedCallback,
             callendedfailed: kandyOnCallEndedFailed,
-
             callinitiated: kandyOnCallInitiate,
             callinitiatefailed: kandyOnCallInitiateFail,
-
-
             callrejected: kandyOnCallRejected,
-
             presencenotification: kandyPresenceNotificationCallback
         }
     });
@@ -134,13 +125,14 @@ kandyPresenceNotificationCallback = function (userId, state, description, activi
  * @param call
  */
 function kandyOnCallInitiate(call) {
-    callId = call.getId();
-
+    jQuery("#" + activeContainerId).attr("data-call-id", call.getId());
     $audioRingIn[0].pause();
     $audioRingOut[0].play();
 }
 
-// Event handler for callinitiatefail event
+/**
+ * Event handler for callinitiatefail event.
+ */
 function kandyOnCallInitiateFail() {
     $audioRingOut[0].pause();
 
@@ -149,9 +141,7 @@ function kandyOnCallInitiateFail() {
 /**
  * Event handler for callrejected event
  */
-
 function kandyOnCallRejected() {
-    callId = null;
     $audioRingIn[0].pause();
     UIState.callrejected();
 }
@@ -166,6 +156,7 @@ kandyOnCallCallback = function (call) {
         on_call_callback(call);
     }
     $audioRingOut[0].pause();
+
     var target = jQuery('.kandyVideoButtonCalling:visible').get(0).closest('.kandyButton');
     changeAnswerButtonState("ON_CALL", target);
 };
@@ -182,8 +173,9 @@ kandyIncomingCallCallback = function (call, isAnonymous) {
     }
 
     $audioRingIn[0].play();
-    callId = call.getId();
+
     var target = jQuery('.kandyVideoButtonCallOut:visible').get(0).closest('.kandyButton');
+    jQuery(target).attr("data-call-id", call.getId());
     changeAnswerButtonState('BEING_CALLED',target);
 };
 
@@ -197,10 +189,10 @@ kandyCallAnsweredCallback = function (call, isAnonymous) {
     if (typeof call_answered_callback == 'function') {
         call_answered_callback(call, isAnonymous);
     }
-    callId = call.getId();
 
     $audioRingOut[0].pause();
     $audioRingIn[0].pause();
+
     var target = jQuery('.kandyVideoButtonSomeonesCalling:visible').get(0).closest('.kandyButton');
     changeAnswerButtonState("ON_CALL", target);
 };
@@ -208,8 +200,7 @@ kandyCallAnsweredCallback = function (call, isAnonymous) {
 /**
  * Kandy call ended callback.
  */
-kandyCallEndedCallback = function () {
-    callId = null;
+kandyCallEndedCallback = function (call) {
 
     $audioRingOut[0].play();
     $audioRingIn[0].pause();
@@ -217,7 +208,9 @@ kandyCallEndedCallback = function () {
     if (typeof call_ended_callback == 'function') {
         call_ended_callback();
     }
-    changeAnswerButtonState("READY_FOR_CALLING");
+
+    var target = jQuery('.kandyButton[data-call-id="'+ call.getId() +'"]');
+    changeAnswerButtonState("READY_FOR_CALLING", target);
 };
 
 /**
@@ -225,7 +218,6 @@ kandyCallEndedCallback = function () {
  */
 function kandyOnCallEndedFailed() {
 
-    callId = null;
 }
 
 /**
@@ -287,7 +279,10 @@ changeAnswerButtonState = function (state, target) {
  */
 kandy_answer_video_call = function (target) {
     var kandyButtonId = jQuery(target).data('container');
-    KandyAPI.Phone.answerCall(callId, true);
+    var currentCallId = jQuery("div#" + kandyButtonId).attr("data-call-id");
+
+    activeContainerId = kandyButtonId;
+    KandyAPI.Phone.answerCall(currentCallId, true);
     changeAnswerButtonState("ANSWERING_CALL", '#'+kandyButtonId);
     if (typeof answer_video_call_callback == 'function') {
         answer_video_call_callback("ANSWERING_CALL");
@@ -300,7 +295,11 @@ kandy_answer_video_call = function (target) {
  * @param target
  */
 kandy_reject_video_call = function (target) {
-    KandyAPI.Phone.rejectCall(callId);
+
+    var kandyButtonId = jQuery(target).data('container');
+    var currentCallId = jQuery("div#" + kandyButtonId).attr("data-call-id");
+    KandyAPI.Phone.rejectCall(currentCallId);
+
     target = jQuery(target).closest('.kandyButton');
     changeAnswerButtonState("READY_FOR_CALLING", target);
     if (typeof reject_video_call_callback == 'function') {
@@ -309,14 +308,36 @@ kandy_reject_video_call = function (target) {
 };
 
 /**
+ * Event when click call button PSTN.
+ *
+ * @param target
+ */
+kandy_make_pstn_call = function (target) {
+
+    var kandyButtonId = jQuery(target).data('container');
+    activeContainerId = kandyButtonId;
+    var number = jQuery('#'+kandyButtonId+ ' .kandyVideoButtonCallOut #'+kandyButtonId+'-callOutUserId').val();
+    var userName = jQuery('#'+kandyButtonId+ ' .kandyVideoButtonCallOut #'+kandyButtonId+'-callOutUserId').val()
+
+    KandyAPI.Phone.makePSTNCall(number, userName);
+
+    target = jQuery(target).closest('.kandyButton');
+    changeAnswerButtonState("CALLING", target);
+};
+
+/**
  * Event when click call button.
  *
  * @param target
  */
 kandy_make_video_call = function (target) {
+
     var kandyButtonId = jQuery(target).data('container');
-    KandyAPI.Phone.makeCall(jQuery('#'+kandyButtonId+ ' .kandyVideoButtonCallOut #'+kandyButtonId+'-callOutUserId').val(), true);
-    changeAnswerButtonState("CALLING",'#'+kandyButtonId);
+    activeContainerId = kandyButtonId;
+    var userName = jQuery('#'+kandyButtonId+ ' .kandyVideoButtonCallOut #'+kandyButtonId+'-callOutUserId').val();
+
+    KandyAPI.Phone.makeCall(userName, true);
+    changeAnswerButtonState("CALLING", '#'+kandyButtonId);
 };
 
 /**
@@ -325,8 +346,11 @@ kandy_make_video_call = function (target) {
  * @param target
  */
 kandy_answerVoiceCall = function (target) {
-    KandyAPI.Phone.answerCall(callId, false);
+
     var kandyButtonId = jQuery(target).data('container');
+    var currentCallId = jQuery("div#" + kandyButtonId).attr("data-call-id");
+    activeContainerId = kandyButtonId;
+    KandyAPI.Phone.answerCall(currentCallId, false);
     changeAnswerButtonState("ANSWERING_CALL", '#'+kandyButtonId);
 
     if (typeof answer_voice_call_callback == 'function') {
@@ -342,7 +366,10 @@ kandy_answerVoiceCall = function (target) {
  */
 kandy_makeVoiceCall = function (target) {
     var kandyButtonId = jQuery(target).data('container');
-    KandyAPI.Phone.makeCall(jQuery('#'+kandyButtonId + ' .kandyVideoButtonCallOut #'+kandyButtonId+'-callOutUserId').val(), false);
+    activeContainerId = kandyButtonId;
+    var userName = jQuery('#'+kandyButtonId+ ' .kandyVideoButtonCallOut #'+kandyButtonId+'-callOutUserId').val();
+
+    KandyAPI.Phone.makeCall(userName, false);
     changeAnswerButtonState("CALLING",'#'+kandyButtonId);
 };
 
@@ -350,8 +377,11 @@ kandy_makeVoiceCall = function (target) {
  * Event when click end call button.
  */
 kandy_end_call = function (target) {
-    KandyAPI.Phone.endCall(callId);
     var kandyButtonId = jQuery(target).data('container');
+
+    var currentCallId = jQuery("div#" + kandyButtonId).attr("data-call-id");
+    KandyAPI.Phone.endCall(currentCallId);
+    activeContainerId = kandyButtonId;
     if (typeof end_call_callback == 'function') {
         end_call_callback('READY_FOR_CALLING');
     }
@@ -362,24 +392,34 @@ kandy_end_call = function (target) {
  * Event when click hold call button.
  */
 kandy_hold_call = function (target) {
-    KandyAPI.Phone.holdCall(callId);
+    var kandyButtonId = jQuery(target).data('container');
+    var currentCallId = jQuery("#" + kandyButtonId).attr("data-call-id");
+
+    KandyAPI.Phone.holdCall(currentCallId);
+
+    activeContainerId = kandyButtonId;
     if (typeof hold_callback == 'function') {
         hold_call_callback('HOLD_CALL');
     }
 
-    changeAnswerButtonState("HOLD_CALL");
+    changeAnswerButtonState("HOLD_CALL", '#'+kandyButtonId);
 };
 
 /**
  * Event when click resume call button.
  */
 kandy_resume_call = function (target) {
-    KandyAPI.Phone.unHoldCall(callId);
+    var kandyButtonId = jQuery(target).data('container');
+    var currentCallId = jQuery("#" + kandyButtonId).attr("data-call-id");
+
+    KandyAPI.Phone.unHoldCall(currentCallId);
+
+    activeContainerId = kandyButtonId;
     if (typeof hold_callback == 'function') {
         hold_call_callback('RESUME_CALL');
     }
 
-    changeAnswerButtonState("RESUME_CALL");
+    changeAnswerButtonState("RESUME_CALL", '#'+kandyButtonId);
 };
 
 /**
