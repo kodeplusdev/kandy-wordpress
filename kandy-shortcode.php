@@ -837,7 +837,7 @@ class KandyShortcode {
                         '<div class="chat-heading">
                             <div class="contact-heading">
                             <label>'. $contactLabel .'</label>
-                            <select onchange="kandy_contactFilterChanged($(this).val())">
+                            <select onchange="kandy_contactFilterChanged(jQuery(this).val())">
                             <option value="all">All</option>
                             <option value="offline">Offline</option>
                             <option value="available">Available</option>
