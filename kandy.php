@@ -34,6 +34,7 @@ define('KANDY_VIDEO_THEIR_TITLE_DEFAULT', 'their');
 define('KANDY_UN_ASSIGN_USER', 'kandy-un-assign-user');
 
 define('KANDY_PSTN_TYPE', 'PSTN');
+define('KANDY_COBROWSING_JS', 'https://kandy-portal.s3.amazonaws.com/public/javascript/cobrowse/1.0.1/kandy.cobrowse.min.js');
 
 define('KANDY_USER_TYPE_AGENT', 1);
 define('KANDY_USER_TYPE_NORMAL', 0);

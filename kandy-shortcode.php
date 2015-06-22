@@ -19,6 +19,8 @@ class KandyShortcode {
 
         // Kandy chat shortCode.
         add_shortcode('kandyChat', array(__CLASS__,'kandy_chat_shortcode_content'));
+        //Kandy coBrowisng shortcode
+        add_shortcode('kandyCoBrowsing', array(__CLASS__,'kandy_cobrowsing_shortcode_content'));
 
 	    //Kandy liveChat shortcode
 	    add_shortcode('kandyLiveChat', array(__CLASS__, 'kandy_live_chat_shortcode_content'));
@@ -222,7 +224,14 @@ class KandyShortcode {
 			true
 	    );
 
-        //register style
+
+        wp_register_script(
+            'kandy_cobrowsing_js',
+            KANDY_COBROWSING_JS,
+            array('kandy_wordpress_js'),
+            KANDY_PLUGIN_VERSION,
+            true
+        );        //register style
         wp_register_style(
             'kandy_wordpress_css',
             KANDY_PLUGIN_URL . "/css/kandyWordpress.css",
@@ -923,6 +932,83 @@ class KandyShortcode {
     }
 
     /**
+     * Kandy cobrowsing shortcode
+     */
+
+    public function kandy_cobrowsing_shortcode_content($attr)
+    {
+        global $wp_scripts;
+        $current_user = wp_get_current_user();
+        $assignUser = KandyApi::getAssignUser($current_user->ID);
+        $output = "";
+        $defaults = array(
+            'holder_id'                  => 'cobrowsing-holder',
+            'btn_terminate_id'            => 'btnTerminateSession',
+            'btn_stop_id'                 => 'btnStopCoBrowsing',
+            'btn_leave_id'                => 'btnLeaveSession',
+            'btn_start_browsing_viewer_id'  => 'btnStartCoBrowsingViewer',
+            'btn_start_cobrowsing_id'      => 'btnStartCoBrowsing',
+            'btn_connect_session_id'       => 'btnConnectSession',
+            'current_user'               => $assignUser,
+            'session_list_id'             => 'openSessions'
+        );
+
+        $params = shortcode_atts($defaults,$attr);
+
+        if(!empty($params)){
+            $result = self::kandySetup();
+            // get current kandy user
+            if($result['success']){
+                if($assignUser) {
+                    $output = "";
+                    wp_enqueue_script('kandy_cobrowsing_js');
+                    wp_enqueue_script( 'jquery-ui-core' );
+                    wp_enqueue_script( 'jquery-ui-dialog' );
+
+                    // get registered script object for jquery-ui
+                    $ui = $wp_scripts->query('jquery-ui-core');
+
+                    // tell WordPress to load the Smoothness theme from Google CDN
+                    $protocol = is_ssl() ? 'https' : 'http';
+                    $url = "$protocol://ajax.googleapis.com/ajax/libs/jqueryui/{$ui->ver}/themes/smoothness/jquery-ui.min.css";
+                    wp_enqueue_style('jquery-ui-smoothness', $url, false, null);
+                    wp_enqueue_script('kandy_cobrowsing_function', KANDY_PLUGIN_URL . '/js/kandyCoBrowsing.js', 'kandy_wordpress_js');
+                    wp_localize_script('kandy_cobrowsing_function','cobrowsing',$params);
+                    $output = "
+                <div id=\"coBrowsing\">
+                    <button class=\"small tiny\" id=\"btnCreateSession\">Create Session</button>
+                    <div>
+                        <div class=\"openSessionWrap\">
+                            <label>Available sessions</label>
+                            <select id=\"{$params['session_list_id']}\"></select>
+                        </div>
+                        <div class=\"buttons\">
+                            <button class=\"small\" title='join session' id=\"{$params['btn_connect_session_id']}\">Connect</button>
+                            <button class=\"small\" title='Terminate session' id=\"{$params['btn_terminate_id']}\">Terminate</button>
+                            <button class=\"small\" title='Start co-browsing' id=\"{$params['btn_start_cobrowsing_id']}\">Start</button>
+                            <button class=\"small\" title='Start co-browsing viewer' id=\"{$params['btn_start_browsing_viewer_id']}\">Start viewer</button>
+                            <button class=\"small\" title='Stop co-browsing' id=\"{$params['btn_stop_id']}\">Stop</button>
+                            <button class=\"small\" title='Leave session' id=\"{$params['btn_leave_id']}\">Leave</button>
+                        </div>
+                    </div>
+                    <div id=\"{$params['holder_id']}\"></div>
+                </div>
+                <div id=\"kandy-chat-create-group-modal\" title=\"Create a new group\">
+                    <label for=\"right-label\" class=\"right inline\">Session name</label>
+                    <input type=\"text\" id=\"kandy-chat-create-session-name\" placeholder=\"Session name\">
+                </div>";
+
+                }
+                if(isset($result['output'])){
+                    $output .= $result['output'];
+                }
+
+            }
+        }
+        return $output;
+    }
+
+    /**
      * @param $attr
      */
     function kandy_live_chat_shortcode_content($attr) {
@@ -1092,6 +1178,7 @@ class KandyShortcode {
         array_push( $buttons, "|", "kandyPresence" );
         array_push( $buttons, "|", "kandyChat" );
 	    array_push( $buttons, "|", 'kandyLiveChat');
+        array_push( $buttons, "|", "kandyCoBrowsing" );
         return $buttons;
     }
 
@@ -1107,6 +1194,7 @@ class KandyShortcode {
         $plugin_array['kandyVoice'] = KANDY_PLUGIN_URL . '/js/tinymce/KandyVoice.js';
         $plugin_array['kandyPresence'] = KANDY_PLUGIN_URL . '/js/tinymce/KandyPresence.js';
         $plugin_array['kandyChat'] = KANDY_PLUGIN_URL . '/js/tinymce/KandyChat.js';
+        $plugin_array['kandyCoBrowsing'] = KANDY_PLUGIN_URL . '/js/tinymce/KandyCoBrowsing.js';
         $plugin_array['kandyLiveChat'] = KANDY_PLUGIN_URL . '/js/tinymce/KandyLiveChat.js';
         return $plugin_array;
     }
