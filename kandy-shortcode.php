@@ -20,6 +20,9 @@ class KandyShortcode {
         // Kandy chat shortCode.
         add_shortcode('kandyChat', array(__CLASS__,'kandy_chat_shortcode_content'));
 
+	    //Kandy liveChat shortcode
+	    add_shortcode('kandyLiveChat', array(__CLASS__, 'kandy_live_chat_shortcode_content'));
+
         add_action('init', array(__CLASS__,'my_kandy_tinymce_button'));
         add_action('wp_logout', array(__CLASS__,'my_kandy_logout'));
 
@@ -31,6 +34,12 @@ class KandyShortcode {
         add_action( 'wp_ajax_kandy_get_user_for_search', array(__CLASS__,'kandy_get_user_for_search_callback'));
         add_action( 'wp_ajax_kandy_get_name_for_contact', array(__CLASS__,'kandy_get_name_for_contact_callback'));
         add_action( 'wp_ajax_kandy_get_name_for_chat_content', array(__CLASS__,'kandy_get_name_for_chat_content_callback'));
+        add_action( 'wp_ajax_nopriv_kandy_register_guest', array(__CLASS__,'kandy_register_guest'));
+        add_action( 'wp_ajax_nopriv_kandy_get_free_user', array(__CLASS__,'kandy_get_free_user'));
+        add_action( 'wp_ajax_nopriv_kandy_end_chat_session', array(__CLASS__,'kandy_end_chat_session'));
+        add_action( 'wp_ajax_nopriv_kandy_rate_agent', array(__CLASS__,'kandy_rate_agent'));
+        add_action( 'wp_ajax_kandy_add_chat_agent', array(__CLASS__,'kandy_add_chat_agent'));
+
     }
 
     /**
@@ -196,6 +205,23 @@ class KandyShortcode {
             KANDY_PLUGIN_VERSION,
             true
         );
+
+	    wp_register_script(
+		    'kandy_live_chat_js',
+		    KANDY_PLUGIN_URL . "/js/kandylivechat.js",
+		    array(),
+		    KANDY_PLUGIN_VERSION,
+		    true
+	    );
+
+	    wp_register_script(
+			'kandy_rating_js',
+			KANDY_PLUGIN_URL . "/js/jquery.rateit.min.js",
+			array(),
+			KANDY_PLUGIN_VERSION,
+			true
+	    );
+
         //register style
         wp_register_style(
             'kandy_wordpress_css',
@@ -228,6 +254,18 @@ class KandyShortcode {
             array(),
             KANDY_PLUGIN_VERSION
         );
+	    wp_register_style(
+		    'kandy_live_chat_css',
+		    KANDY_PLUGIN_URL . "/css/kandylivechat.css",
+		    array(),
+		    KANDY_PLUGIN_VERSION
+	    );
+	    wp_register_style(
+		    'kandy_rating_css',
+		    KANDY_PLUGIN_URL . "/css/rateit.css",
+		    array(),
+		    KANDY_PLUGIN_VERSION
+	    );
 	}
 
     /**
@@ -885,6 +923,128 @@ class KandyShortcode {
     }
 
     /**
+     * @param $attr
+     */
+    function kandy_live_chat_shortcode_content($attr) {
+		if(!empty($attr)){
+            if(get_option('kandy_jquery_reload', "0")){
+                wp_enqueue_script('kandy_jquery');
+            }
+            wp_enqueue_script("kandy_fcs_url");
+            wp_enqueue_script("kandy_js_url");
+            wp_enqueue_script('kandy_rating_js');
+            wp_enqueue_script('kandy_live_chat_js');
+            wp_enqueue_style('kandy_live_chat_css');
+            wp_enqueue_style('kandy_rating_css');
+            wp_localize_script('kandy_live_chat_js', 'ajax_object', array(
+                'ajax_url' => admin_url( 'admin-ajax.php' ), 'we_value' => 1234 )
+            );
+            $defaultAttr = array(
+                'id'    => 'liveChat',
+                'class' => '',
+            );
+            $attr = wp_parse_args($attr, $defaultAttr);
+
+            if(!isset($_SESSION['kandyLiveChatUserInfo'])){
+                $attr['class'] .= ' hidden';
+                $func = 'LiveChatUI.changeState();';
+            }else{
+                $userInfo = $_SESSION['kandyLiveChatUserInfo'];
+                $func = 'getKandyUsers()';
+            }
+            $output = '
+                <div id="'.$attr['id'].'" class="liveChat '.$attr['class'].'">
+                    <div class="header">
+                        Kandy live chat
+                        <span class="closeChat handle" title="end chat" style="display: none">x</span>
+                        <span class="minimize handle" title="minimize">_</span>
+                        <span id="restoreBtn"></span>
+                    </div>
+                    <div class="liveChatBody">
+                        <div id="waiting">
+                            <img id="loading" width="30px" height="30px" src="'.KANDY_PLUGIN_URL . '/img/loading.gif'.'" title="loading">
+                            <p>Please wait a moment...</p>
+                        </div>
+                        <div id="registerForm">
+                            <form id="customerInfo" method="POST" action="" >
+                                <label for="customerName">Your name</label>
+                                <input type="text" name="customerName" id="customerName" class="" />
+                                <span data-input="customerName" style="display: none" class="error"></span>
+                                <label for="customerEmail">Your email</label>
+                                <input type="text" name="customerEmail" id="customerEmail" class="" />
+                                <span data-input="customerEmail" style="display: none" class="error"></span>
+                                <button type="submit">Start chat</button>
+                            </form>
+                        </div>
+                        <div id="ratingForm">
+                            <h3 class="formTitle">Rate for <span class="agentName">'.$userInfo['agent'].'</span> </h3>
+                            <form>
+                                <select id="backing2b">
+                                    <option title="" value="1">1</option>
+                                    <option title="" value="2">2</option>
+                                    <option title="" value="3">3</option>
+                                    <option title="" value="4">4</option>
+                                    <option title="" value="5" selected="selected">5</option>
+                                </select>
+                                <div class="rateit" data-rateit-backingfld="#backing2b"></div>
+                                <textarea id="rateComment" rows="3" placeholder="Say something about your supporter"></textarea>
+                                <a id="btnEndSession" class="button" href="javascript:;">No, thanks</a>
+                                <button id="btnSendRate" type="submit">Send</button>
+                            </form>
+                            <div class="message">
+                                <h3>Thanks you! Good bye!</h3>
+                            </div>
+                        </div>
+                            <div class="customerService">
+                                <div class="avatar">
+                                    <img src="'.KANDY_PLUGIN_URL . '/img/icon-helpdesk.png'.'">
+                                </div>
+                                <div class="helpdeskInfo">
+                                    <span class="agentName">'.$userInfo['agent'].'</span>
+                                    <p class="title">Support Agent</p>
+                                </div>
+                            </div>
+                            <div id="messageBox" class="" style="">
+                                <ul>
+                                    <li class="their-message"><span class="username">'.$userInfo['agent'].'</span>: Hi '.$userInfo['username'].', what brings you here?</li>
+                                </ul>
+                            </div>
+                            <div class="formChat" style="">
+                                <form id="formChat">
+                                    <input type="text" value="" name="message" id="messageToSend" placeholder="Type here and press Enter to send">
+                                </form>
+                            </div>
+                    </div>
+                </div>
+                <script>
+                    //agent user id
+                    var agent;
+                    var rateData;
+                    jQuery(function(){
+                        '.
+                        $func
+                        .'
+                        jQuery(".liveChat #ratingForm .rateit").bind("rated", function(){
+                            var ri = jQuery(this);
+                            rateData = rateData || {};
+                            rateData.rate = {id: agent.main_user_id, point: ri.rateit("value")}
+                        });
+
+                        jQuery(".liveChat #ratingForm .rateit").bind("reset", function(){
+                            rateData = rateData || {};
+                            if(rateData.hasOwnProperty("rate")){
+                                delete rateData.rate;
+                            }
+                        });
+
+                    });
+                </script>';
+            return $output;
+
+		}
+	}
+
+    /**
      * Setup for shortcode.
      * @return array
      */
@@ -931,6 +1091,7 @@ class KandyShortcode {
         array_push( $buttons, "|", "kandyVoice" );
         array_push( $buttons, "|", "kandyPresence" );
         array_push( $buttons, "|", "kandyChat" );
+	    array_push( $buttons, "|", 'kandyLiveChat');
         return $buttons;
     }
 
@@ -946,6 +1107,7 @@ class KandyShortcode {
         $plugin_array['kandyVoice'] = KANDY_PLUGIN_URL . '/js/tinymce/KandyVoice.js';
         $plugin_array['kandyPresence'] = KANDY_PLUGIN_URL . '/js/tinymce/KandyPresence.js';
         $plugin_array['kandyChat'] = KANDY_PLUGIN_URL . '/js/tinymce/KandyChat.js';
+        $plugin_array['kandyLiveChat'] = KANDY_PLUGIN_URL . '/js/tinymce/KandyLiveChat.js';
         return $plugin_array;
     }
 
@@ -1014,4 +1176,237 @@ class KandyShortcode {
         </script>
     <?php
     }
+
+    /**
+     * register user live chat session
+     * @return mixed
+     */
+    public function kandy_register_guest()
+    {
+        if(isset($_POST) && !empty($_POST)){
+            $username = $_POST['customerName'];
+            $userEmail = $_POST['customerEmail'];
+            //Save user info to database
+            $userInfo = array(
+                'username'  => $username,
+                'email'     => $userEmail
+            );
+            $errors = [];
+            if( !$userEmail || !is_email($userEmail)){
+                $errors['customerEmail'] = __('Please provide a valid email', 'kandy');
+            }
+            if(!$username){
+                $errors['customerName'] = __('Please enter your name', 'kandy');
+            }
+            if(empty($errors)){
+                if(!isset($_SESSION['kandyLiveChatUserInfo'])){
+                    $_SESSION['kandyLiveChatUserInfo'] = $userInfo;
+                }
+                echo json_encode($userInfo);exit;
+            }else{
+                echo json_encode(array('errors' => $errors));exit;
+            }
+        }
+
+    }
+
+    /**
+     * Get agent - user pair for chatting
+     * @return mixed
+     */
+    public function kandy_get_free_user()
+    {
+        global $wpdb;
+        $kandyLaravel = new KandyApi();
+        $freeUser = null;
+        $availableAgent = null;
+        //get all unassigned users
+        $kandyUserTable = $wpdb->prefix . 'kandy_users';
+        $kandyLiveChatUser = get_option('kandy_live_chat_users','[]');
+        $kandyLiveChatUser = json_decode($kandyLiveChatUser);
+        $kandyLiveChatUser = implode('","', $kandyLiveChatUser);
+
+        $kandyLiveChatTable = $wpdb->prefix . 'kandy_live_chat';
+        $userTable = $wpdb->prefix . 'users';
+        $liveChatSessionInfo = $_SESSION['kandyLiveChatUserInfo'];
+        $agentType = KANDY_USER_TYPE_AGENT;
+        $user_query ="SELECT CONCAT(user_id, '@', domain_name) AS full_user_id, password
+            FROM $kandyUserTable WHERE user_id IN(\"".$kandyLiveChatUser."\")
+            GROUP BY full_user_id ";
+
+        $users = $wpdb->get_results($user_query, OBJECT_K);
+        $query = "SELECT CONCAT(user_id,'@',domain_name) AS full_user_id,
+                $kandyUserTable.password as password, $userTable.user_nicename AS username, $kandyUserTable.main_user_id,
+                $kandyLiveChatTable.end_at as last_end_chat
+            FROM $kandyUserTable
+            LEFT JOIN $kandyLiveChatTable
+            ON $kandyUserTable.user_id = $kandyLiveChatTable.agent_user_id
+            LEFT JOIN $userTable
+            ON $kandyUserTable.main_user_id = $userTable.id
+            WHERE type = $agentType
+            ORDER BY last_end_chat ASC";
+        $agents = $wpdb->get_results($query, OBJECT_K);
+        $arrayUsers = array_merge(array_keys($users), array_keys($agents));
+        $lastSeen = $kandyLaravel->getLastSeen($arrayUsers);
+        if($lastSeen){
+            if($lastSeen->message == 'success'){
+                //current time of kandy server
+                $serverTimestamp = $lastSeen->result->server_timestamp;
+                foreach($lastSeen->result->users as $user){
+                    //get user
+                    if(isset($users[$user->full_user_id]) && !$freeUser){
+                        //get users not online in last 10 secs
+                        if(($serverTimestamp - $user->last_seen) > 10000){
+                            $freeUser = $user;
+                            $freeUser->password = $users[$user->full_user_id]->password;
+                        }
+                    }
+                    //get agent
+                    if(isset($agents[$user->full_user_id]) && !$availableAgent
+                        && $agents[$user->full_user_id]->last_end_chat != '0'){
+                        // get agents online in last 3 secs
+                        if(($serverTimestamp - $user->last_seen) < 3000) {
+                            $availableAgent = $user;
+                            $availableAgent->user_id = current(explode('@',$availableAgent->full_user_id));
+                            $availableAgent->username = $agents[$user->full_user_id]->username;
+                            $availableAgent->main_user_id = $agents[$user->full_user_id]->main_user_id;
+                        }
+                    }
+                    if($freeUser && $availableAgent) break;
+                }
+            }
+
+            if($freeUser && $availableAgent){
+//                \Session::set('kandyLiveChatUserInfo.agent', $availableAgent->user_id);
+                $liveChatSessionInfo['agent'] = $availableAgent->user_id;
+                $now = time();
+                $wpdb->insert($kandyLiveChatTable,
+                    array(
+                        'agent_user_id'     => $availableAgent->user_id,
+                        'customer_user_id'  => $freeUser->full_user_id,
+                        'customer_name'     => $liveChatSessionInfo['username'],
+                        'customer_email'    => $liveChatSessionInfo['email'],
+                        'begin_at'         => $now,
+                    ),
+                    array(
+                        '%s', '%s', '%s', '%s', '%s'
+                    )
+                );
+                //save last insert id for user later
+                $liveChatSessionInfo['sessionId'] = $wpdb->insert_id;
+                $_SESSION['kandyLiveChatUserInfo'] = $liveChatSessionInfo;
+                $result = array(
+                    'status' => 'success',
+                    'user'  => $freeUser,
+                    'agent' => $availableAgent,
+                    'apiKey' => get_option('kandy_api_key', KANDY_API_KEY)
+                );
+            }else{
+                $result = array(
+                    'status'    => 'fail'
+                );
+            }
+        }else{
+            $result = array(
+                'status'    => 'fail'
+            );
+        }
+        echo json_encode($result);exit;
+    }
+
+    public function kandy_end_chat_session() {
+        global $wpdb;
+        if(isset($_SESSION['kandyLiveChatUserInfo']) &&
+            ($chatSessionInfo = $_SESSION['kandyLiveChatUserInfo'])){
+            $currentSession = intval($chatSessionInfo['sessionId']);
+            //save end session time
+            $wpdb->update(
+                $wpdb->prefix . 'kandy_live_chat',
+                array(
+                    'end_at' => time(),
+                ),
+                array( 'id' => $currentSession )
+            );
+            //delete cookie
+            unset($_SESSION['kandyLiveChatUserInfo']);
+        }
+        if((defined('DOING_AJAX') && DOING_AJAX)){
+            echo json_encode(array(
+                'status'    => 'success',
+            ));exit;
+        }
+        wp_redirect($_SERVER['HTTP_REFERER']);exit;
+    }
+
+    function kandy_rate_agent() {
+        global $wpdb;
+        $rate = $_POST['rate'];
+        $userId = $rate['id'];
+        $point = $rate['point'];
+        $comment = $_POST['comment'];
+        if(!isset($_SESSION['kandyLiveChatUserInfo'])){
+            echo json_encode(array(
+                'success' => false,
+                'message' => 'not allowed'
+            ));exit;
+        }else {
+            $liveChatSessionInfo = $_SESSION['kandyLiveChatUserInfo'];
+            if(!$userId){
+                $result = array(
+                    'success'   => false,
+                    'message'   => 'agent is not specified'
+                );
+            }else{
+                if(isset($liveChatSessionInfo['rated'])){
+                    $result = array(
+                        'success'   => true,
+                        'message'   => 'Already rated'
+                    );
+                }else{
+                    $now = time();
+
+                    $wpdb->insert($wpdb->prefix . 'kandy_live_chat_rate',array(
+                        'main_user_id'  => $userId,
+                        'rated_time'    => $now,
+                        'point'         => intval($point),
+                        'rated_by'      => $liveChatSessionInfo['email'],
+                        'comment'       => htmlspecialchars($comment)
+                    ));
+                    $liveChatSessionInfo['rated'] = true;
+                    $_SESSION['kandyLiveChatUserInfo'] = $liveChatSessionInfo;
+                    $result = array(
+                        'success'   => true,
+                    );
+                }
+            }
+        }
+        echo json_encode($result);exit;
+    }
+
+    /**
+     * change a kandy user type to chat agent
+     */
+    function kandy_add_chat_agent() {
+        global $wpdb;
+        $userId = $_GET['id'];
+        $affectedRow = $wpdb->update(
+            $wpdb->prefix . 'kandy_users',
+            array(
+                'type'  => KANDY_USER_TYPE_AGENT,
+            ),
+            array('id'  => $userId)
+        );
+        if($affectedRow){
+            $result = array(
+                'success'   => true,
+            );
+        }else{
+            $result = array(
+                'success'   => false,
+                'message'   => 'Cannot add user'
+            );
+        }
+        echo json_encode($result);exit;
+    }
+
 }

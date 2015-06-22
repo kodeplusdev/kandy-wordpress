@@ -4,6 +4,10 @@ class KandyAdmin {
     public function __construct() {
         add_action('admin_menu', array($this, 'admin_menu'));
         load_plugin_textdomain( 'kandy', false, KANDY_PLUGIN_DIR. "/languages" );
+
+        wp_register_script('kandy_admin_js',KANDY_PLUGIN_URL . '/js/kandylivechatadmin.js',array('jquery'));
+        wp_enqueue_script('kandy_admin_js');
+
     }
 
     /**
@@ -50,6 +54,14 @@ class KandyAdmin {
             "Help",
             "administrator",
             "kandy-help",
+            array($this, "kandy_admin_pages")
+        );
+        add_submenu_page(
+            "kandy",
+            "Kandy Live Chat",
+            "Live Chat",
+            "administrator",
+            "kandy-live-chat",
             array($this, "kandy_admin_pages")
         );
     }
@@ -112,6 +124,24 @@ class KandyAdmin {
                 $kandySettingPage = new KandyHelpPage();
                 $kandySettingPage->render();
                 break;
+            case "kandy-live-chat":
+                wp_enqueue_script('select2-js', KANDY_PLUGIN_URL . '/js/select2-3.5.2/select2.min.js');
+                wp_enqueue_style("select2-css", KANDY_PLUGIN_URL . '/js/select2-3.5.2/select2.css');
+                require_once __DIR__ . '/admin/LiveChatAssignmentPage.php';
+                $kanddyLiveChat = new LiveChatAssignmentPage();
+                if(isset($_GET['action'])){
+                    if($_GET['action'] == 'remove'){
+                        $kanddyLiveChat->remove_agent();
+                    }elseif($_GET['action'] == 'live-chat-user'){
+                        $kanddyLiveChat->user_for_live_chat();
+                    }elseif($_GET['action'] == 'view'){
+                        $kanddyLiveChat->view_agent_process();
+                    }
+
+                }else{
+                    $kanddyLiveChat->render();
+                }
+
         }
     }
 }

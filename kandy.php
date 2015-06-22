@@ -35,13 +35,23 @@ define('KANDY_UN_ASSIGN_USER', 'kandy-un-assign-user');
 
 define('KANDY_PSTN_TYPE', 'PSTN');
 
+define('KANDY_USER_TYPE_AGENT', 1);
+define('KANDY_USER_TYPE_NORMAL', 0);
+
 require_once dirname(__FILE__) . '/kandy-admin-class.php';
 require_once dirname(__FILE__) . '/kandy-shortcode.php';
 require_once dirname(__FILE__) . '/api/kandy-api-class.php';
 if (is_admin()) {
     $kandy_admin = new KandyAdmin();
+
 }
 KandyShortcode::init();
+
+add_action('init', function(){
+    if(!session_id()){
+        session_start();
+    }
+});
 
 //active plugin
 register_activation_hook( __FILE__, 'kandy_install' );
@@ -72,7 +82,29 @@ function kandy_install() {
                   `main_user_id` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
                   `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
                   `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+                  `type` tinyint(4) DEFAULT 0,
                   PRIMARY KEY (`id`)
+                )";
+        $sql .= "CREATE TABLE IF NOT EXISTS `wp_kandy_live_chat` (
+                  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+                  `agent_user_id` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+                  `customer_user_id` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+                  `customer_name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+                  `customer_email` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+                  `begin_at` int(10) unsigned NOT NULL DEFAULT '0',
+                  `end_at` int(10) unsigned NOT NULL DEFAULT '0',
+                  PRIMARY KEY (`id`),
+                  KEY `kandy_live_chat_customer_email_agent_user_id_index` (`customer_email`,`agent_user_id`)
+                )";
+        $sql .= "CREATE TABLE IF NOT EXISTS `wp_kandy_live_chat_rate` (
+                  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+                  `main_user_id` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+                  `rated_by` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+                  `rated_time` int(11) NOT NULL DEFAULT '0',
+                  `point` int(11) NOT NULL,
+                  `comment` text COLLATE utf8_unicode_ci NOT NULL,
+                  PRIMARY KEY (`id`),
+                  KEY `kandy_live_chat_rate_main_user_id_index` (`main_user_id`)
                 )";
 
         require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
