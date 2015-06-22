@@ -1353,10 +1353,32 @@ var kandy_loadGroupDetails = function(sessionId){
 
 };
 
+var kandy_sendSms = function(receiver, sender, message, successCallback, errorCallback) {
+    KandyAPI.Phone.sendSMS(
+        receiver,
+        sender,
+        message,
+        function() {
+            if(typeof successCallback == 'function'){
+                successCallback();
+            }
+        },
+        function(message, status) {
+            if(typeof errorCallback == 'function'){
+                errorCallback(message, status);
+            }
+        }
+    );
+};
+
 /**
  * Ready================================================================================================================
  */
 jQuery(document).ready(function (jQuery) {
+    var sms = window.sms;
+    if(sms){
+        var btnSendSms = jQuery("."+sms.class +" #"+sms.btn_send_id);
+    }
 
     // Register kandy widget event.
     if (typeof login == 'function') {
@@ -1523,5 +1545,16 @@ jQuery(document).ready(function (jQuery) {
             jQuery(this).toggleClass('fa-plus-square-o').toggleClass('fa-minus-square-o');
             jQuery(this).siblings('.list-users').toggleClass('expanding');
         });
+
+
+    }
+    if(typeof sms != 'undefined'){
+        btnSendSms.click(function(){
+            try {
+                kandy_sendSms(jQuery(".smsContainer #phoneNum").val(),'', jQuery("#msg").val());
+            }catch(e){
+                console.log('there was an error');console.dir(e);
+            }
+        })
     }
 });

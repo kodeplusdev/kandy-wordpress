@@ -562,6 +562,17 @@
     font-size: 15px;
 }
 
+.smsContainer {
+    padding: 10px;
+}
+
+.msgContainer {
+    margin-bottom: 5px;
+}
+
+.numberContainer {
+    margin-bottom: 5px;
+}
 
 
 
