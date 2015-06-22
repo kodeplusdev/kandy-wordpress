@@ -21,8 +21,7 @@ class KandyShortcode {
         add_shortcode('kandyChat', array(__CLASS__,'kandy_chat_shortcode_content'));
         //Kandy coBrowisng shortcode
         add_shortcode('kandyCoBrowsing', array(__CLASS__,'kandy_cobrowsing_shortcode_content'));
-
-	    //Kandy liveChat shortcode
+        add_shortcode('kandySms', array(__CLASS__,'kandy_sms_shortcode_content'));	    //Kandy liveChat shortcode
 	    add_shortcode('kandyLiveChat', array(__CLASS__, 'kandy_live_chat_shortcode_content'));
 
         add_action('init', array(__CLASS__,'my_kandy_tinymce_button'));
@@ -931,6 +930,44 @@ class KandyShortcode {
         return $output;
     }
 
+    public function kandy_sms_shortcode_content($attr)
+    {
+        $output = "";
+        $defaults = array(
+            "class"                 => "",
+            'message_place_holder'  => "Your message",
+            'number_place_holder'   => "Phone number",
+            "btn_send_id"           => "btnSendSms",
+            "btn_send_label"        => "Send Sms"
+        );
+        $params = shortcode_atts($defaults, $attr);
+        if(!empty($attr)) {
+            $result = self::kandySetup();
+            if($result['success']){
+                $current_user = wp_get_current_user();
+                $assignUser = KandyApi::getAssignUser($current_user->ID);
+                wp_localize_script('kandy_wordpress_js', 'sms', $params);
+                if($assignUser){
+                    $output = "<div class=\"{$params['class']} smsContainer \">
+                        <div class=\"msgContainer\">
+                            <textarea placeholder=\"{$params['message_place_holder']}\" name=\"msg\" id=\"msg\" cols=\"30\" rows=\"10\"></textarea>
+                        </div>
+                        <div class=\"numberContainer\">
+                            <input type=\"text\" placeholder=\"{$params['number_place_holder']}\" name=\"phoneNum\" id=\"phoneNum\">
+                        </div>
+                        <button id=\"{$params['btn_send_id']}\">{$params['btn_send_label']}</button>
+                        <!-- end oncall -->
+                    </div>";
+                }
+                if(isset($result['output'])){
+                    $output .= $result['output'];
+                }
+            }
+
+        }
+        return $output;
+    }
+
     /**
      * Kandy cobrowsing shortcode
      */
@@ -1179,6 +1216,7 @@ class KandyShortcode {
         array_push( $buttons, "|", "kandyChat" );
 	    array_push( $buttons, "|", 'kandyLiveChat');
         array_push( $buttons, "|", "kandyCoBrowsing" );
+        array_push( $buttons, "|", "kandySms" );
         return $buttons;
     }
 
@@ -1196,7 +1234,7 @@ class KandyShortcode {
         $plugin_array['kandyChat'] = KANDY_PLUGIN_URL . '/js/tinymce/KandyChat.js';
         $plugin_array['kandyCoBrowsing'] = KANDY_PLUGIN_URL . '/js/tinymce/KandyCoBrowsing.js';
         $plugin_array['kandyLiveChat'] = KANDY_PLUGIN_URL . '/js/tinymce/KandyLiveChat.js';
-        return $plugin_array;
+        $plugin_array['kandySms'] = KANDY_PLUGIN_URL . '/js/tinymce/KandySms.js';        return $plugin_array;
     }
 
     /**
