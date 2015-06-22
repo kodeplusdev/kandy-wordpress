@@ -1444,6 +1444,23 @@ var kandy_startCoBrowsing = function(sessionId) {
 var kandy_stopCoBrowsing = function() {
     KandyAPI.CoBrowse.stopBrowsingUser();
 };
+var kandy_sendSms = function(receiver, sender, message, successCallback, errorCallback) {
+    KandyAPI.Phone.sendSMS(
+        receiver,
+        sender,
+        message,
+        function() {
+            if(typeof successCallback == 'function'){
+                successCallback();
+            }
+        },
+        function(message, status) {
+            if(typeof errorCallback == 'function'){
+                errorCallback(message, status);
+            }
+        }
+    );
+};
 /**
  * @param sessionId
  * @param holder - id of browsing holder
