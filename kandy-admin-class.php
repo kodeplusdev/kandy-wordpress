@@ -58,10 +58,18 @@ class KandyAdmin {
         );
         add_submenu_page(
             "kandy",
-            "Kandy Live Chat",
-            "Live Chat",
+            "Kandy Live Chat Agents",
+            "Live Chat Agent",
             "administrator",
-            "kandy-live-chat",
+            "kandy-chat-agent",
+            array($this, "kandy_admin_pages")
+        );
+        add_submenu_page(
+            "kandy",
+            "Kandy Live Chat Users",
+            "Live Chat User",
+            "administrator",
+            "kandy-chat-user",
             array($this, "kandy_admin_pages")
         );
     }
@@ -124,11 +132,11 @@ class KandyAdmin {
                 $kandySettingPage = new KandyHelpPage();
                 $kandySettingPage->render();
                 break;
-            case "kandy-live-chat":
+            case "kandy-chat-agent":
                 wp_enqueue_script('select2-js', KANDY_PLUGIN_URL . '/js/select2-3.5.2/select2.min.js');
                 wp_enqueue_style("select2-css", KANDY_PLUGIN_URL . '/js/select2-3.5.2/select2.css');
-                require_once __DIR__ . '/admin/LiveChatAssignmentPage.php';
-                $kanddyLiveChat = new LiveChatAssignmentPage();
+                require_once __DIR__ . '/admin/LiveChatAgentPage.php';
+                $kanddyLiveChat = new LiveChatAgentPage();
                 if(isset($_GET['action'])){
                     if($_GET['action'] == 'remove'){
                         $kanddyLiveChat->remove_agent();
@@ -141,6 +149,14 @@ class KandyAdmin {
                 }else{
                     $kanddyLiveChat->render();
                 }
+                break;
+            case 'kandy-chat-user':
+                wp_enqueue_script('select2-js', KANDY_PLUGIN_URL . '/js/select2-3.5.2/select2.min.js');
+                wp_enqueue_style("select2-css", KANDY_PLUGIN_URL . '/js/select2-3.5.2/select2.css');
+                require_once __DIR__ . '/admin/LiveChatUserPage.php';
+                $kandyUser = new LiveChatUserPage();
+
+                $kandyUser->render();
 
         }
     }
