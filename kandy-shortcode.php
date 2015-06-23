@@ -1069,7 +1069,7 @@ class KandyShortcode {
             $attr = wp_parse_args($attr, $defaultAttr);
 
             if(!isset($_SESSION['kandyLiveChatUserInfo'])){
-                $attr['class'] .= ' hidden';
+                $attr['class'] .= ' kandy_hidden';
                 $func = 'LiveChatUI.changeState();';
             }else{
                 $userInfo = $_SESSION['kandyLiveChatUserInfo'];

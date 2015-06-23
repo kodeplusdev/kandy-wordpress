@@ -140,7 +140,7 @@ var getIm = function(){
 jQuery(function(){
     //hide vs restore box chat
     jQuery(".handle.minimize, #restoreBtn").click(function(){
-        jQuery(".liveChat").toggleClass('hidden');
+        jQuery(".liveChat").toggleClass('kandy_hidden');
     });
 
     jQuery(".handle.closeChat").click(function(){

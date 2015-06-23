@@ -69,11 +69,11 @@
     font-weight: bold;
 }
 
-.liveChat.hidden .liveChatBody, .liveChat.hidden .handle{
+.liveChat.kandy_hidden .liveChatBody, .liveChat.kandy_hidden .handle{
     display: none;
 }
 
-.liveChat.hidden #restoreBtn {
+.liveChat.kandy_hidden #restoreBtn {
     display: inline-block;
 }
 
