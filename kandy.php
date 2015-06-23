@@ -127,6 +127,8 @@ function kandy_uninstall(){
     //drop a custom db table
     global $wpdb;
     $wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}kandy_users" );
+    $wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}kandy_live_chat" );
+    $wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}kandy_live_chat_rate" );
 
     delete_option( "kandy_db_version" );
     delete_option( "kandy_api_key" );
