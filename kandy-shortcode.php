@@ -228,6 +228,13 @@ class KandyShortcode {
             array(),
             KANDY_PLUGIN_VERSION
         );
+
+	    // Pace lib.
+	    wp_enqueue_script( "kandy-pace-script",
+		    'https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js',
+		    array( 'jquery' ), false, true );
+	    wp_enqueue_style( "kandy-pace-style",
+		    'https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/pink/pace-theme-minimal.css' );
 	}
 
     /**

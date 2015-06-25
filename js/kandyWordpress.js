@@ -974,7 +974,7 @@ var buildListParticipants = function(sessionId, participants, admin_id){
         for(var i in participants) {
             displayNames[participants[i].full_user_id] = participants[i].display_name;
             if(!jQuery(listUsersGroup).find('li[data-user="'+participants[i].full_user_id+'"]').length) {
-                var status = participants[i].status;
+                var status = '';
                 var additionBtn = '';
                 var displayName = displayNames[participants[i].full_user_id];
                 if(admin_id == participants[i].full_user_id){
@@ -1175,14 +1175,18 @@ var kandy_onLeaveGroup = function(notification){
  * @param userId
  */
 var kandy_removeFromGroup = function(sessionId, userId) {
-    KandyAPI.Session.bootUser(sessionId, userId, 'boot reason',
-        function () {
-            kandy_loadGroupDetails(sessionId);
-        },
-        function (msg, code) {
-            console.log(code + ': ' + msg);
-        }
-    );
+    var confirm = window.confirm("Do you want to remove "+ displayNames[userId] + " from this group?");
+    if(confirm){
+        KandyAPI.Session.bootUser(sessionId, userId, 'boot reason',
+            function () {
+                kandy_loadGroupDetails(sessionId);
+            },
+            function (msg, code) {
+                console.log(code + ': ' + msg);
+            }
+        );
+    }
+
 };
 
 var activateGroup = function(groupId){

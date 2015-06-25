@@ -562,6 +562,7 @@
     font-size: 15px;
 }
 
-
-
-
+/* Pace */
+.pace .pace-progress {
+    z-index: 999999;
+}
