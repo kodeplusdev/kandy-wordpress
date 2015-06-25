@@ -1,10 +1,7 @@
 /* KANDY CHAT STYLE */
 .myChatStyle .kandyMessages {
     background: #EFEFEF;
-}
-
-.myChatStyle .imUsername {
-    width:100px;
+    padding: 0 0 0 5px;
 }
 
 .myChatStyle .imMessageToSend {
@@ -13,10 +10,6 @@
 
 .myChatStyle .messages {
  
-}
-
-.myChatStyle .imMessage {
-    width:250px;
 }
 
 .myChatStyle .my-message {
@@ -43,4 +36,8 @@
 }
 
 .myChatStyle .chat-with-message {
+}
+
+.myChatStyle .chat-heading {
+    padding: 5px 0;
 }

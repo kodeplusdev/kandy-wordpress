@@ -865,7 +865,7 @@ class KandyShortcode {
                         '<div style="clear: both;"></div>';
 
 
-                    $output .= '<div id="kandy-chat-create-group-modal" title="Create a new group">
+                    $output .= '<div id="kandy-chat-create-group-modal" title="Create a group">
                                     <label for="right-label" class="right inline">Group name</label>
                                     <input type="text" id="kandy-chat-create-session-name" placeholder="Group name">
                                 </div></div>';
