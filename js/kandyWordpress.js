@@ -980,7 +980,7 @@ var buildListParticipants = function(sessionId, participants, admin_id){
                 if(admin_id == participants[i].full_user_id){
                     displayName += '<span> (owner)</span>';
                 }
-                if(status == 'pending') {
+                if(participants[i].status == 'pending') {
                     status = 'pending'
                     if(admin_id == currentUser){
                         additionBtn = '<i class="fa fa-check approve" id="approveJoin" title="Approve" onclick="kandy_ApproveJoinGroup(\''+sessionId+'\',\''+participants[i].full_user_id+'\',kandy_loadGroupDetails(\''+sessionId+'\'))"></i>'
@@ -1124,7 +1124,7 @@ var kandy_sendGroupIm = function(groupId,msg){
     );
 };
 var kandy_onJoinRequest = function(notification){
-    var message = 'User '+notification.full_user_id+' requests to join group '+ groupNames[notification.session_id] + '. Do you accept this request? ';
+    var message = notification.full_user_id+' requests to join group '+ groupNames[notification.session_id] + '. Do you accept this request? ';
     var confirm = window.confirm(message);
     if(confirm){
         kandy_ApproveJoinGroup(notification.session_id, notification.full_user_id);
