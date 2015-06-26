@@ -274,6 +274,13 @@ class KandyShortcode {
 		    array(),
 		    KANDY_PLUGIN_VERSION
 	    );
+
+	    // Pace lib.
+	    wp_enqueue_script( "kandy-pace-script",
+		    'https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js',
+		    array( 'jquery' ), false, true );
+	    wp_enqueue_style( "kandy-pace-style",
+		    'https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/pink/pace-theme-minimal.css' );
 	}
 
     /**
@@ -727,7 +734,7 @@ class KandyShortcode {
                     }
                 }
                 $output = '<div class="'. $class .'">'.
-                    '<span class="title"> ' . $title.' </span><select id="'. $id .'" class="dropDown" '. $htmlOptionsAttributes .' onchange="kandy_myStatusChanged($(this).val())">'.
+                    '<span class="title"> ' . $title.' </span><select id="'. $id .'" class="dropDown" '. $htmlOptionsAttributes .' onchange="kandy_myStatusChanged(jQuery(this).val())">'.
                     '<option value="0" selected>Available</option>'.
                     '<option value="1">Unavailable</option>'.
                     '<option value="2">Away</option>'.
@@ -911,7 +918,7 @@ class KandyShortcode {
                         '<div style="clear: both;"></div>';
 
 
-                    $output .= '<div id="kandy-chat-create-group-modal" title="Create a new group">
+                    $output .= '<div id="kandy-chat-create-group-modal" title="Create a group">
                                     <label for="right-label" class="right inline">Group name</label>
                                     <input type="text" id="kandy-chat-create-session-name" placeholder="Group name">
                                 </div></div>';
