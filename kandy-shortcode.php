@@ -800,6 +800,8 @@ class KandyShortcode {
                 wp_enqueue_style('font-awesome', '//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css');
                 wp_enqueue_script( 'jquery-ui-core' );
                 wp_enqueue_script( 'jquery-ui-dialog' );
+                wp_enqueue_script("select-2-script", KANDY_PLUGIN_URL . '/js/select2-3.5.2/select2.js');
+                wp_enqueue_style("select-2-style", KANDY_PLUGIN_URL . '/js/select2-3.5.2/select2.css');
 
                 // get registered script object for jquery-ui
                 $ui = $wp_scripts->query('jquery-ui-core');
@@ -875,6 +877,10 @@ class KandyShortcode {
                     $output .= '<div id="kandy-chat-create-group-modal" title="Create a group">
                                     <label for="right-label" class="right inline">Group name</label>
                                     <input type="text" id="kandy-chat-create-session-name" placeholder="Group name">
+                                </div></div>';
+                    $output .= '<div id="kandy-chat-add-user-modal" title="Add user to group">
+                                    <label for="right-label" class="right inline">Username</label>
+                                    <input class="select2" id="kandy-chat-invite-username" placeholder="Username">
                                 </div></div>';
                 } else {
                     $output = 'Not found kandy user';
