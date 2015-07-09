@@ -15,7 +15,7 @@
     var currentKandyUser = cobrowsing.current_user.user_id + '@' + cobrowsing.current_user.domain_name;
     var btnTerminate = jQuery("#coBrowsing .buttons #" + cobrowsing.btn_terminate_id);
     var btnStartCoBrowsing = jQuery("#coBrowsing .buttons #"+ cobrowsing.btn_start_cobrowsing_id);
-    var btnConnect = jQuery("#coBrowsing .buttons #"+ cobrowsing.btn_connect_sessionid);
+    var btnConnect = jQuery("#coBrowsing .buttons #"+ cobrowsing.btn_connect_session_id);
     var btnStartBrowsingViewer = jQuery("#coBrowsing .buttons #"+cobrowsing.btn_start_browsing_viewer_id);
     var btnLeave = jQuery("#coBrowsing .buttons #"+cobrowsing.btn_leave_id);
     var slSessionList = jQuery('#'+cobrowsing.session_list_id);
@@ -94,12 +94,12 @@
             width: 600,
             modal: true,
             buttons: {
-                "Create a Group": function() {
+                "Save": function() {
                     var groupName = jQuery('#kandy-chat-create-session-name').val();
                     var creationTime = new Date().getTime();
                     var timeExpire = creationTime + 31536000;// expire in 1 year
                     if(groupName == ''){
-                        alert('Group must have a name.');
+                        alert('Session must have a name.');
                         jQuery('#kandy-chat-create-session-name').focus();
                     } else {
                         var config = { //config
@@ -178,9 +178,10 @@
             if(confirm){
                 if(currentSession){
                     //delete from my session array
-                    mySessions.splice(mySessions.indexOf(currentSession),1);
-                    kandy_LeaveSession(currentSession.session_id);
-                    displayButtons();
+                    kandy_LeaveSession(currentSession.session_id, function(){
+                        mySessions.splice(mySessions.indexOf(currentSession),1);
+                        displayButtons();
+                    });
                 }
             }
         })

@@ -1053,7 +1053,7 @@ class KandyShortcode {
                     </div>
                     <div id=\"{$params['holder_id']}\"></div>
                 </div>
-                <div id=\"kandy-chat-create-group-modal\" title=\"Create a new group\">
+                <div id=\"kandy-chat-create-group-modal\" title=\"Create a session\">
                     <label for=\"right-label\" class=\"right inline\">Session name</label>
                     <input type=\"text\" id=\"kandy-chat-create-session-name\" placeholder=\"Session name\">
                 </div>";

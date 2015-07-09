@@ -1266,6 +1266,21 @@ var kandy_joinSession = function (sessionId, successCallback){
         }
     );
 };
+
+var kandy_LeaveSession= function(sessionId, successCallBack){
+    KandyAPI.Session.leave(sessionId,
+        '',
+        function(){
+            if(typeof successCallBack == 'function'){
+                successCallBack(sessionId);
+            }
+        },
+        function(){
+            console.log('Leave group fail');
+        }
+    )
+};
+
 var kandy_LeaveGroup= function(sessionId){
     var confirm = window.confirm("Do you want to leave group "+groupNames[sessionId]);
     if(confirm){
@@ -1296,16 +1311,13 @@ var kandy_onUserBoot = function(notification){
  * @param sessionId
  */
 var kandy_terminateSession = function(sessionId, successCallback){
-    var confirm = window.confirm("Do you want to remove group " + groupNames[sessionId] +"?");
-    if(confirm){
-        KandyAPI.Session.terminate(
-            sessionId,
-            null,
-            function (msg, code) {
-                console.log('Terminate session fail : '+code+': '+msg);
-            }
-        );
-    }
+    KandyAPI.Session.terminate(
+        sessionId,
+        successCallback,
+        function (msg, code) {
+            console.log('Terminate session fail : '+code+': '+msg);
+        }
+    );
 };
 /**
  * session terminate event callback
