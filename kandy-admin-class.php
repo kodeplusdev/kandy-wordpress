@@ -5,9 +5,6 @@ class KandyAdmin {
         add_action('admin_menu', array($this, 'admin_menu'));
         load_plugin_textdomain( 'kandy', false, KANDY_PLUGIN_DIR. "/languages" );
 
-        wp_register_script('kandy_admin_js',KANDY_PLUGIN_URL . '/js/kandylivechatadmin.js',array('jquery'));
-        wp_enqueue_script('kandy_admin_js');
-
     }
 
     /**
@@ -133,6 +130,8 @@ class KandyAdmin {
                 $kandySettingPage->render();
                 break;
             case "kandy-chat-agent":
+                wp_register_script('kandy_admin_js',KANDY_PLUGIN_URL . '/js/kandylivechatadmin.js',array('jquery'));
+                wp_enqueue_script('kandy_admin_js');
                 wp_enqueue_script('select2-js', KANDY_PLUGIN_URL . '/js/select2-3.5.2/select2.min.js');
                 wp_enqueue_style("select2-css", KANDY_PLUGIN_URL . '/js/select2-3.5.2/select2.css');
                 require_once __DIR__ . '/admin/LiveChatAgentPage.php';
@@ -151,6 +150,8 @@ class KandyAdmin {
                 }
                 break;
             case 'kandy-chat-user':
+                wp_register_script('kandy_admin_js',KANDY_PLUGIN_URL . '/js/kandylivechatadmin.js',array('jquery'));
+                wp_enqueue_script('kandy_admin_js');
                 wp_enqueue_script('select2-js', KANDY_PLUGIN_URL . '/js/select2-3.5.2/select2.min.js');
                 wp_enqueue_style("select2-css", KANDY_PLUGIN_URL . '/js/select2-3.5.2/select2.css');
                 require_once __DIR__ . '/admin/LiveChatUserPage.php';
