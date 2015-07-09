@@ -107,6 +107,7 @@ class KandyShortcode {
      */
     public function kandy_get_name_for_chat_content_callback()
     {
+        global $wpdb;
         $messages = array();
         if(isset($_POST['data'])) {
             $messages = $_POST['data'];
@@ -115,12 +116,27 @@ class KandyShortcode {
                     continue;
                 }
                 $sender = $message['sender'];
-                $user = KandyApi::getUserByUserId($sender['user_id']);
-                $displayName = "";
-                if($user) {
-                    $result = get_user_by('id', $user->main_user_id);
-                    if($result) {
-                        $displayName = $result->display_name;
+                //if incoming message is from live chat users
+                if(in_array($sender['user_id'], json_decode(get_option('kandy_live_chat_users')))){
+                    $liveChatTable = $wpdb->prefix . 'kandy_live_chat';
+                    $user = $wpdb->get_results(
+                        $sql = "SELECT customer_name, customer_email
+                        FROM {$liveChatTable}
+                        WHERE customer_user_id = '".$sender['full_user_id']."'
+                        AND end_at = 0"
+                    );
+                    if($user){
+                        $displayName = $user[0]->customer_name;
+                        $sender['user_email'] = $user[0]->customer_email;
+                    }
+                } else {
+                    $user = KandyApi::getUserByUserId($sender['user_id']);
+                    $displayName = "";
+                    if($user) {
+                        $result = get_user_by('id', $user->main_user_id);
+                        if($result) {
+                            $displayName = $result->display_name;
+                        }
                     }
                 }
                 $sender['display_name'] = $displayName;

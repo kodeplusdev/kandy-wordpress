@@ -522,12 +522,12 @@ var getDisplayNameForChatContent = function (data, url) {
         jQuery.ajax({
             url: ajax_object.ajax_url,
             type: "POST",
-            data: {data:data.messages, action: 'kandy_get_name_for_chat_content'},
+            data: {data: data.messages, action: 'kandy_get_name_for_chat_content'},
             async: false
-        }).done(function(response) {
-                data.messages = JSON.parse(response);
-            }).fail(function(e) {
-            });
+        }).done(function (response) {
+            data.messages = JSON.parse(response);
+        }).fail(function (e) {
+        });
     }
     return data;
 
@@ -830,10 +830,7 @@ kandyGetIms = function () {
                 var get_name_for_chat_content_url = jQuery(".kandyChat #get_name_for_chat_content_url").val();
                 data = getDisplayNameForChatContent(data, get_name_for_chat_content_url);
             }
-
-            var i;
-
-            for (i = 0; i < data.messages.length; ++i) {
+            for (var i = 0; i < data.messages.length; ++i) {
                 var msg = data.messages[i];
                 if (msg.messageType == 'chat' ) {
                     if(chatMessageTimeStamp == msg.timestamp) {
@@ -844,10 +841,15 @@ kandyGetIms = function () {
                     // Get user info.
                     var username = data.messages[i].sender.full_user_id;
                     var displayName = data.messages[i].sender.display_name;
+                    var contactTab = jQuery(liTabWrapSelector + " li a[" + userHoldingAttribute + "='" + username + "']");
 
                     // Process tabs.
-                    if (!jQuery(liTabWrapSelector + " li a[" + userHoldingAttribute + "='" + username + "']").length) {
+                    if (!contactTab.length) {
                         prependContact(data.messages[i].sender);
+                    }
+                    //change display name for live chat user
+                    if(contactTab.text()!== displayName){
+                        contactTab.text(displayName);
                     }
                     if (!jQuery('input.imMessageToSend').is(':focus')) {
                         move_contact_to_top_and_set_active(data.messages[i].sender);
