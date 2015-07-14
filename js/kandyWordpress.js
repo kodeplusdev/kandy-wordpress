@@ -517,7 +517,7 @@ var get_display_name_for_contact = function (data, url) {
  *
  * @returns {*}
  */
-var getDisplayNameForChatContent = function (data, url) {
+var getDisplayNameForChatContent = function (data) {
     if (data.messages.length) {
         jQuery.ajax({
             url: ajax_object.ajax_url,
@@ -827,8 +827,7 @@ kandyGetIms = function () {
     KandyAPI.Phone.getIm(
         function (data) {
             if (data.messages.length) {
-                var get_name_for_chat_content_url = jQuery(".kandyChat #get_name_for_chat_content_url").val();
-                data = getDisplayNameForChatContent(data, get_name_for_chat_content_url);
+                data = getDisplayNameForChatContent(data);
             }
             for (var i = 0; i < data.messages.length; ++i) {
                 var msg = data.messages[i];

@@ -119,11 +119,12 @@ class KandyShortcode {
                 //if incoming message is from live chat users
                 if(in_array($sender['user_id'], json_decode(get_option('kandy_live_chat_users')))){
                     $liveChatTable = $wpdb->prefix . 'kandy_live_chat';
+                    $fakeEndTime = PHP_INT_MAX;
                     $user = $wpdb->get_results(
                         $sql = "SELECT customer_name, customer_email
                         FROM {$liveChatTable}
                         WHERE customer_user_id = '".$sender['full_user_id']."'
-                        AND end_at = 0"
+                        AND end_at = $fakeEndTime"
                     );
                     if($user){
                         $displayName = $user[0]->customer_name;
@@ -1361,14 +1362,17 @@ class KandyShortcode {
 
     /**
      * Get agent - user pair for chatting
+     * - If kandy user lastSeen is greater than 10 secs, we consider user is not online
+     * - If kandy user lastSeen is less than 3 secs, we consider user is online
      * @return mixed
      */
     public function kandy_get_free_user()
     {
         global $wpdb;
-        $kandyLaravel = new KandyApi();
+        $kandyApi = new KandyApi();
         $freeUser = null;
         $availableAgent = null;
+        $fakeEndTime = PHP_INT_MAX;
         //get all unassigned users
         $kandyUserTable = $wpdb->prefix . 'kandy_users';
         $kandyLiveChatUser = get_option('kandy_live_chat_users','[]');
@@ -1379,24 +1383,27 @@ class KandyShortcode {
         $userTable = $wpdb->prefix . 'users';
         $liveChatSessionInfo = $_SESSION['kandyLiveChatUserInfo'];
         $agentType = KANDY_USER_TYPE_AGENT;
-        $user_query ="SELECT CONCAT(user_id, '@', domain_name) AS full_user_id, password
+        $userQuery ="SELECT CONCAT(user_id, '@', domain_name) AS full_user_id, password
             FROM $kandyUserTable WHERE user_id IN(\"".$kandyLiveChatUser."\")
             GROUP BY full_user_id ";
 
-        $users = $wpdb->get_results($user_query, OBJECT_K);
-        $query = "SELECT CONCAT(user_id,'@',domain_name) AS full_user_id,
-                $kandyUserTable.password as password, $userTable.user_nicename AS username, $kandyUserTable.main_user_id,
-                $kandyLiveChatTable.end_at as last_end_chat
+        $users = $wpdb->get_results($userQuery, OBJECT_K);
+        $agentQuery =
+            "SELECT CONCAT(user_id,'@',domain_name) AS full_user_id,
+                $kandyUserTable.password as password, $userTable.user_nicename AS username,
+                $kandyUserTable.main_user_id, max(end_at) as last_chat
             FROM $kandyUserTable
-            LEFT JOIN $kandyLiveChatTable
-            ON $kandyUserTable.user_id = $kandyLiveChatTable.agent_user_id
-            LEFT JOIN $userTable
+            INNER JOIN $userTable
             ON $kandyUserTable.main_user_id = $userTable.id
+            LEFT JOIN $kandyLiveChatTable
+            ON $kandyLiveChatTable.agent_user_id = $kandyUserTable.user_id
             WHERE type = $agentType
-            ORDER BY last_end_chat ASC";
-        $agents = $wpdb->get_results($query, OBJECT_K);
+            GROUP BY full_user_id
+            ORDER by last_chat ASC";
+
+        $agents = $wpdb->get_results($agentQuery, OBJECT_K);
         $arrayUsers = array_merge(array_keys($users), array_keys($agents));
-        $lastSeen = $kandyLaravel->getLastSeen($arrayUsers);
+        $lastSeen = $kandyApi->getLastSeen($arrayUsers);
         if($lastSeen){
             if($lastSeen->message == 'success'){
                 //current time of kandy server
@@ -1411,14 +1418,37 @@ class KandyShortcode {
                         }
                     }
                     //get agent
-                    if(isset($agents[$user->full_user_id]) && !$availableAgent
-                        && $agents[$user->full_user_id]->last_end_chat != '0'){
+                    if(!$availableAgent) {
                         // get agents online in last 3 secs
-                        if(($serverTimestamp - $user->last_seen) < 3000) {
-                            $availableAgent = $user;
-                            $availableAgent->user_id = current(explode('@',$availableAgent->full_user_id));
-                            $availableAgent->username = $agents[$user->full_user_id]->username;
-                            $availableAgent->main_user_id = $agents[$user->full_user_id]->main_user_id;
+                        if(isset($agents[$user->full_user_id])){
+                            $userId = current(explode('@',$user->full_user_id));
+                            $lastSeen = $serverTimestamp - $user->last_seen;
+                            //user considered currently online
+                            if($lastSeen < 3000) {
+                                if($agents[$user->full_user_id]->last_chat == $fakeEndTime) {
+                                    //user currently in chat, so we find someone else
+                                    continue;
+                                } else {
+                                    $availableAgent = $user;
+                                    $availableAgent->user_id = $userId;
+                                    $availableAgent->username = $agents[$user->full_user_id]->username;
+                                    $availableAgent->main_user_id = $agents[$user->full_user_id]->main_user_id;
+                                }
+
+                            } elseif($lastSeen > 10000) {
+                                // may be user not online for a while,
+                                // may be there is something wrong, the session is still considered connected,
+                                // need to update session end time for the next use
+                                if($agents[$user->full_user_id]->last_chat == $fakeEndTime){
+                                    $wpdb->update($kandyLiveChatTable,
+                                        array('end_at' => time()),
+                                        array(
+                                            'agent_user_id' => $userId,
+                                            'end_at'        => $fakeEndTime
+                                        )
+                                    );
+                                }
+                            }
                         }
                     }
                     if($freeUser && $availableAgent) break;
@@ -1435,7 +1465,8 @@ class KandyShortcode {
                         'customer_user_id'  => $freeUser->full_user_id,
                         'customer_name'     => $liveChatSessionInfo['username'],
                         'customer_email'    => $liveChatSessionInfo['email'],
-                        'begin_at'         => $now,
+                        'begin_at'          => $now,
+                        'end_at'            => PHP_INT_MAX
                     ),
                     array(
                         '%s', '%s', '%s', '%s', '%s'
@@ -1451,13 +1482,20 @@ class KandyShortcode {
                     'apiKey' => get_option('kandy_api_key', KANDY_API_KEY)
                 );
             }else{
+                /*
+                 * agent not available: -3
+                 * user not available -2
+                 */
+                $code = (!$freeUser) ? '-2' : '-3';
                 $result = array(
+                    'code'      => $code,
                     'status'    => 'fail'
                 );
             }
         }else{
             $result = array(
-                'status'    => 'fail'
+                'status'    => 'fail',
+                'code'      => -1 // cannot get last_seen
             );
         }
         echo json_encode($result);exit;
