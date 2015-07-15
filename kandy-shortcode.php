@@ -1198,8 +1198,11 @@ class KandyShortcode {
     static function kandySetup(){
 
         $current_user = wp_get_current_user();
-        $assignUser = KandyApi::getAssignUser($current_user->ID);
-
+        if (!empty($current_user->ID)) {
+            $assignUser = KandyApi::getAssignUser($current_user->ID);
+        } else {
+            $assignUser = false;
+        }
         if($assignUser){
             $userName = $assignUser->user_id;
             $password = $assignUser->password;
