@@ -639,7 +639,7 @@ class KandyApi{
             );
             $urlView = self::page_url(array(
                 'action'    => 'view',
-                'id'        => $user['id']
+                'id'        => $user['main_user_id']
             ));
             $user['action'] = '<a href="'. $urlRemove .'" class="button">Remove</a>';
             $user['action'] .= '<a href="'.$urlView.'" class="button">View</a>';

@@ -710,10 +710,15 @@ var addExampleBox = function () {
  */
 var getLiContact = function (user, active) {
     var username = user.contact_user_name;
+    var real_id = '';
+    if(typeof user.user_email != 'undefined'){
+        username = user.user_email;
+        real_id = "data-real-id='" + user.contact_user_name + "' ";
+    }
     var displayName = user.display_name;
     var id = username.replace(/[.@]/g, '_');
     var liClass = (typeof active !== 'undefined') ? active : "";
-    return '<li id="' + id + '" class="' + liClass + '"><a ' + userHoldingAttribute + '="' + username + '" href="#">' + displayName + '</a><i class="status"></i></li>';
+    return '<li id="' + id + '" class="' + liClass + '"><a ' + real_id + userHoldingAttribute + '="' + username + '" href="#">' + displayName + '</a><i class="status"></i></li>';
 };
 
 /**
@@ -724,7 +729,11 @@ var getLiContact = function (user, active) {
  *
  * @returns {string}
  */
-var getLiContent = function (user) {
+var getLiContent = function (user, real_id) {
+    var uid= '';
+    if(typeof real_id != "undefined"){
+        uid = real_id;
+    }
     var result =
         '<li ' + userHoldingAttribute + '="' + user + '">\
                 <div class="kandyMessages" data-user="' + user + '">\
@@ -733,12 +742,12 @@ var getLiContent = function (user) {
                     Messages:\
                 </div>\
                 <div>\
-                            <form class="send-message" data-user="' + user + '">\
+                            <form class="send-message" data-real-id="'+ uid + '" data-user="' + user + '">\
                         <div class="input-message">\
                             <input class="imMessageToSend chat-input" type="text" data-user="' + user + '">\
                         </div>\
                         <div class="button-send">\
-                            <input class="btnSendMessage chat-input" type="submit" value="Send"  data-user="' + user + '" >\
+                            <input class="btnSendMessage chat-input" type="submit" value="Send" data-user="' + user + '" >\
                         </div>\
                     </form>\
                 </div>\
@@ -800,9 +809,10 @@ kandy_load_contacts_chat = function () {
  *
  * @param username
  */
-kandy_send_message = function (username) {
+kandy_send_message = function (username, dataHolder) {
     var displayName = jQuery('.kandyChat .kandy_current_username').val();
-    var inputMessage = jQuery('.kandyChat .imMessageToSend[data-user="' + username + '"]');
+    var dataHolder = (typeof dataHolder!= 'undefined')? dataHolder : username;
+    var inputMessage = jQuery('.kandyChat .imMessageToSend[data-user="' + dataHolder + '"]');
     var message = inputMessage.val();
     inputMessage.val('');
     KandyAPI.Phone.sendIm(username, message, function () {
@@ -810,7 +820,7 @@ kandy_send_message = function (username) {
                     <b><span class="imUsername">' + displayName + ':</span></b>\
                     <span class="imMessage">' + message + '</span>\
                 </div>';
-            var messageDiv = jQuery('.kandyChat .kandyMessages[data-user="' + username + '"]');
+            var messageDiv = jQuery('.kandyChat .kandyMessages[data-user="' + dataHolder + '"]');
             messageDiv.append(newMessage);
             messageDiv.scrollTop(messageDiv[0].scrollHeight);
         },
@@ -839,6 +849,9 @@ kandyGetIms = function () {
                     }
                     // Get user info.
                     var username = data.messages[i].sender.full_user_id;
+                    if(typeof data.messages[i].sender.user_email != "undefined" ){
+                        username = data.messages[i].sender.user_email;
+                    }
                     var displayName = data.messages[i].sender.display_name;
                     var contactTab = jQuery(liTabWrapSelector + " li a[" + userHoldingAttribute + "='" + username + "']");
 
@@ -892,7 +905,12 @@ var emptyContact = function () {
  * @param user
  */
 var prependContact = function (user) {
+
     var username = user.contact_user_name;
+
+    if(typeof user.user_email != "undefined"){
+        username = user.user_email;
+    }
 
     var liParent = jQuery(liTabContactWrap + " li a[" + userHoldingAttribute + "='" + username + "']").parent();
     var liContact = "";
@@ -905,7 +923,7 @@ var prependContact = function (user) {
 
     jQuery(liTabContactWrap).prepend(liContact);
     if (!jQuery(liContentWrapSelector + " li[" + userHoldingAttribute + "='" + username + "']").length) {
-        var liContent = getLiContent(username);
+        var liContent = getLiContent(username, user.contact_user_name);
         jQuery(liContentWrapSelector).prepend(liContent);
     }
 };
@@ -925,7 +943,11 @@ var getActiveContact = function () {
  * @param user
  */
 var setFocusContact = function (user) {
-    jQuery(liTabWrapSelector + " li a[" + userHoldingAttribute + "='" + user + "']").trigger("click");
+    var username = user.contact_user_name;
+    if(typeof user.user_email != "undefined"){
+        username = user.user_email;
+    }
+    jQuery(liTabWrapSelector + " li a[" + userHoldingAttribute + "='" + username + "']").trigger("click");
 };
 
 /**
@@ -935,6 +957,9 @@ var setFocusContact = function (user) {
  */
 var move_contact_to_top = function (user) {
     var username = user.contact_user_name;
+    if(typeof user.user_email != "undefined"){
+        username = user.user_email;
+    }
 
     var contact = jQuery(liTabWrapSelector + " li a[" + userHoldingAttribute + "='" + username + "']").parent();
     var active = contact.hasClass(activeClass);
@@ -1559,9 +1584,12 @@ jQuery(document).ready(function (jQuery) {
     if (jQuery('.kandyChat').length) {
         jQuery(".kandyChat form.send-message").live("submit", function (e) {
             var username = jQuery(this).attr('data-user');
-
+            var realID = jQuery(this).data('real-id');
+            if(realID == ''){
+                realID = username;
+            }
             if(jQuery(this).is('[data-user]')){
-                kandy_send_message(username);
+                kandy_send_message(realID, username);
             }else{
                 kandy_sendGroupIm(jQuery(this).data('group'),jQuery(this).find('.imMessageToSend').val());
                 jQuery(this).find('.imMessageToSend').val('');
