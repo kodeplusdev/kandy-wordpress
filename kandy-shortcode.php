@@ -1069,6 +1069,8 @@ class KandyShortcode {
                     $output .= $result['output'];
                 }
 
+            }else {
+                $output = '<p>' . __('Could not setup Kandy CoBrowsing. Please contact administrator') . '<p>';
             }
         }
         return $output;

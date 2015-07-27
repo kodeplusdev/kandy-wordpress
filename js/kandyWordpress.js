@@ -5,7 +5,7 @@
 
 
 var activeContainerId;
-
+var sessionNames = {};
 // Create audio objects to play incoming calls and outgoing calls sound
 var $audioRingIn = jQuery('<audio>', { loop: 'loop', id: 'ring-in' });
 var $audioRingOut = jQuery('<audio>', { loop: 'loop', id: 'ring-out' });
@@ -1206,6 +1206,27 @@ var kandy_onSessionJoinRequest = function(notification) {
         console.log("join request has been disapproved");
     }
 };
+
+/**
+ * Approve join session request
+ * @param sessionId
+ * @param userId
+ * @param successCallback
+ */
+var kandy_ApproveJoinSession = function(sessionId, userId, successCallback){
+    KandyAPI.Session.acceptJoinRequest(sessionId, userId,
+        function () {
+            if(typeof successCallback == "function"){
+                successCallback(sessionId);
+            }
+        },
+        function (msg, code) {
+            console.log('Error:'+code+': '+msg);
+        }
+    );
+};
+
+
 var kandy_onLeaveGroup = function(message){
     if(message.messageType == 'chatGroupLeave') {
         var leaverDisplayName = displayNames[message.leaver] || message.split('@')[0];
@@ -1288,6 +1309,37 @@ var kandy_terminateGroup = function(groupId, successCallback, failCallback){
         kandy.messaging.deleteGroup(groupId, successCallback, failCallback);
     }
 };
+
+var kandy_joinSession = function (sessionId, successCallback){
+    KandyAPI.Session.join(
+        sessionId,
+        {},
+        function () {
+            if(typeof successCallback == "function"){
+                successCallback(sessionId);
+            }
+        },
+        function (msg, code) {
+            console.log(code + ": " + msg);
+        }
+    );
+};
+
+var kandy_LeaveSession= function(sessionId, successCallBack){
+    KandyAPI.Session.leave(sessionId,
+        '',
+        function(){
+            if(typeof successCallBack == 'function'){
+                successCallBack(sessionId);
+            }
+        },
+        function(){
+            console.log('Leave group fail');
+        }
+    )
+};
+
+
 /**
  * session terminate event callback
  * @param notification
@@ -1331,7 +1383,20 @@ var updateUserGroupStatus = function (){
         }
     }
 };
-
+var kandy_getSessionInfo = function(sessionId, successCallback, failCallback){
+    KandyAPI.Session.getInfoById(sessionId,
+        function(result){
+            if(typeof successCallback == 'function'){
+                successCallback(result);
+            }
+        },
+        function (msg, code) {
+            if(typeof failCallback == 'function' ){
+                failCallback(msg,code);
+            }
+        }
+    )
+};
 var kandy_loadGroupDetails = function(groupId){
     kandy.messaging.getGroupById(groupId,
         function (result) {
