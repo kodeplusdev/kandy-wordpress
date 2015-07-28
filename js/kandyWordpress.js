@@ -1478,6 +1478,11 @@ var kandy_getOpenSessionsByType = function(sessionType, successCallback){
     KandyAPI.Session.getOpenSessionsByType (
         sessionType,
         function(result){
+            for(var i = 0; i < result.sessions.length; i++){
+                if(result.sessions[i].session_type != sessionType){
+                    result.sessions.splice(i,1);
+                }
+            }
             if(typeof successCallback == "function") {
                 successCallback(result.sessions);
             }

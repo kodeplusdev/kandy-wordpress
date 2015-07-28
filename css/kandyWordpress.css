@@ -602,7 +602,6 @@
 
 #coBrowsing .buttons button {
     display: none;
-    width: 46%;
 }
 
 #coBrowsing.browsing .buttons #btnStartCoBrowsing,
