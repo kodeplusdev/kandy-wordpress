@@ -165,7 +165,7 @@ class KandyApi{
                             $result = $wpdb->get_results(
                                 "SELECT *
                              FROM {$wpdb->prefix}kandy_users
-                             WHERE (main_user_id = 0 || main_user_id IS NULL)
+                             WHERE (main_user_id = '' || main_user_id IS NULL)
                              AND domain_name = '". $domainName ."' AND user_id NOT IN(\"".$excludedUsers."\")");
                         }
                     }
@@ -683,5 +683,35 @@ class KandyApi{
             ARRAY_A
         );
         return $agentRates;
+    }
+
+    public static function logKandyUserStatus($kandyUserId, $userType, $logType = KANDY_USER_STATUS_ONLINE){
+        global $wpdb;
+        $userLoginTable = $wpdb->prefix . 'kandy_user_login';
+        $now = time();
+        $affectedRows = $wpdb->update(
+            $userLoginTable,
+            array(
+                'status' => $logType,
+                'time'  => $now
+            ),
+            array(
+                'kandy_user_id' => $kandyUserId
+            )
+        );
+        if(!$affectedRows){
+            $wpdb->insert(
+                $userLoginTable,
+                array(
+                    'kandy_user_id' => $kandyUserId,
+                    'type'          => $userType,
+                    'status'        => $logType,
+                    'browser_agent' => '',
+                    'ip_address'    => $_SERVER['REMOTE_ADDR'],
+                    'time'          => $now
+                ), array('%s', '%d', '%d', '%s', '%s')
+            );
+        }
+
     }
 }
