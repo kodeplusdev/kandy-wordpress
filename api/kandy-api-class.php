@@ -560,11 +560,9 @@ class KandyApi{
             $password = $assignUser->password;
             $kandyApiKey = get_option('kandy_api_key', KANDY_API_KEY);
             wp_enqueue_script("kandy_js_url");
-            wp_enqueue_script("kandy_fcs_url");
             $output = "";
             $output .="<script type='text/javascript' src='". KANDY_JQUERY ."'></script>";
             $output .="<script type='text/javascript' src='". KANDY_JS_URL ."'></script>";
-            $output .="<script type='text/javascript' src='". KANDY_FCS_URL ."'></script>";
             $output .="<script>if (window.login == undefined){window.login = function() {
                         KandyAPI.Phone.login('" . $kandyApiKey . "', '" . $userName . "', '" . $password . "');
                     };
