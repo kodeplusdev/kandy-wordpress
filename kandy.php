@@ -147,7 +147,6 @@ function kandy_install() {
                   KEY kandy_user_login_kandy_user_id_index (kandy_user_id)
                 );";
         dbDelta($sql);
-        delete_option( "kandy_fcs_url" );
         delete_option( "kandy_js_url" );
         update_option( 'kandy_db_version', $kandyDbVersion );
     }
@@ -169,7 +168,6 @@ function kandy_uninstall(){
     delete_option( "kandy_api_key" );
     delete_option( "kandy_domain_name" );
     delete_option( "kandy_domain_secret_key" );
-    delete_option( "kandy_fcs_url" );
     delete_option( "kandy_jquery_reload" );
     delete_option( "kandy_js_url" );
     delete_option( "kandy_excluded_users" );

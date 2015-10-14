@@ -77,6 +77,18 @@ Kandy Wordpress Plugin help you use kandy in your website easily by following st
         id = "my-chat"
         contactLabel = "Contacts"]
   ```
+  **Kandy LiveChat**: Make a small widget to help you implement live chat, give your customers ability to chat with customer service agent.
+```sh
+[kandyLiveChat id="liveChat" class="liveChat"]
+```
+**Kandy Co-browsing**: Make a co-browsing component which help you share your browser screen with your friends.
+```
+[kandyCoBrowsing id="coBrowsing" class="coBrowsing"]
+```
+**Kandy SMS**: Make a SMS component which help you send SMS to someone's phone number
+```
+[kandySms id="kandySms" class="kandySms"]
+```
   
 ### Quick Examples: 
 **Kandy Voice Call**
@@ -121,9 +133,16 @@ Two **kandyVideo** object should be inline because some editor will insert a bre
 - **Domain Secret Key:** Domain Kandy API key which found in your kandy account.
 - **Domain Name:** Domain name of you kandy account.
 - **Javascript Library Url**: Link to kandy javascript library.
-- **FCS Library Url**: Link to kandy FCS javascript library.
 
 **User assignment:**  help you synchronize kandy users from kandy server to your users system. Select your user and click edit button to assign(unassign) kandy user.
+
+**Live chat configuration:**
+Live chat feature needs some configurations before using:
+- **Configure "Excluded Kandy Users" in Kandy Settings page**: these Kandy users will not be assigned to your users. They are reserved to live chat feature or some features in future. Each user separated by comma or whitespace.   
+- **Add Excluded Kandy Users to live chat feature**: From Kandy component menu, chose *Live chat users management*, this page display your excluded users in previous step. You can assign a user to live chat feature by chosing from select box and click *Save*.
+- **Add Live Chat Agent**: From Kandy component menu, chose *Live chat agents management*
+. You can add a user from your user system to assign him as a Live Chat Agent
+
 
 **Style customization**: help you edit kandy shortcode(video, voice, chat...) style. Select appropriate file(.css) then click edit them.
 
