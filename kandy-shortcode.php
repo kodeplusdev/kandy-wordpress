@@ -116,7 +116,7 @@ class KandyShortcode {
             }
             $sender = $message['sender'];
             //if incoming message is from live chat users
-            if(in_array($sender['user_id'], json_decode(get_option('kandy_live_chat_users')))){
+            if(in_array($sender['user_id'], json_decode(get_option('kandy_live_chat_users', '[]')))){
                 $liveChatTable = $wpdb->prefix . 'kandy_live_chat';
                 $fakeEndTime = PHP_INT_MAX;
                 $user = $wpdb->get_results(
