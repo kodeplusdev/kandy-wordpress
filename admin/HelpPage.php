@@ -151,6 +151,42 @@ class KandyHelpPage extends KandyPage
         </pre>
         </div>
 
+        <p style="box-sizing: border-box; margin-top: 0px; margin-bottom: 16px; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif; font-size: 16px; line-height: 28px;">
+            <strong style="box-sizing: border-box;">Kandy LiveChat</strong>: Make a small widget to help you implement live chat, give your customers ability to chat with customer service agent.
+        </p>
+
+        <div class="highlight highlight-sh" style="box-sizing: border-box; margin-bottom: 16px; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif; font-size: 16px; line-height: 28px;">
+        <pre style="box-sizing: border-box; overflow: auto; font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13px; margin-top: 0px; margin-bottom: 0px; font-stretch: normal; line-height: 1.45; padding: 16px; border-radius: 3px; word-wrap: normal; word-break: normal; background-color: rgb(247, 247, 247);">
+    [kandyLiveChat
+            class = <span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>liveChat<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span>
+            id = <span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>liveChat<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span>]
+        </pre>
+        </div>
+
+        <p style="box-sizing: border-box; margin-top: 0px; margin-bottom: 16px; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif; font-size: 16px; line-height: 28px;">
+            <strong style="box-sizing: border-box;">Kandy Co-browsing</strong>: Make a co-browsing component which help you share your browser screen with your friends.
+        </p>
+
+        <div class="highlight highlight-sh" style="box-sizing: border-box; margin-bottom: 16px; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif; font-size: 16px; line-height: 28px;">
+        <pre style="box-sizing: border-box; overflow: auto; font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13px; margin-top: 0px; margin-bottom: 0px; font-stretch: normal; line-height: 1.45; padding: 16px; border-radius: 3px; word-wrap: normal; word-break: normal; background-color: rgb(247, 247, 247);">
+    [kandyCoBrowsing
+            class = <span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>coBrowsing<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span>
+            id = <span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>coBrowsing<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span>]
+        </pre>
+        </div>
+
+        <p style="box-sizing: border-box; margin-top: 0px; margin-bottom: 16px; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif; font-size: 16px; line-height: 28px;">
+            <strong style="box-sizing: border-box;">Kandy SMS</strong>: Make a SMS component which help you send SMS to someone's phone number.
+        </p>
+
+        <div class="highlight highlight-sh" style="box-sizing: border-box; margin-bottom: 16px; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif; font-size: 16px; line-height: 28px;">
+        <pre style="box-sizing: border-box; overflow: auto; font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13px; margin-top: 0px; margin-bottom: 0px; font-stretch: normal; line-height: 1.45; padding: 16px; border-radius: 3px; word-wrap: normal; word-break: normal; background-color: rgb(247, 247, 247);">
+    [kandySms
+            class = <span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>kandySms<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span>
+            id = <span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>kandySms<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span>]
+        </pre>
+        </div>
+
         <h3 style="box-sizing: border-box; margin-top: 1em; margin-bottom: 16px; line-height: 1.43; font-size: 1.5em; position: relative; font-weight: bold; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif;">
             Quick Examples:
         </h3>
@@ -228,6 +264,22 @@ class KandyHelpPage extends KandyPage
         <p style="box-sizing: border-box; margin-top: 0px; margin-bottom: 16px; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif; font-size: 16px; line-height: 28px;">
             <strong style="box-sizing: border-box;">User assignment:</strong>&nbsp;help you synchronize kandy users from kandy server to your users system. Select your user and click edit button to assign(unassign) kandy user.
         </p>
+
+        <p style="box-sizing: border-box; margin-top: 0px; margin-bottom: 16px; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif; font-size: 16px; line-height: 28px;">
+            <strong style="box-sizing: border-box;">Live chat configuration:</strong>&nbsp; Live chat feature needs some configurations before using:
+        </p>
+
+        <ul class="task-list" style="box-sizing: border-box; padding-right: 0px; padding-left: 2em; margin-top: 0px; margin-bottom: 16px; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif; font-size: 16px; line-height: 28px;">
+            <li style="box-sizing: border-box;">
+                <strong style="box-sizing: border-box;">Configure "Excluded Kandy Users" in Kandy Settings page:</strong>&nbsp; these Kandy users will not be assigned to your users. They are reserved to live chat feature or some features in future. Each user separated by comma or whitespace.
+            </li>
+            <li style="box-sizing: border-box;">
+                <strong style="box-sizing: border-box;">Add Excluded Kandy Users to live chat feature:</strong>&nbsp;From Kandy component menu, chose Live chat users management, this page display your excluded users in previous step. You can assign a user to live chat feature by chosing from select box and click Save.
+            </li>
+            <li style="box-sizing: border-box;">
+                <strong style="box-sizing: border-box;">Add Live Chat Agent:</strong>&nbsp;From Kandy component menu, chose Live chat agents management . You can add a user from your user system to assign him as a Live Chat Agent.
+            </li>
+        </ul>
 
         <p style="box-sizing: border-box; margin-top: 0px; margin-bottom: 16px; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif; font-size: 16px; line-height: 28px;">
             <strong style="box-sizing: border-box;">Style customization</strong>: help you edit kandy shortcode(video, voice, chat...) style. Select appropriate file(.css) then click edit them.

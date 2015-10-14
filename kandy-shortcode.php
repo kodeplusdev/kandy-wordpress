@@ -1478,8 +1478,8 @@ class KandyShortcode {
                 $wpdb->query("UPDATE $kandyLiveChatTable SET end_at = $now WHERE agent_user_id IN $inActiveUsersStr AND end_at = $fakeEndTime");
             }
             /*
-             * agent not available: -3
-             * user not available -2
+             * agent not available: -2
+             * user not available -3
              */
             $code = (!$agent) ? '-2' : '-3';
             $result = array(
