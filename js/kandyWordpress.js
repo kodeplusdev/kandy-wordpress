@@ -1310,6 +1310,23 @@ var kandy_terminateGroup = function(groupId, successCallback, failCallback){
     }
 };
 
+var kandy_createSession = function(config, successCallback, failCallback) {
+    KandyAPI.Session.create(
+        config,
+        function(result){
+            if(typeof successCallback == "function"){
+                activateSession(result.session_id);
+                successCallback(result);
+            }
+        },
+        function(){
+            if(typeof failCallback == "function"){
+                failCallback();
+            }
+        }
+    )
+};
+
 var kandy_joinSession = function (sessionId, successCallback){
     KandyAPI.Session.join(
         sessionId,
@@ -1408,7 +1425,7 @@ var kandy_loadGroupDetails = function(groupId){
             if(jQuery(".kandy_user").val() === result.owners[0].full_user_id ){
                 //add admin functionality
                 isOwner = true;
-                groupActivity = '<a class="" href="javascipt:;"><i title="Remove group" onclick="kandy_terminateGroup(\''+result.group_id+'\')" class="fa fa-remove"></i></a>';
+                groupActivity = '<a class="" href="javascipt:;"><i title="Remove group" onclick="kandy_terminateGroup(\''+result.group_id+'\', kandy_loadGroups)" class="fa fa-remove"></i></a>';
                 jQuery(liTabWrapSelector + ' li[data-group="'+result.group_id+'"] ' + ' .'+ listUserClass+' li[data-user!="'+result.owners[0].full_user_id+'"] .actions').append(
                     '<i title="Remove user" class="remove fa fa-remove"></i>'
                 );
@@ -1423,7 +1440,7 @@ var kandy_loadGroupDetails = function(groupId){
                 groupActivity += '<a class="btnInviteUser" title="Add user" data-reveal-id="inviteModal"  href="javascript:;"><i class="fa fa-plus"></i></a>';
                 //disable message input if user not belongs to a specific group
             }else {
-                groupActivity = '<a class="leave" title="Leave group" onclick="kandy_leaveGroup(\''+result.group_id+'\',kandy_loadGroupDetails)" href="javascript:;"><i class="fa fa-sign-out"></i></a>';
+                groupActivity = '<a class="leave" title="Leave group" onclick="kandy_leaveGroup(\''+result.group_id+'\',kandy_loadGroups)" href="javascript:;"><i class="fa fa-sign-out"></i></a>';
                 if(messageInput.is(':disabled')){
                     messageInput.prop('disabled',false);
                 }
