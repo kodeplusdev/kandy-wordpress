@@ -9,7 +9,7 @@ var sessionNames = {};
 // Create audio objects to play incoming calls and outgoing calls sound
 var $audioRingIn = jQuery('<audio>', { loop: 'loop', id: 'ring-in' });
 var $audioRingOut = jQuery('<audio>', { loop: 'loop', id: 'ring-out' });
-
+var kandyPresence = {};
 // Load audio source to DOM to indicate call events
 var audioSource = {
     ringIn: [
@@ -48,8 +48,7 @@ setup = function () {
             callendedfailed: kandyOnCallEndedFailed,
             callinitiated: kandyOnCallInitiate,
             callinitiatefailed: kandyOnCallInitiateFail,
-            callrejected: kandyOnCallRejected,
-            presencenotification: kandyPresenceNotificationCallback
+            callrejected: kandyOnCallRejected
         }
     });
 
@@ -73,7 +72,6 @@ setup = function () {
  * Login Success Callback.
  */
 kandyLoginSuccessCallback = function () {
-    KandyAPI.Phone.updatePresence(0);
     console.log('login success');
     // Have kandy Address Book widget.
     if (jQuery(".kandyAddressBook").length) {
@@ -446,7 +444,7 @@ kandyLoadContactsAddressBook = function () {
     var contactListForPresence = [];
     var i = 0;
     var deleteContact = [];
-    KandyAPI.Phone.retrievePersonalAddressBook(
+    kandy.addressbook.retrievePersonalAddressBook(
         function (results) {
             var get_name_for_contact_url = jQuery(".kandyAddressBook #get_name_for_contact_url").val();
             results = get_display_name_for_contact(results, get_name_for_contact_url);
@@ -462,7 +460,7 @@ kandyLoadContactsAddressBook = function () {
                 jQuery('.kandyAddressBook .kandyAddressContactList').append("<div class='kandy-contact-heading'><span class='displayname'><b>Username</b></span><span class='userId'><b>Contact</b></span><span class='presence'><b>Status</b></span></div>");
                 for (i = 0; i < results.length; i++) {
                     if (results[i].display_name != "kandy-un-assign-user") {
-                        contactListForPresence.push({full_user_id: results[i].contact_user_name});
+                        contactListForPresence.push(results[i].contact_user_name);
 
                         var id_attr = results[i].contact_user_name.replace(/[.@]/g, '_');
                         jQuery('.kandyAddressBook .kandyAddressContactList').append(
@@ -480,8 +478,7 @@ kandyLoadContactsAddressBook = function () {
                         deleteContact.push({id_attr: id_attr, contact_id: results[i].contact_id});
                     }
                 }
-                KandyAPI.Phone.watchPresence(contactListForPresence);
-
+                get_last_seen_interval(contactListForPresence);
                 // Delete empty contact id.
                 for (i = 0; i < deleteContact.length; i++) {
                     var contact_id = deleteContact[i].contact_id;
@@ -564,7 +561,13 @@ var addContacts = function () {
  * @param status
  */
 kandy_myStatusChanged = function (status) {
-    KandyAPI.Phone.updatePresence(status);
+  jQuery.ajax({
+    url: ajax_object.ajax_url,
+    data: {'presence_status': status, 'action': 'kandy_set_presence'},
+    dataType: 'json'
+  }).done(function(){
+
+  })
 
 };
 
@@ -794,6 +797,35 @@ var kandy_contactFilterChanged = function (val) {
         }
     });
 };
+
+var kandy_get_presence = function(lastSeen){
+  lastSeen.action = 'kandy_get_presence';
+  jQuery.ajax({
+    url: ajax_object.ajax_url,
+    data: lastSeen,
+    method: 'POST',
+    dataType: 'json'
+  }).done(function(presences) {
+    presences.forEach(function(user, index){
+      kandyPresence[user.full_user_id] = user.presence_status;
+    });
+    jQuery('body').trigger('presenceChanged');
+  })
+};
+
+
+var get_last_seen = function(contacts){
+  kandy.getLastSeen(contacts, function(result){
+    kandy_get_presence(result);
+  });
+};
+
+var get_last_seen_interval = function(contacts) {
+  get_last_seen(contacts);
+  setInterval(get_last_seen,10000, contacts);
+};
+
+
 /**
  * Load Contact for KandyChat.
  */
@@ -806,11 +838,10 @@ kandy_load_contacts_chat = function () {
             emptyContact();
             for (var i = 0; i < results.length; i++) {
                 prependContact(results[i]);
-                contactListForPresence.push({full_user_id: results[i].contact_user_name});
+                contactListForPresence.push(results[i].contact_user_name);
             }
             addExampleBox();
-            KandyAPI.Phone.watchPresence(contactListForPresence);
-
+            get_last_seen_interval(contactListForPresence);
         },
         function () {
             console.log("Error");
@@ -1485,21 +1516,24 @@ var kandy_stopCoBrowsing = function() {
     KandyAPI.CoBrowse.stopBrowsingUser();
 };
 var kandy_sendSms = function(receiver, sender, message, successCallback, errorCallback) {
-    KandyAPI.Phone.sendSMS(
+    if(receiver && message) {
+      kandy.messaging.sendSMS(
         receiver,
         sender,
         message,
         function() {
-            if(typeof successCallback == 'function'){
-                successCallback();
-            }
+          if(typeof successCallback == 'function'){
+            successCallback();
+          }
         },
         function(message, status) {
-            if(typeof errorCallback == 'function'){
-                errorCallback(message, status);
-            }
+          if(typeof errorCallback == 'function'){
+            errorCallback(message, status);
+          }
         }
-    );
+      );
+    }
+
 };
 /**
  * @param sessionId
@@ -1523,7 +1557,13 @@ var heartBeat = function(interval){
  * Ready================================================================================================================
  */
 jQuery(document).ready(function (jQuery) {
-    var sms = window.sms;
+  jQuery('body').on('presenceChanged', function(){
+    for(var userId in kandyPresence){
+      kandyPresenceNotificationCallback(userId,kandyPresence[userId].toLowerCase(),kandyPresence[userId]);
+    }
+  });
+
+  var sms = window.sms;
     if(sms){
         var btnSendSms = jQuery("."+sms.class +" #"+sms.btn_send_id);
     }
@@ -1738,9 +1778,13 @@ jQuery(document).ready(function (jQuery) {
     if(typeof sms != 'undefined'){
         btnSendSms.click(function(){
             try {
-                kandy_sendSms(jQuery(".smsContainer #phoneNum").val(),'', jQuery("#msg").val());
+                kandy_sendSms(jQuery(".smsContainer #phoneNum").val(),'', jQuery("#msg").val(), function(){
+                  jQuery('.smsContainer .smsStatus').html('Message sent!').css('color','green');
+                }, function(){
+                  jQuery('.smsContainer .smsStatus').html('There was an error. Please try again later.').css('color', 'red');
+                });
             }catch(e){
-                console.log('there was an error');console.dir(e);
+                console.log('There was an error');console.dir(e);
             }
         })
     }

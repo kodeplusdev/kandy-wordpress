@@ -131,6 +131,15 @@
                 }
             }
         });
+      var kandy_terminateSession = function(sessionId, successCallback){
+        KandyAPI.Session.terminate(
+          sessionId,
+          successCallback,
+          function (msg, code) {
+            console.log('Terminate session fail : '+code+': '+msg);
+          }
+        );
+      };
 
         jQuery("#btnCreateSession").click(function(){
             jQuery("#kandy-chat-create-group-modal").dialog('open');

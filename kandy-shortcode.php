@@ -42,6 +42,8 @@ class KandyShortcode {
         add_action( 'wp_ajax_kandy_add_chat_agent', array(__CLASS__,'kandy_add_chat_agent'));
         add_action( 'wp_ajax_kandy_still_alive', array(__CLASS__,'updateKandyUserStatus'));
         add_action( 'wp_ajax_nopriv_kandy_still_alive', array(__CLASS__,'updateKandyUserStatus'));
+        add_action( 'wp_ajax_kandy_get_presence', array(__CLASS__, 'getPresenceStatus'));
+        add_action( 'wp_ajax_kandy_set_presence', array(__CLASS__, 'setPresenceStatus'));
     }
 
     /**
@@ -738,13 +740,13 @@ class KandyShortcode {
                 }
                 $output = '<div class="'. $class .'">'.
                     '<span class="title"> ' . $title.' </span><select id="'. $id .'" class="dropDown" '. $htmlOptionsAttributes .' onchange="kandy_myStatusChanged(jQuery(this).val())">'.
-                    '<option value="0" selected>Available</option>'.
-                    '<option value="1">Unavailable</option>'.
-                    '<option value="2">Away</option>'.
-                    '<option value="3">Out To Lunch</option>'.
-                    '<option value="4">Busy</option>'.
-                    '<option value="5">On Vacation</option>'.
-                    '<option value="6">Be Right Back</option>'.
+                    '<option value="available" selected>Available</option>'.
+                    '<option value="unavailable">Unavailable</option>'.
+                    '<option value="away">Away</option>'.
+                    '<option value="out-to-lunch">Out To Lunch</option>'.
+                    '<option value="busy">Busy</option>'.
+                    '<option value="on-vacation">On Vacation</option>'.
+                    '<option value="be-right-back">Be Right Back</option>'.
                     '</select>'.
                     '</div>';
                 if(isset($result['output'])){
@@ -984,7 +986,7 @@ class KandyShortcode {
                         <div class=\"numberContainer\">
                             <input type=\"text\" placeholder=\"{$params['number_place_holder']}\" name=\"phoneNum\" id=\"phoneNum\">
                         </div>
-                        <button id=\"{$params['btn_send_id']}\">{$params['btn_send_label']}</button>
+                        <button id=\"{$params['btn_send_id']}\">{$params['btn_send_label']}</button>&nbsp<span class='smsStatus'></span>
                         <!-- end oncall -->
                     </div>";
                 }
@@ -1502,7 +1504,9 @@ class KandyShortcode {
                 array(
                     'end_at' => time(),
                 ),
-                array( 'id' => $currentSession )
+                array( 'id' => $currentSession ),
+                array('%d'),
+                array('%d')
             );
             //delete cookie
             unset($_SESSION['kandyLiveChatUserInfo']);
@@ -1604,9 +1608,62 @@ class KandyShortcode {
                 ),
                 array(
                     'kandy_user_id' => $kandyUser->user_id
-                )
+                ),
+                array('%d'),
+                array('%s')
             );
         }
+    }
+
+
+    public static function getPresenceStatus()
+    {
+        $serverTimestamp = $_POST['server_timestamp'];
+        $users = (array) $_POST['users'];
+        foreach($users as $id => &$user) {
+            $lastActive = $serverTimestamp - $user['last_seen'];
+            if($lastActive > 10000) {
+                $user['presence_status'] = 'Offline';
+            } else {
+                $userId = explode('@', $user['full_user_id']);
+                $userData = KandyApi::getUserByUserId($userId[0]);
+                $user['presence_status'] = ($userData->presence_status) ? ucfirst(str_replace('-',' ',$userData->presence_status)): 'Available';
+            }
+            $user['last_active_in'] = $lastActive;
+        }
+        echo json_encode($users);exit;
+    }
+
+    public static function setPresenceStatus()
+    {
+        global $wpdb;
+        $presenceStatus = isset($_GET['presence_status'])?$_GET['presence_status']:'';
+        $availableStatuses = array('available', 'away', 'out-to-lunch', 'be-right-back', 'on-vacation', 'busy', 'unavailable');
+        if(!in_array($presenceStatus, $availableStatuses)) {
+            exit;
+        }
+        $currentUser = wp_get_current_user();
+        $kandyUser = KandyApi::getAssignUser($currentUser->ID);
+        if($kandyUser) {
+            $wpdb->update(
+                $wpdb->prefix ."kandy_users",
+                array(
+                    'presence_status' => $presenceStatus
+                ),
+                array(
+                    'user_id' => $kandyUser->user_id
+                ),
+                array('%s'),
+                array('%s')
+            );
+            echo json_encode(array(
+                'status' => 'success',
+                'presence_status' => $presenceStatus
+            ));exit;
+        }
+        echo json_encode(array(
+            'status' => 'fail'
+        ));exit;
     }
 
 }
