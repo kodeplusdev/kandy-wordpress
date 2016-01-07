@@ -102,14 +102,18 @@ Home page: http://www.kandy.io/
 7. Kandy Help
 
 == Changelog ==
-Version  2.2
-- Implement PSTN Call
-- Add AddContactLabel attribute
-- Fixed label attribute in shortcode
-- Fixed multiple voice call
-Version 1.4
-- Implement Voice Call feature
-- Implement Video Call feature
-- Implement Address Book feature
-- Implement Chat feature
-
+= 2.3 =
+* Upgrade Kandy JS SDK 2.3.0
+* Implement groupchat using new kandy groupchat api
+* Implement sms, live chat, cobrowsing
+* Fix bugs
+= 2.2 =
+* Implement PSTN Call
+* Add AddContactLabel attribute
+* Fixed label attribute in shortcode
+* Fixed multiple voice call
+= 1.4 =
+* Implement Voice Call feature
+* Implement Video Call feature
+* Implement Address Book feature
+* Implement Chat feature
