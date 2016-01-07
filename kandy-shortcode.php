@@ -1,64 +1,67 @@
 <?php
 
-class KandyShortcode {
+class KandyShortcode
+{
 
-    static function init() {
+    static function init()
+    {
         // Register script.
-        add_action('wp_enqueue_scripts', array(__CLASS__,'register_my_script' ));
+        add_action('wp_enqueue_scripts', array(__CLASS__, 'register_my_script'));
 
         // Kandy video shortCode.
-        add_shortcode('kandyVideoButton', array(__CLASS__,'kandy_video_button_shortcode_content'));
-        add_shortcode('kandyVideo', array(__CLASS__,'kandy_video_shortcode_content'));
+        add_shortcode('kandyVideoButton', array(__CLASS__, 'kandy_video_button_shortcode_content'));
+        add_shortcode('kandyVideo', array(__CLASS__, 'kandy_video_shortcode_content'));
 
         // Kandy voice shortCode.
-        add_shortcode('kandyVoiceButton', array(__CLASS__,'kandy_voice_shortcode_content'));
+        add_shortcode('kandyVoiceButton', array(__CLASS__, 'kandy_voice_shortcode_content'));
 
         // Kandy addressBook shortCode.
-        add_shortcode('kandyStatus', array(__CLASS__,'kandy_status_shortcode_content'));
-        add_shortcode('kandyAddressBook', array(__CLASS__,'kandy_addressBook_shortcode_content'));
+        add_shortcode('kandyStatus', array(__CLASS__, 'kandy_status_shortcode_content'));
+        add_shortcode('kandyAddressBook', array(__CLASS__, 'kandy_addressBook_shortcode_content'));
 
         // Kandy chat shortCode.
-        add_shortcode('kandyChat', array(__CLASS__,'kandy_chat_shortcode_content'));
+        add_shortcode('kandyChat', array(__CLASS__, 'kandy_chat_shortcode_content'));
         //Kandy coBrowisng shortcode
-        add_shortcode('kandyCoBrowsing', array(__CLASS__,'kandy_cobrowsing_shortcode_content'));
-        add_shortcode('kandySms', array(__CLASS__,'kandy_sms_shortcode_content'));	    //Kandy liveChat shortcode
-	    add_shortcode('kandyLiveChat', array(__CLASS__, 'kandy_live_chat_shortcode_content'));
+        add_shortcode('kandyCoBrowsing', array(__CLASS__, 'kandy_cobrowsing_shortcode_content'));
+        add_shortcode('kandySms', array(__CLASS__, 'kandy_sms_shortcode_content'));      //Kandy liveChat shortcode
+        add_shortcode('kandyLiveChat', array(__CLASS__, 'kandy_live_chat_shortcode_content'));
 
-        add_action('init', array(__CLASS__,'my_kandy_tinymce_button'));
-        add_action('wp_logout', array(__CLASS__,'my_kandy_logout'));
+        add_action('init', array(__CLASS__, 'my_kandy_tinymce_button'));
+        add_action('wp_logout', array(__CLASS__, 'my_kandy_logout'));
 
-        if(isset($_COOKIE['kandy_logout'])){
+        if (isset($_COOKIE['kandy_logout'])) {
             KandyApi::kandyLogout($_COOKIE['kandy_logout']);
         }
 
         // Kandy Get User For Search Action
-        add_action( 'wp_ajax_kandy_get_user_for_search', array(__CLASS__,'kandy_get_user_for_search_callback'));
-        add_action( 'wp_ajax_kandy_get_name_for_contact', array(__CLASS__,'kandy_get_name_for_contact_callback'));
-        add_action( 'wp_ajax_kandy_get_name_for_chat_content', array(__CLASS__,'kandy_get_name_for_chat_content_callback'));
-        add_action( 'wp_ajax_nopriv_kandy_register_guest', array(__CLASS__,'kandy_register_guest'));
-        add_action( 'wp_ajax_nopriv_kandy_get_free_user', array(__CLASS__,'kandy_get_free_user'));
-        add_action( 'wp_ajax_nopriv_kandy_end_chat_session', array(__CLASS__,'kandy_end_chat_session'));
-        add_action( 'wp_ajax_nopriv_kandy_rate_agent', array(__CLASS__,'kandy_rate_agent'));
-        add_action( 'wp_ajax_kandy_add_chat_agent', array(__CLASS__,'kandy_add_chat_agent'));
-        add_action( 'wp_ajax_kandy_still_alive', array(__CLASS__,'updateKandyUserStatus'));
-        add_action( 'wp_ajax_nopriv_kandy_still_alive', array(__CLASS__,'updateKandyUserStatus'));
-        add_action( 'wp_ajax_kandy_get_presence', array(__CLASS__, 'getPresenceStatus'));
-        add_action( 'wp_ajax_kandy_set_presence', array(__CLASS__, 'setPresenceStatus'));
+        add_action('wp_ajax_kandy_get_user_for_search', array(__CLASS__, 'kandy_get_user_for_search_callback'));
+        add_action('wp_ajax_kandy_get_name_for_contact', array(__CLASS__, 'kandy_get_name_for_contact_callback'));
+        add_action('wp_ajax_kandy_get_name_for_chat_content', array(__CLASS__, 'kandy_get_name_for_chat_content_callback'));
+        add_action('wp_ajax_nopriv_kandy_register_guest', array(__CLASS__, 'kandy_register_guest'));
+        add_action('wp_ajax_nopriv_kandy_get_free_user', array(__CLASS__, 'kandy_get_free_user'));
+        add_action('wp_ajax_nopriv_kandy_end_chat_session', array(__CLASS__, 'kandy_end_chat_session'));
+        add_action('wp_ajax_nopriv_kandy_rate_agent', array(__CLASS__, 'kandy_rate_agent'));
+        add_action('wp_ajax_kandy_add_chat_agent', array(__CLASS__, 'kandy_add_chat_agent'));
+        add_action('wp_ajax_kandy_still_alive', array(__CLASS__, 'updateKandyUserStatus'));
+        add_action('wp_ajax_nopriv_kandy_still_alive', array(__CLASS__, 'updateKandyUserStatus'));
+        add_action('wp_ajax_kandy_get_presence', array(__CLASS__, 'getPresenceStatus'));
+        add_action('wp_ajax_kandy_set_presence', array(__CLASS__, 'setPresenceStatus'));
     }
 
     /**
      * Get user for search callback
      */
-    function kandy_get_user_for_search_callback() {
+    function kandy_get_user_for_search_callback()
+    {
 
         $result = array();
-        if(isset($_GET['q'])){
+        if (isset($_GET['q'])) {
             $searchString = $_GET['q'];
-            $userResults = get_users(array('search'=> '*' . $searchString . '*'));
+            $userResults = get_users(array('search' => '*' . $searchString . '*'));
 
             foreach ($userResults as $row) {
                 $kandyUser = KandyApi::getAssignUser($row->ID);
-                if($kandyUser) {
+                if ($kandyUser) {
                     $kandyFullName = $kandyUser->user_id . "@" . $kandyUser->domain_name;
 
                     $userToAdd = array(
@@ -76,19 +79,20 @@ class KandyShortcode {
     /**
      * Kandy get name for contact
      */
-    function kandy_get_name_for_contact_callback() {
+    function kandy_get_name_for_contact_callback()
+    {
         $contacts = array();
-        if(isset($_POST['data'])) {
+        if (isset($_POST['data'])) {
             $contacts = $_POST['data'];
             foreach ($contacts as &$contact) {
-                if(isset($contact['contact_user_name'])) {
+                if (isset($contact['contact_user_name'])) {
                     $user = KandyApi::getUserByKandyUserMail($contact['contact_user_name']);
                 } else {
                     $user = KandyApi::getUserByKandyUserMail($contact['full_user_id']);
                 }
 
-                if(!empty($user)) {
-                    if($user == KANDY_UN_ASSIGN_USER) {
+                if (!empty($user)) {
+                    if ($user == KANDY_UN_ASSIGN_USER) {
                         $displayName = KANDY_UN_ASSIGN_USER;
                     } else {
                         $displayName = $user->display_name;
@@ -111,32 +115,32 @@ class KandyShortcode {
     public function kandy_get_name_for_chat_content_callback()
     {
         global $wpdb;
-        if(isset($_POST['data'])) {
+        if (isset($_POST['data'])) {
             $message = $_POST['data'];
             if (!isset($message['sender'])) {
                 return;
             }
             $sender = $message['sender'];
             //if incoming message is from live chat users
-            if(in_array($sender['user_id'], json_decode(get_option('kandy_live_chat_users', '[]')))){
+            if (in_array($sender['user_id'], json_decode(get_option('kandy_live_chat_users', '[]')))) {
                 $liveChatTable = $wpdb->prefix . 'kandy_live_chat';
                 $fakeEndTime = PHP_INT_MAX;
                 $user = $wpdb->get_results(
                     $sql = "SELECT customer_name, customer_email
                     FROM {$liveChatTable}
-                    WHERE customer_user_id = '".$sender['full_user_id']."'
+                    WHERE customer_user_id = '" . $sender['full_user_id'] . "'
                     AND end_at = $fakeEndTime"
                 );
-                if($user){
+                if ($user) {
                     $displayName = $user[0]->customer_name;
                     $sender['user_email'] = $user[0]->customer_email;
                 }
             } else {
                 $user = KandyApi::getUserByUserId($sender['user_id']);
                 $displayName = "";
-                if($user) {
+                if ($user) {
                     $result = get_user_by('id', $user->main_user_id);
-                    if($result) {
+                    if ($result) {
                         $displayName = $result->display_name;
                     }
                 }
@@ -153,14 +157,15 @@ class KandyShortcode {
     /**
      * Register script
      */
-    static function register_my_script() {
+    static function register_my_script()
+    {
         /*if(get_option('kandy_jquery_reload', "0")){
             wp_register_script('kandy_jquery', KANDY_JQUERY);
         }*/
 
         //register script
         $kandyJsUrl = get_option('kandy_js_url');
-        if(empty($kandyJsUrl)){
+        if (empty($kandyJsUrl)) {
             $kandyJsUrl = KANDY_JS_URL;
         }
         wp_register_script(
@@ -180,8 +185,8 @@ class KandyShortcode {
         );
 
         // in JavaScript, object properties are accessed as ajax_object.ajax_url, ajax_object.we_value
-        wp_localize_script( 'kandy_wordpress_js', 'ajax_object',
-            array( 'ajax_url' => admin_url( 'admin-ajax.php' ), 'we_value' => 1234 ) );
+        wp_localize_script('kandy_wordpress_js', 'ajax_object',
+            array('ajax_url' => admin_url('admin-ajax.php'), 'we_value' => 1234));
 
         wp_register_script(
             'kandy_addressbook_js',
@@ -212,21 +217,21 @@ class KandyShortcode {
             true
         );
 
-	    wp_register_script(
-		    'kandy_live_chat_js',
-		    KANDY_PLUGIN_URL . "/js/kandylivechat.js",
-		    array(),
-		    KANDY_PLUGIN_VERSION,
-		    true
-	    );
+        wp_register_script(
+            'kandy_live_chat_js',
+            KANDY_PLUGIN_URL . "/js/kandylivechat.js",
+            array(),
+            KANDY_PLUGIN_VERSION,
+            true
+        );
 
-	    wp_register_script(
-			'kandy_rating_js',
-			KANDY_PLUGIN_URL . "/js/jquery.rateit.min.js",
-			array(),
-			KANDY_PLUGIN_VERSION,
-			true
-	    );
+        wp_register_script(
+            'kandy_rating_js',
+            KANDY_PLUGIN_URL . "/js/jquery.rateit.min.js",
+            array(),
+            KANDY_PLUGIN_VERSION,
+            true
+        );
 
 
         wp_register_script(
@@ -267,76 +272,82 @@ class KandyShortcode {
             array(),
             KANDY_PLUGIN_VERSION
         );
-	    wp_register_style(
-		    'kandy_live_chat_css',
-		    KANDY_PLUGIN_URL . "/css/kandylivechat.css",
-		    array(),
-		    KANDY_PLUGIN_VERSION
-	    );
-	    wp_register_style(
-		    'kandy_rating_css',
-		    KANDY_PLUGIN_URL . "/css/rateit.css",
-		    array(),
-		    KANDY_PLUGIN_VERSION
-	    );
+        wp_register_style(
+            'kandy_live_chat_css',
+            KANDY_PLUGIN_URL . "/css/kandylivechat.css",
+            array(),
+            KANDY_PLUGIN_VERSION
+        );
+        wp_register_style(
+            'kandy_rating_css',
+            KANDY_PLUGIN_URL . "/css/rateit.css",
+            array(),
+            KANDY_PLUGIN_VERSION
+        );
 
-	    // Pace lib.
-	    wp_enqueue_script( "kandy-pace-script",
-		    'https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js',
-		    array( 'jquery' ), false, true );
-	    wp_enqueue_style( "kandy-pace-style",
-		    'https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/pink/pace-theme-minimal.css' );
-	}
+        // Pace lib.
+        wp_enqueue_script("kandy-pace-script",
+            'https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js',
+            array('jquery'), false, true);
+        wp_enqueue_style("kandy-pace-style",
+            'https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/pink/pace-theme-minimal.css');
+    }
 
     /**
      * Kandy Video Content
      * @param $attr
      * @return null|string
      */
-    function kandy_video_shortcode_content($attr) {
+    function kandy_video_shortcode_content($attr)
+    {
         $output = "";
-        if(!empty($attr)){
-            $result = self::kandySetup();
-            if($result['success']) {
-                // init title attribute
-                if(isset($attr['title'])){
-                    $title = $attr['title'];
-                } else {
-                    $title = 'Kandy Video';
-                }
-
-                //init class attribute
-                $class = 'kandyVideo ';
-                if(isset($attr['class'])){
-                    $class .= $attr['class'] ;
-                }
-
-                //init id attribute
-                $id = 'kandy-video-'. rand() . ' ';
-                if(isset($attr['id'])){
-                    $id = $attr['id'] ;
-                }
-
-                //init htmlOptions
-                $htmlOptionsAttributes = '';                
-
-                foreach ($attr as $key => $value) {
-                    if ($key != "id" && $key != "class" && $key != "title") {
-                        $htmlOptionsAttributes .= $key . "= '" . $value . "'";
-                    }
-                }
-
-                $output = '<div class="'. $class .'">';
-                $output .= '<p class="title">' . $title .'</p>';
-                $output .= '<span class="video" id="' . $id .'"  '. $htmlOptionsAttributes.'></span>';
-                $output .= '</div>';
+        if (!empty($attr)) {
+            if(!is_ssl()) {
+                $output = '<p>' . __('Can not setup kandy video. In order to use this feature, you need a secure origin, such as HTTPS') . '<p>';
             } else {
-                $output = '<p>' . __('Can not setup kandy video. Please contact administrator') . '<p>';
+                $result = self::kandySetup();
+                if ($result['success']) {
+                    // init title attribute
+                    if (isset($attr['title'])) {
+                        $title = $attr['title'];
+                    } else {
+                        $title = 'Kandy Video';
+                    }
+
+                    //init class attribute
+                    $class = 'kandyVideo ';
+                    if (isset($attr['class'])) {
+                        $class .= $attr['class'];
+                    }
+
+                    //init id attribute
+                    $id = 'kandy-video-' . rand() . ' ';
+                    if (isset($attr['id'])) {
+                        $id = $attr['id'];
+                    }
+
+                    //init htmlOptions
+                    $htmlOptionsAttributes = '';
+
+                    foreach ($attr as $key => $value) {
+                        if ($key != "id" && $key != "class" && $key != "title") {
+                            $htmlOptionsAttributes .= $key . "= '" . $value . "'";
+                        }
+                    }
+
+                    $output = '<div class="' . $class . '">';
+                    $output .= '<p class="title">' . $title . '</p>';
+                    $output .= '<span class="video" id="' . $id . '"  ' . $htmlOptionsAttributes . '></span>';
+                    $output .= '</div>';
+                } else {
+                    $output = '<p>' . __('Can not setup kandy video. Please contact administrator') . '<p>';
+                }
+
+                if (isset($result['output'])) {
+                    $output .= $result['output'];
+                }
             }
 
-            if(isset($result['output'])){
-                $output .= $result['output'];
-            }
         }
         return $output;
 
@@ -347,131 +358,135 @@ class KandyShortcode {
      * @param $attr
      * @return null|string
      */
-    function kandy_video_button_shortcode_content($attr) {
+    function kandy_video_button_shortcode_content($attr)
+    {
         $output = "";
 
-        if(!empty($attr)){
-            $result = self::kandySetup();
-            if($result['success']) {
-
-                wp_enqueue_script("kandy_video_js");
-                wp_enqueue_style("kandy_video_css");
-                //load script and css
-                wp_enqueue_script("select-2-script", KANDY_PLUGIN_URL . '/js/select2-3.5.2/select2.js');
-                wp_enqueue_style("select-2-style", KANDY_PLUGIN_URL . '/js/select2-3.5.2/select2.css');
-
-                // Init class attribute.
-                $class = 'kandyButton ';
-                if (isset($attr['class']))
-                {
-                    $class .= $attr['class'];
-                }
-
-                // Init id attribute.
-                $id = 'kandy-video-button' . rand();
-                if (isset($attr['id']))
-                {
-                    $id = $attr['id'];
-                }
-
-                // Init incominglabel attribute.
-                $incomingLabel = 'Incoming Call...';
-                if (isset($attr['incominglabel'])) {
-                    $incomingLabel = ($attr['incominglabel']);
-                }
-
-                // Init incomingbuttontext attribute.
-                $incomingButtonText = 'Answer';
-                if (isset($attr['incomingbuttontext'])) {
-                    $incomingButtonText = ($attr['incomingbuttontext']);
-                }
-
-                // Init rejectbuttontext attribute.
-                $rejectButtonText = 'Reject';
-                if (isset($attr['rejectbuttontext'])) {
-                    $incomingButtonText = ($attr['rejectbuttontext']);
-                }
-
-                // Init calloutlabel attribute.
-                $callOutLabel = 'User to call';
-                if (isset($attr['calloutlabel'])) {
-                    $callOutLabel = ($attr['calloutlabel']);
-                }
-
-                // Init calloutbuttontext attribute.
-                $callOutButtonText = 'Call';
-                if (isset($attr['calloutbuttontext'])) {
-                    $callOutButtonText = ($attr['calloutbuttontext']);
-                }
-
-                // Init callinglabel attribute.
-                $callingLabel = 'Calling...';
-                if (isset($attr['callinglabel'])) {
-                    $callingLabel = ($attr['callinglabel']);
-                }
-
-                // Init callingbuttontext attribute.
-                $callingButtonText = 'End Call';
-                if (isset($attr['callingbuttontext'])) {
-                    $callingButtonText = ($attr['callingbuttontext']);
-                }
-
-                // Init oncalllabel attribute.
-                $onCallLabel = 'You are connected!';
-                if (isset($attr['oncalllabel'])) {
-                    $onCallLabel = $attr['oncalllabel'];
-                }
-
-                // Init oncallbuttontext attribute.
-                $onCallButtonText = 'End Call';
-                if (isset($attr['oncallbuttontext'])) {
-                    $onCallButtonText = ($attr['oncallbuttontext']);
-                }
-
-                // Init $holdCallButtonText attribute.
-                $holdCallButtonText = 'Hold Call';
-                if (isset($attr['holdcallbuttontext'])) {
-                    $holdCallButtonText = ($attr['holdcallbuttontext']);
-                }
-
-                // Init $resumeCallButtonText attribute.
-                $resumeCallButtonText = 'Resume Call';
-                if (isset($attr['resumecallbuttontext'])) {
-                    $resumeCallButtonText = ($attr['resumecallbuttontext']);
-                }
-
-                $ajaxUserSearchUrl = admin_url( 'admin-ajax.php' );
-
-                $output = '<div class="' . $class . '" id ="' . $id . '" data-call-id="0">' .
-                    '<div class="kandyButtonComponent kandyVideoButtonSomeonesCalling" id="'.$id.'-incomingCall">' .
-                    '<label>' . $incomingLabel . '</label>' .
-                    '<input data-container="'.$id.'" class="btmAnswerVideoCall" type="button" value="' . $incomingButtonText . '" onclick="kandy_answer_video_call(this)"/>' .
-                    '<input style="visibility: hidden" class="btmAnswerRejectCall" type="button" onclick="kandy_reject_video_call(this)" value="' . $rejectButtonText . '"/>' .
-                    '</div>' .
-
-                    '<div class="kandyButtonComponent kandyVideoButtonCallOut" id="'.$id.'-callOut">' .
-                    '<label>' . $callOutLabel . '</label><input id="'.$id.'-callOutUserId" data-ajax-url="' . $ajaxUserSearchUrl . '" type="text" value="" class="select2"/>' .
-                    '<input data-container="'.$id.'"  class="btnCall" id="callBtn" type="button" value="' . $callOutButtonText . '" onclick="kandy_make_video_call(this)"/>' .
-                    '</div>' .
-
-                    '<div class="kandyButtonComponent kandyVideoButtonCalling" id="'.$id.'-calling">' .
-                    '<label>' . $callingLabel . '</label>' .
-                    '<input data-container="'.$id.'"  type="button" class="btnEndCall" value="' . $callingButtonText . '" onclick="kandy_end_call(this)"/>' .
-                    '</div>' .
-                    '<div class="kandyButtonComponent kandyVideoButtonOnCall" id="'.$id.'-onCall">' .
-                    '<label>' . $onCallLabel . '</label>' .
-                    '<input data-container="'.$id.'"  class="btnEndCall" type="button" value="' . $onCallButtonText . '" onclick="kandy_end_call(this)"/>' .
-                    '<input style="visibility: hidden" class="btnHoldCall" type="button" value="' . $holdCallButtonText . '" onclick="kandy_hold_call(this)"/>' .
-                    '<input style="visibility: hidden" class="btnResumeCall" type="button" value="' . $resumeCallButtonText . '" onclick="kandy_resume_call(this)"/>' .
-                    '</div></div>';
-
-                if(isset($result['output'])){
-                    $output .= $result['output'];
-                }
-
+        if (!empty($attr)) {
+            if (!is_ssl()) {
+                $output = '<p>' . __('Can not setup kandy video button. In order to use this feature, you need a secure origin, such as HTTPS') . '<p>';
             } else {
-                $output = '<p>' . __('Can not setup kandy video button. Please contact administrator') . '<p>';
+                $result = self::kandySetup();
+                if ($result['success']) {
+
+                    wp_enqueue_script("kandy_video_js");
+                    wp_enqueue_style("kandy_video_css");
+                    //load script and css
+                    wp_enqueue_script("select-2-script", KANDY_PLUGIN_URL . '/js/select2-3.5.2/select2.js');
+                    wp_enqueue_style("select-2-style", KANDY_PLUGIN_URL . '/js/select2-3.5.2/select2.css');
+
+                    // Init class attribute.
+                    $class = 'kandyButton ';
+                    if (isset($attr['class'])) {
+                        $class .= $attr['class'];
+                    }
+
+                    // Init id attribute.
+                    $id = 'kandy-video-button' . rand();
+                    if (isset($attr['id'])) {
+                        $id = $attr['id'];
+                    }
+
+                    // Init incominglabel attribute.
+                    $incomingLabel = 'Incoming Call...';
+                    if (isset($attr['incominglabel'])) {
+                        $incomingLabel = ($attr['incominglabel']);
+                    }
+
+                    // Init incomingbuttontext attribute.
+                    $incomingButtonText = 'Answer';
+                    if (isset($attr['incomingbuttontext'])) {
+                        $incomingButtonText = ($attr['incomingbuttontext']);
+                    }
+
+                    // Init rejectbuttontext attribute.
+                    $rejectButtonText = 'Reject';
+                    if (isset($attr['rejectbuttontext'])) {
+                        $incomingButtonText = ($attr['rejectbuttontext']);
+                    }
+
+                    // Init calloutlabel attribute.
+                    $callOutLabel = 'User to call';
+                    if (isset($attr['calloutlabel'])) {
+                        $callOutLabel = ($attr['calloutlabel']);
+                    }
+
+                    // Init calloutbuttontext attribute.
+                    $callOutButtonText = 'Call';
+                    if (isset($attr['calloutbuttontext'])) {
+                        $callOutButtonText = ($attr['calloutbuttontext']);
+                    }
+
+                    // Init callinglabel attribute.
+                    $callingLabel = 'Calling...';
+                    if (isset($attr['callinglabel'])) {
+                        $callingLabel = ($attr['callinglabel']);
+                    }
+
+                    // Init callingbuttontext attribute.
+                    $callingButtonText = 'End Call';
+                    if (isset($attr['callingbuttontext'])) {
+                        $callingButtonText = ($attr['callingbuttontext']);
+                    }
+
+                    // Init oncalllabel attribute.
+                    $onCallLabel = 'You are connected!';
+                    if (isset($attr['oncalllabel'])) {
+                        $onCallLabel = $attr['oncalllabel'];
+                    }
+
+                    // Init oncallbuttontext attribute.
+                    $onCallButtonText = 'End Call';
+                    if (isset($attr['oncallbuttontext'])) {
+                        $onCallButtonText = ($attr['oncallbuttontext']);
+                    }
+
+                    // Init $holdCallButtonText attribute.
+                    $holdCallButtonText = 'Hold Call';
+                    if (isset($attr['holdcallbuttontext'])) {
+                        $holdCallButtonText = ($attr['holdcallbuttontext']);
+                    }
+
+                    // Init $resumeCallButtonText attribute.
+                    $resumeCallButtonText = 'Resume Call';
+                    if (isset($attr['resumecallbuttontext'])) {
+                        $resumeCallButtonText = ($attr['resumecallbuttontext']);
+                    }
+
+                    $ajaxUserSearchUrl = admin_url('admin-ajax.php');
+
+                    $output = '<div class="' . $class . '" id ="' . $id . '" data-call-id="0">' .
+                        '<div class="kandyButtonComponent kandyVideoButtonSomeonesCalling" id="' . $id . '-incomingCall">' .
+                        '<label>' . $incomingLabel . '</label>' .
+                        '<input data-container="' . $id . '" class="btmAnswerVideoCall" type="button" value="' . $incomingButtonText . '" onclick="kandy_answer_video_call(this)"/>' .
+                        '<input style="visibility: hidden" class="btmAnswerRejectCall" type="button" onclick="kandy_reject_video_call(this)" value="' . $rejectButtonText . '"/>' .
+                        '</div>' .
+
+                        '<div class="kandyButtonComponent kandyVideoButtonCallOut" id="' . $id . '-callOut">' .
+                        '<label>' . $callOutLabel . '</label><input id="' . $id . '-callOutUserId" data-ajax-url="' . $ajaxUserSearchUrl . '" type="text" value="" class="select2"/>' .
+                        '<input data-container="' . $id . '"  class="btnCall" id="callBtn" type="button" value="' . $callOutButtonText . '" onclick="kandy_make_video_call(this)"/>' .
+                        '</div>' .
+
+                        '<div class="kandyButtonComponent kandyVideoButtonCalling" id="' . $id . '-calling">' .
+                        '<label>' . $callingLabel . '</label>' .
+                        '<input data-container="' . $id . '"  type="button" class="btnEndCall" value="' . $callingButtonText . '" onclick="kandy_end_call(this)"/>' .
+                        '</div>' .
+                        '<div class="kandyButtonComponent kandyVideoButtonOnCall" id="' . $id . '-onCall">' .
+                        '<label>' . $onCallLabel . '</label>' .
+                        '<input data-container="' . $id . '"  class="btnEndCall" type="button" value="' . $onCallButtonText . '" onclick="kandy_end_call(this)"/>' .
+                        '<input style="visibility: hidden" class="btnHoldCall" type="button" value="' . $holdCallButtonText . '" onclick="kandy_hold_call(this)"/>' .
+                        '<input style="visibility: hidden" class="btnResumeCall" type="button" value="' . $resumeCallButtonText . '" onclick="kandy_resume_call(this)"/>' .
+                        '</div></div>';
+
+                    if (isset($result['output'])) {
+                        $output .= $result['output'];
+                    }
+
+                } else {
+                    $output = '<p>' . __('Can not setup kandy video button. Please contact administrator') . '<p>';
+                }
             }
+
         }
         return $output;
     }
@@ -481,221 +496,227 @@ class KandyShortcode {
      * @param $attr
      * @return null|string
      */
-    function kandy_voice_shortcode_content($attr) {
+    function kandy_voice_shortcode_content($attr)
+    {
         $output = "";
-        if(!empty($attr)){
-            $result = self::kandySetup();
-            if($result['success']) {
-                wp_enqueue_script("kandy_voice_js");
-                wp_enqueue_style("kandy_voice_css");
-
-                //load script and css
-                wp_enqueue_script("select-2-script", KANDY_PLUGIN_URL . '/js/select2-3.5.2/select2.js');
-                wp_enqueue_style("select-2-style", KANDY_PLUGIN_URL . '/js/select2-3.5.2/select2.css');
-
-                // Init incominglabel attribute.
-                $callType = '';
-                if (isset($attr['type'])) {
-                    $callType = ($attr['type']);
-                }
-
-                // Init incominglabel attribute.
-                $callTo = '';
-                if (isset($attr['callto'])) {
-                    $callTo = ($attr['callto']);
-                }
-
-                //init class attribute
-                $class = 'kandyButton ';
-                if(isset($attr['class'])){
-                    $class .= $attr['class'] ;
-                }
-
-                //init id attribute
-                $id = 'kandy-voice-button'. rand();
-                if(isset($attr['id'])){
-                    $id = $attr['id'] ;
-                }
-
-                // Init incominglabel attribute.
-                $incomingLabel = 'Incoming Call...';
-                if (isset($attr['incominglabel'])) {
-                    $incomingLabel = ($attr['incominglabel']);
-                }
-
-                // Init incomingbuttontext attribute.
-                $incomingButtonText = 'Answer';
-                if (isset($attr['incomingbuttontext'])) {
-                    $incomingButtonText = ($attr['incomingbuttontext']);
-                }
-
-                // Init calloutlabel attribute.
-                $callOutLabel = 'User to call';
-                if (isset($attr['calloutlabel'])) {
-                    $callOutLabel = ($attr['calloutlabel']);
-                }
-
-                // Init calloutbuttontext attribute.
-                $callOutButtonText = 'Call';
-                if (isset($attr['calloutbuttontext'])) {
-                    $callOutButtonText = ($attr['calloutbuttontext']);
-                }
-
-                // Init callinglabel attribute.
-                $callingLabel = 'Calling...';
-                if (isset($attr['callinglabel'])) {
-                    $callingLabel = ($attr['callinglabel']);
-                }
-
-                // Init callingbuttontext attribute.
-                $callingButtonText = 'End Call';
-                if (isset($attr['callingbuttontext'])) {
-                    $callingButtonText = ($attr['callingbuttontext']);
-                }
-
-                // Init oncalllabel attribute.
-                $onCallLabel = 'You are connected!';
-                if (isset($attr['oncalllabel'])) {
-                    $onCallLabel = $attr['oncalllabel'];
-                }
-
-                // Init oncallbuttontext attribute.
-                $onCallButtonText = 'End Call';
-                if (isset($attr['oncallbuttontext'])) {
-                    $onCallButtonText = ($attr['oncallbuttontext']);
-                }
-
-                // Init holdcallbuttontext attribute.
-                $holdCallButtonText = 'Hold Call';
-                if (isset($attr['holdcallbuttontext'])) {
-                    $holdCallButtonText = ($attr['holdcallbuttontext']);
-                }
-
-                // Init resumecallbuttontext attribute.
-                $resumeCallButtonText = 'Resume Call';
-                if (isset($attr['resumecallbuttontext'])) {
-                    $resumeCallButtonText = ($attr['resumecallbuttontext']);
-                }
-
-                // Init rejectbuttontext attribute.
-                $rejectButtonText = 'Reject';
-                if (isset($attr['rejectbuttontext'])) {
-                    $incomingButtonText = ($attr['rejectbuttontext']);
-                }
-
-                $ajaxUserSearchUrl = admin_url( 'admin-ajax.php' );
-                if(strtoupper($callType) == KANDY_PSTN_TYPE) {
-
-                    if (!isset($attr['calloutlabel'])) {
-                        $callOutLabel = 'Enter Number';
-                    }
-
-                    if(empty($callTo)) {
-
-                        $output = '<div class="' . $class . '" id ="' . $id . '" data-call-id="">' .
-                            '<div class="kandyButtonComponent kandyVideoButtonSomeonesCalling" id="'.$id.'-incomingCall">' .
-                            '<label>' . $incomingLabel . '</label>' .
-                            '<input data-container="'.$id.'" class="btnAnswerVoiceCall" type="button" value="' . $incomingButtonText . '" onclick="kandy_answerVoiceCall(this)"/>' .
-                            '<input data-container="'.$id.'" style="visibility: hidden" class="btmAnswerRejectCall" type="button" onclick="kandy_reject_video_call(this)" value="' . $rejectButtonText . '"/>' .
-                            '</div>' .
-
-                            '<div class="kandyButtonComponent kandyVideoButtonCallOut" id="'.$id.'-callOut">' .
-                            '<label>' . $callOutLabel . '</label>' .
-                            '<input id="'.$id.'-callOutUserId" style="display:block;" type="text" value=""/>' .
-                            '<input data-container="'.$id.'" class="btnCall" id="callBtn" type="button" value="' . $callOutButtonText . '" onclick="kandy_make_pstn_call(this)"/>' .
-                            '</div>' .
-
-                            '<div class="kandyButtonComponent kandyVideoButtonCalling" id="'.$id.'-calling">' .
-                            '<label>' . $callingLabel . '</label>' .
-                            '<input data-container="'.$id.'" type="button" class="btnEndCall" value="' . $callingButtonText . '" onclick="kandy_end_call(this)"/>' .
-                            '</div>' .
-                            '<div class="kandyButtonComponent kandyVideoButtonOnCall" id="'.$id.'-onCall">' .
-                            '<label>' . $onCallLabel . '</label>' .
-                            '<input data-container="'.$id.'" class="btnEndCall" type="button" value=" ' . $onCallButtonText . ' " onclick="kandy_end_call(this)"/>' .
-                            '<input data-container="'.$id.'" style="visibility: hidden" class="btnHoldCall" type="button" value="' . $holdCallButtonText . '" onclick="kandy_hold_call(this)"/>' .
-                            '<input data-container="'.$id.'" style="visibility: hidden" class="btnResumeCall" type="button" value="' . $resumeCallButtonText . '" onclick="kandy_resume_call(this)"/>' .
-                            '</div><div class="videoVoiceCallHolder"><div id="theirVideo" class="video"></div></div></div>';
-                    } else {
-                        $output = '<div class="' . $class . '" id ="' . $id . '" data-call-id="">' .
-                            '<div class="kandyButtonComponent kandyVideoButtonSomeonesCalling" id="'.$id.'-incomingCall">' .
-                            '<label>' . $incomingLabel . '</label>' .
-                            '<input data-container="'.$id.'" class="btnAnswerVoiceCall" type="button" value="' . $incomingButtonText . '" onclick="kandy_answerVoiceCall(this)"/>' .
-                            '<input data-container="'.$id.'" style="visibility: hidden" class="btmAnswerRejectCall" type="button" onclick="kandy_reject_video_call(this)" value="' . $rejectButtonText . '"/>' .
-                            '</div>' .
-
-                            '<div class="kandyButtonComponent kandyVideoButtonCallOut" id="'.$id.'-callOut">' .
-                            '<input id="'.$id.'-callOutUserId" type="text" value ="'. $callTo .'"/>' .
-                            '<input data-container="'.$id.'" class="btnCall" id="callBtn" type="button" value="' . $callOutButtonText . '" onclick="kandy_make_pstn_call(this)"/>' .
-                            '</div>' .
-
-                            '<div class="kandyButtonComponent kandyVideoButtonCalling" id="'.$id.'-calling">' .
-                            '<label>' . $callingLabel . '</label>' .
-                            '<input data-container="'.$id.'" type="button" class="btnEndCall" value="' . $callingButtonText . '" onclick="kandy_end_call(this)"/>' .
-                            '</div>' .
-                            '<div class="kandyButtonComponent kandyVideoButtonOnCall" id="'.$id.'-onCall">' .
-                            '<label>' . $onCallLabel . '</label>' .
-                            '<input data-container="'.$id.'" class="btnEndCall" type="button" value=" ' . $onCallButtonText . ' " onclick="kandy_end_call(this)"/>' .
-                            '<input data-container="'.$id.'" style="visibility: hidden" class="btnHoldCall" type="button" value="' . $holdCallButtonText . '" onclick="kandy_hold_call(this)"/>' .
-                            '<input data-container="'.$id.'" style="visibility: hidden" class="btnResumeCall" type="button" value="' . $resumeCallButtonText . '" onclick="kandy_resume_call(this)"/>'.
-                            '</div><div class="videoVoiceCallHolder"><div id="theirVideo" class="video"></div></div></div>';
-                    }
-
-                } else {
-                    if(empty($callTo)) {
-                        $output = '<div class="' . $class . '" id ="' . $id . '" data-call-id="">' .
-                            '<div class="kandyButtonComponent kandyVideoButtonSomeonesCalling" id="'.$id.'-incomingCall">' .
-                            '<label>' . $incomingLabel . '</label>' .
-                            '<input data-container="'.$id.'"  class="btnAnswerVoiceCall" type="button" value="' . $incomingButtonText . '" onclick="kandy_answerVoiceCall(this)"/>' .
-                            '<input data-container="'.$id.'"  style="visibility: hidden" class="btmAnswerRejectCall" type="button" onclick="kandy_reject_video_call(this)" value="' . $rejectButtonText . '"/>' .
-                            '</div>' .
-
-                            '<div class="kandyButtonComponent kandyVideoButtonCallOut" id="'.$id.'-callOut">' .
-                            '<label>' . $callOutLabel . '</label>' .
-                            '<input id="'.$id.'-callOutUserId" data-ajax-url="' . $ajaxUserSearchUrl . '" type="text" value="" class="select2"/>' .
-                            '<input data-container="'.$id.'" class="btnCall" id="callBtn" type="button" value="' . $callOutButtonText . '" onclick="kandy_makeVoiceCall(this)"/>' .
-                            '</div>' .
-
-                            '<div class="kandyButtonComponent kandyVideoButtonCalling" id="'.$id.'-calling">' .
-                            '<label>' . $callingLabel . '</label>' .
-                            '<input data-container="'.$id.'"  type="button" class="btnEndCall" value="' . $callingButtonText . '" onclick="kandy_end_call(this)"/>' .
-                            '</div>' .
-                            '<div class="kandyButtonComponent kandyVideoButtonOnCall" id="'.$id.'-onCall">' .
-                            '<label>' . $onCallLabel . '</label>' .
-                            '<input data-container="'.$id.'"  class="btnEndCall" type="button" value=" ' . $onCallButtonText . ' " onclick="kandy_end_call(this)"/>' .
-                            '<input data-container="'.$id.'"  style="visibility: hidden" class="btnHoldCall" type="button" value="' . $holdCallButtonText . '" onclick="kandy_hold_call(this)"/>' .
-                            '<input data-container="'.$id.'"  style="visibility: hidden" class="btnResumeCall" type="button" value="' . $resumeCallButtonText . '" onclick="kandy_resume_call(this)"/>' .
-                            '</div><div class="videoVoiceCallHolder"><div id="theirVideo" class="video"></div></div></div>';
-                    } else {
-                        $output = '<div class="' . $class . '" id ="' . $id . '" data-call-id="">' .
-                            '<div class="kandyButtonComponent kandyVideoButtonSomeonesCalling" id="'.$id.'-incomingCall">' .
-                            '<label>' . $incomingLabel . '</label>' .
-                            '<input data-container="'.$id.'"  class="btnAnswerVoiceCall" type="button" value="' . $incomingButtonText . '" onclick="kandy_answerVoiceCall(this)"/>' .
-                            '<input data-container="'.$id.'"  style="visibility: hidden" class="btmAnswerRejectCall" type="button" onclick="kandy_reject_video_call(this)" value="' . $rejectButtonText . '"/>' .
-                            '</div>' .
-
-                            '<div class="kandyButtonComponent kandyVideoButtonCallOut" id="'.$id.'-callOut">' .
-                            '<input id="'.$id.'-callOutUserId" type="text" value ="'. $callTo .'"/>' .
-                            '<input data-container="'.$id.'"  class="btnCall" id="callBtn" type="button" value="' . $callOutButtonText . '" onclick="kandy_make_pstn_call(this)"/>' .
-                            '</div>' .
-
-                            '<div class="kandyButtonComponent kandyVideoButtonCalling" id="'.$id.'-calling">' .
-                            '<label>' . $callingLabel . '</label>' .
-                            '<input data-container="'.$id.'"  type="button" class="btnEndCall" value="' . $callingButtonText . '" onclick="kandy_end_call(this)"/>' .
-                            '</div>' .
-                            '<div class="kandyButtonComponent kandyVideoButtonOnCall" id="'.$id.'-onCall">' .
-                            '<label>' . $onCallLabel . '</label>' .
-                            '<input data-container="'.$id.'"  class="btnEndCall" type="button" value=" ' . $onCallButtonText . ' " onclick="kandy_end_call(this)"/>' .
-                            '<input data-container="'.$id.'"  style="visibility: hidden" class="btnHoldCall" type="button" value="' . $holdCallButtonText . '" onclick="kandy_hold_call(this)"/>' .
-                            '<input data-container="'.$id.'"  style="visibility: hidden" class="btnResumeCall" type="button" value="' . $resumeCallButtonText . '" onclick="kandy_resume_call(this)"/>'.
-                            '</div><div class="videoVoiceCallHolder"><div id="theirVideo" class="video"></div></div></div>';
-                    }
-                }
-                if(isset($result['output'])){
-                    $output .= $result['output'];
-                }
+        if (!empty($attr)) {
+            if(!is_ssl()){
+                $output = '<p>' . __('Can not setup kandy voice button. In order to use this feature, you need a secure origin, such as HTTPS') . '<p>';
             } else {
-                $output = '<p>' . __('Can not setup kandy voice button. Please contact administrator') . '<p>';
+                $result = self::kandySetup();
+                if ($result['success']) {
+                    wp_enqueue_script("kandy_voice_js");
+                    wp_enqueue_style("kandy_voice_css");
+
+                    //load script and css
+                    wp_enqueue_script("select-2-script", KANDY_PLUGIN_URL . '/js/select2-3.5.2/select2.js');
+                    wp_enqueue_style("select-2-style", KANDY_PLUGIN_URL . '/js/select2-3.5.2/select2.css');
+
+                    // Init incominglabel attribute.
+                    $callType = '';
+                    if (isset($attr['type'])) {
+                        $callType = ($attr['type']);
+                    }
+
+                    // Init incominglabel attribute.
+                    $callTo = '';
+                    if (isset($attr['callto'])) {
+                        $callTo = ($attr['callto']);
+                    }
+
+                    //init class attribute
+                    $class = 'kandyButton ';
+                    if (isset($attr['class'])) {
+                        $class .= $attr['class'];
+                    }
+
+                    //init id attribute
+                    $id = 'kandy-voice-button' . rand();
+                    if (isset($attr['id'])) {
+                        $id = $attr['id'];
+                    }
+
+                    // Init incominglabel attribute.
+                    $incomingLabel = 'Incoming Call...';
+                    if (isset($attr['incominglabel'])) {
+                        $incomingLabel = ($attr['incominglabel']);
+                    }
+
+                    // Init incomingbuttontext attribute.
+                    $incomingButtonText = 'Answer';
+                    if (isset($attr['incomingbuttontext'])) {
+                        $incomingButtonText = ($attr['incomingbuttontext']);
+                    }
+
+                    // Init calloutlabel attribute.
+                    $callOutLabel = 'User to call';
+                    if (isset($attr['calloutlabel'])) {
+                        $callOutLabel = ($attr['calloutlabel']);
+                    }
+
+                    // Init calloutbuttontext attribute.
+                    $callOutButtonText = 'Call';
+                    if (isset($attr['calloutbuttontext'])) {
+                        $callOutButtonText = ($attr['calloutbuttontext']);
+                    }
+
+                    // Init callinglabel attribute.
+                    $callingLabel = 'Calling...';
+                    if (isset($attr['callinglabel'])) {
+                        $callingLabel = ($attr['callinglabel']);
+                    }
+
+                    // Init callingbuttontext attribute.
+                    $callingButtonText = 'End Call';
+                    if (isset($attr['callingbuttontext'])) {
+                        $callingButtonText = ($attr['callingbuttontext']);
+                    }
+
+                    // Init oncalllabel attribute.
+                    $onCallLabel = 'You are connected!';
+                    if (isset($attr['oncalllabel'])) {
+                        $onCallLabel = $attr['oncalllabel'];
+                    }
+
+                    // Init oncallbuttontext attribute.
+                    $onCallButtonText = 'End Call';
+                    if (isset($attr['oncallbuttontext'])) {
+                        $onCallButtonText = ($attr['oncallbuttontext']);
+                    }
+
+                    // Init holdcallbuttontext attribute.
+                    $holdCallButtonText = 'Hold Call';
+                    if (isset($attr['holdcallbuttontext'])) {
+                        $holdCallButtonText = ($attr['holdcallbuttontext']);
+                    }
+
+                    // Init resumecallbuttontext attribute.
+                    $resumeCallButtonText = 'Resume Call';
+                    if (isset($attr['resumecallbuttontext'])) {
+                        $resumeCallButtonText = ($attr['resumecallbuttontext']);
+                    }
+
+                    // Init rejectbuttontext attribute.
+                    $rejectButtonText = 'Reject';
+                    if (isset($attr['rejectbuttontext'])) {
+                        $incomingButtonText = ($attr['rejectbuttontext']);
+                    }
+
+                    $ajaxUserSearchUrl = admin_url('admin-ajax.php');
+                    if (strtoupper($callType) == KANDY_PSTN_TYPE) {
+
+                        if (!isset($attr['calloutlabel'])) {
+                            $callOutLabel = 'Enter Number';
+                        }
+
+                        if (empty($callTo)) {
+
+                            $output = '<div class="' . $class . '" id ="' . $id . '" data-call-id="">' .
+                                '<div class="kandyButtonComponent kandyVideoButtonSomeonesCalling" id="' . $id . '-incomingCall">' .
+                                '<label>' . $incomingLabel . '</label>' .
+                                '<input data-container="' . $id . '" class="btnAnswerVoiceCall" type="button" value="' . $incomingButtonText . '" onclick="kandy_answerVoiceCall(this)"/>' .
+                                '<input data-container="' . $id . '" style="visibility: hidden" class="btmAnswerRejectCall" type="button" onclick="kandy_reject_video_call(this)" value="' . $rejectButtonText . '"/>' .
+                                '</div>' .
+
+                                '<div class="kandyButtonComponent kandyVideoButtonCallOut" id="' . $id . '-callOut">' .
+                                '<label>' . $callOutLabel . '</label>' .
+                                '<input id="' . $id . '-callOutUserId" style="display:block;" type="text" value=""/>' .
+                                '<input data-container="' . $id . '" class="btnCall" id="callBtn" type="button" value="' . $callOutButtonText . '" onclick="kandy_make_pstn_call(this)"/>' .
+                                '</div>' .
+
+                                '<div class="kandyButtonComponent kandyVideoButtonCalling" id="' . $id . '-calling">' .
+                                '<label>' . $callingLabel . '</label>' .
+                                '<input data-container="' . $id . '" type="button" class="btnEndCall" value="' . $callingButtonText . '" onclick="kandy_end_call(this)"/>' .
+                                '</div>' .
+                                '<div class="kandyButtonComponent kandyVideoButtonOnCall" id="' . $id . '-onCall">' .
+                                '<label>' . $onCallLabel . '</label>' .
+                                '<input data-container="' . $id . '" class="btnEndCall" type="button" value=" ' . $onCallButtonText . ' " onclick="kandy_end_call(this)"/>' .
+                                '<input data-container="' . $id . '" style="visibility: hidden" class="btnHoldCall" type="button" value="' . $holdCallButtonText . '" onclick="kandy_hold_call(this)"/>' .
+                                '<input data-container="' . $id . '" style="visibility: hidden" class="btnResumeCall" type="button" value="' . $resumeCallButtonText . '" onclick="kandy_resume_call(this)"/>' .
+                                '</div><div class="videoVoiceCallHolder"><div id="theirVideo" class="video"></div></div></div>';
+                        } else {
+                            $output = '<div class="' . $class . '" id ="' . $id . '" data-call-id="">' .
+                                '<div class="kandyButtonComponent kandyVideoButtonSomeonesCalling" id="' . $id . '-incomingCall">' .
+                                '<label>' . $incomingLabel . '</label>' .
+                                '<input data-container="' . $id . '" class="btnAnswerVoiceCall" type="button" value="' . $incomingButtonText . '" onclick="kandy_answerVoiceCall(this)"/>' .
+                                '<input data-container="' . $id . '" style="visibility: hidden" class="btmAnswerRejectCall" type="button" onclick="kandy_reject_video_call(this)" value="' . $rejectButtonText . '"/>' .
+                                '</div>' .
+
+                                '<div class="kandyButtonComponent kandyVideoButtonCallOut" id="' . $id . '-callOut">' .
+                                '<input id="' . $id . '-callOutUserId" type="text" value ="' . $callTo . '"/>' .
+                                '<input data-container="' . $id . '" class="btnCall" id="callBtn" type="button" value="' . $callOutButtonText . '" onclick="kandy_make_pstn_call(this)"/>' .
+                                '</div>' .
+
+                                '<div class="kandyButtonComponent kandyVideoButtonCalling" id="' . $id . '-calling">' .
+                                '<label>' . $callingLabel . '</label>' .
+                                '<input data-container="' . $id . '" type="button" class="btnEndCall" value="' . $callingButtonText . '" onclick="kandy_end_call(this)"/>' .
+                                '</div>' .
+                                '<div class="kandyButtonComponent kandyVideoButtonOnCall" id="' . $id . '-onCall">' .
+                                '<label>' . $onCallLabel . '</label>' .
+                                '<input data-container="' . $id . '" class="btnEndCall" type="button" value=" ' . $onCallButtonText . ' " onclick="kandy_end_call(this)"/>' .
+                                '<input data-container="' . $id . '" style="visibility: hidden" class="btnHoldCall" type="button" value="' . $holdCallButtonText . '" onclick="kandy_hold_call(this)"/>' .
+                                '<input data-container="' . $id . '" style="visibility: hidden" class="btnResumeCall" type="button" value="' . $resumeCallButtonText . '" onclick="kandy_resume_call(this)"/>' .
+                                '</div><div class="videoVoiceCallHolder"><div id="theirVideo" class="video"></div></div></div>';
+                        }
+
+                    } else {
+                        if (empty($callTo)) {
+                            $output = '<div class="' . $class . '" id ="' . $id . '" data-call-id="">' .
+                                '<div class="kandyButtonComponent kandyVideoButtonSomeonesCalling" id="' . $id . '-incomingCall">' .
+                                '<label>' . $incomingLabel . '</label>' .
+                                '<input data-container="' . $id . '"  class="btnAnswerVoiceCall" type="button" value="' . $incomingButtonText . '" onclick="kandy_answerVoiceCall(this)"/>' .
+                                '<input data-container="' . $id . '"  style="visibility: hidden" class="btmAnswerRejectCall" type="button" onclick="kandy_reject_video_call(this)" value="' . $rejectButtonText . '"/>' .
+                                '</div>' .
+
+                                '<div class="kandyButtonComponent kandyVideoButtonCallOut" id="' . $id . '-callOut">' .
+                                '<label>' . $callOutLabel . '</label>' .
+                                '<input id="' . $id . '-callOutUserId" data-ajax-url="' . $ajaxUserSearchUrl . '" type="text" value="" class="select2"/>' .
+                                '<input data-container="' . $id . '" class="btnCall" id="callBtn" type="button" value="' . $callOutButtonText . '" onclick="kandy_makeVoiceCall(this)"/>' .
+                                '</div>' .
+
+                                '<div class="kandyButtonComponent kandyVideoButtonCalling" id="' . $id . '-calling">' .
+                                '<label>' . $callingLabel . '</label>' .
+                                '<input data-container="' . $id . '"  type="button" class="btnEndCall" value="' . $callingButtonText . '" onclick="kandy_end_call(this)"/>' .
+                                '</div>' .
+                                '<div class="kandyButtonComponent kandyVideoButtonOnCall" id="' . $id . '-onCall">' .
+                                '<label>' . $onCallLabel . '</label>' .
+                                '<input data-container="' . $id . '"  class="btnEndCall" type="button" value=" ' . $onCallButtonText . ' " onclick="kandy_end_call(this)"/>' .
+                                '<input data-container="' . $id . '"  style="visibility: hidden" class="btnHoldCall" type="button" value="' . $holdCallButtonText . '" onclick="kandy_hold_call(this)"/>' .
+                                '<input data-container="' . $id . '"  style="visibility: hidden" class="btnResumeCall" type="button" value="' . $resumeCallButtonText . '" onclick="kandy_resume_call(this)"/>' .
+                                '</div><div class="videoVoiceCallHolder"><div id="theirVideo" class="video"></div></div></div>';
+                        } else {
+                            $output = '<div class="' . $class . '" id ="' . $id . '" data-call-id="">' .
+                                '<div class="kandyButtonComponent kandyVideoButtonSomeonesCalling" id="' . $id . '-incomingCall">' .
+                                '<label>' . $incomingLabel . '</label>' .
+                                '<input data-container="' . $id . '"  class="btnAnswerVoiceCall" type="button" value="' . $incomingButtonText . '" onclick="kandy_answerVoiceCall(this)"/>' .
+                                '<input data-container="' . $id . '"  style="visibility: hidden" class="btmAnswerRejectCall" type="button" onclick="kandy_reject_video_call(this)" value="' . $rejectButtonText . '"/>' .
+                                '</div>' .
+
+                                '<div class="kandyButtonComponent kandyVideoButtonCallOut" id="' . $id . '-callOut">' .
+                                '<input id="' . $id . '-callOutUserId" type="text" value ="' . $callTo . '"/>' .
+                                '<input data-container="' . $id . '"  class="btnCall" id="callBtn" type="button" value="' . $callOutButtonText . '" onclick="kandy_make_pstn_call(this)"/>' .
+                                '</div>' .
+
+                                '<div class="kandyButtonComponent kandyVideoButtonCalling" id="' . $id . '-calling">' .
+                                '<label>' . $callingLabel . '</label>' .
+                                '<input data-container="' . $id . '"  type="button" class="btnEndCall" value="' . $callingButtonText . '" onclick="kandy_end_call(this)"/>' .
+                                '</div>' .
+                                '<div class="kandyButtonComponent kandyVideoButtonOnCall" id="' . $id . '-onCall">' .
+                                '<label>' . $onCallLabel . '</label>' .
+                                '<input data-container="' . $id . '"  class="btnEndCall" type="button" value=" ' . $onCallButtonText . ' " onclick="kandy_end_call(this)"/>' .
+                                '<input data-container="' . $id . '"  style="visibility: hidden" class="btnHoldCall" type="button" value="' . $holdCallButtonText . '" onclick="kandy_hold_call(this)"/>' .
+                                '<input data-container="' . $id . '"  style="visibility: hidden" class="btnResumeCall" type="button" value="' . $resumeCallButtonText . '" onclick="kandy_resume_call(this)"/>' .
+                                '</div><div class="videoVoiceCallHolder"><div id="theirVideo" class="video"></div></div></div>';
+                        }
+                    }
+                    if (isset($result['output'])) {
+                        $output .= $result['output'];
+                    }
+                } else {
+                    $output = '<p>' . __('Can not setup kandy voice button. Please contact administrator') . '<p>';
+                }
             }
+
         }
         return $output;
     }
@@ -705,28 +726,29 @@ class KandyShortcode {
      * @param $attr
      * @return string
      */
-    function kandy_status_shortcode_content($attr) {
+    function kandy_status_shortcode_content($attr)
+    {
         $output = "";
-        if(!empty($attr)){
+        if (!empty($attr)) {
             $result = self::kandySetup();
-            if($result['success']) {
+            if ($result['success']) {
 
                 // Init title attribute.
-                if(isset($attr['title'])){
+                if (isset($attr['title'])) {
                     $title = $attr['title'];
                 } else {
                     $title = 'My Status';
                 }
                 // Init class attribute.
                 $class = 'kandyStatus ';
-                if(isset($attr['class'])){
-                    $class .= $attr['class'] ;
+                if (isset($attr['class'])) {
+                    $class .= $attr['class'];
                 }
 
                 // Init id attribute.
-                $id = 'kandy-status'. rand() . ' ';
-                if(isset($attr['id'])){
-                    $id = $attr['id'] ;
+                $id = 'kandy-status' . rand() . ' ';
+                if (isset($attr['id'])) {
+                    $id = $attr['id'];
                 }
 
                 // Init htmlOptions attribute.
@@ -738,18 +760,23 @@ class KandyShortcode {
                         $htmlOptionsAttributes .= $key . "= '" . $value . "'";
                     }
                 }
-                $output = '<div class="'. $class .'">'.
-                    '<span class="title"> ' . $title.' </span><select id="'. $id .'" class="dropDown" '. $htmlOptionsAttributes .' onchange="kandy_myStatusChanged(jQuery(this).val())">'.
-                    '<option value="available" selected>Available</option>'.
-                    '<option value="unavailable">Unavailable</option>'.
-                    '<option value="away">Away</option>'.
-                    '<option value="out-to-lunch">Out To Lunch</option>'.
-                    '<option value="busy">Busy</option>'.
-                    '<option value="on-vacation">On Vacation</option>'.
-                    '<option value="be-right-back">Be Right Back</option>'.
-                    '</select>'.
-                    '</div>';
-                if(isset($result['output'])){
+                $statuses = array(
+                    'available' => 'Available',
+                    'unavailable' => 'Unavailable',
+                    'away' => 'Away',
+                    'out-to-lunch' => 'Out To Lunch',
+                    'busy' => 'Busy',
+                    'on-vacation' => 'On Vacation',
+                    'be-right-back' => 'Be Right Back'
+                );
+                $output = '<div class="' . $class . '"><span class="title"> ' . $title . ' </span><select id="' . $id . '" class="dropDown" ' . $htmlOptionsAttributes . ' onchange="kandy_myStatusChanged(jQuery(this).val())">';
+                $userStatus = $result['assignUser']->presence_status;
+                foreach ($statuses as $value => $text) {
+                    $selected = ($userStatus == $value) ? 'selected' : '';
+                    $output .= '<option value="' . $value . '" ' . $selected . '>' . $text . '</option>';
+                }
+                $output .= '</select></div>';
+                if (isset($result['output'])) {
                     $output .= $result['output'];
                 }
             } else {
@@ -765,11 +792,12 @@ class KandyShortcode {
      * @param $attr
      * @return null|string
      */
-    function kandy_addressBook_shortcode_content($attr) {
+    function kandy_addressBook_shortcode_content($attr)
+    {
         $output = "";
-        if(!empty($attr)){
+        if (!empty($attr)) {
             $result = self::kandySetup();
-            if($result['success']) {
+            if ($result['success']) {
                 wp_enqueue_script("kandy_addressbook_js");
                 wp_enqueue_style("kandy_addressbook_css");
 
@@ -778,33 +806,33 @@ class KandyShortcode {
                 wp_enqueue_style("select-2-style", KANDY_PLUGIN_URL . '/js/select2-3.5.2/select2.css');
 
                 // Init title attribute.
-                if(isset($attr['title'])){
+                if (isset($attr['title'])) {
                     $title = $attr['title'];
                 } else {
                     $title = 'My Contact';
                 }
                 // Init class attribute.
                 $class = 'kandyAddressBook ';
-                if(isset($attr['class'])){
-                    $class .= $attr['class'] ;
+                if (isset($attr['class'])) {
+                    $class .= $attr['class'];
                 }
 
                 // Init id attribute.
-                $id = 'kandy-address-book'. rand() . ' ';
-                if(isset($attr['id'])){
-                    $id = $attr['id'] ;
+                $id = 'kandy-address-book' . rand() . ' ';
+                if (isset($attr['id'])) {
+                    $id = $attr['id'];
                 }
 
                 // Init userlabel attribute.
                 $userLabel = 'User';
-                if(isset($attr['userlabel'])){
-                    $userLabel = $attr['userlabel'] ;
+                if (isset($attr['userlabel'])) {
+                    $userLabel = $attr['userlabel'];
                 }
 
                 // Init searchlabel attribute.
                 $addContactLabel = 'Add Contact';
-                if(isset($attr['addcontactlabel'])){
-                    $addContactLabel = $attr['addcontactlabel'] ;
+                if (isset($attr['addcontactlabel'])) {
+                    $addContactLabel = $attr['addcontactlabel'];
                 }
 
                 // Init htmlOptions attribute.
@@ -815,15 +843,15 @@ class KandyShortcode {
                         $htmlOptionsAttributes .= $key . "= '" . $value . "'";
                     }
                 }
-                $output = '<div class="'. $class.'" id="'. $id.'" '. $htmlOptionsAttributes .'>'.
-                    '<div class="kandyAddressContactList">'.
-                    '<div class="myContactsTitle"><p>'. $title.'</p></div>'.
+                $output = '<div class="' . $class . '" id="' . $id . '" ' . $htmlOptionsAttributes . '>' .
+                    '<div class="kandyAddressContactList">' .
+                    '<div class="myContactsTitle"><p>' . $title . '</p></div>' .
                     '</div>
-                    <div class="kandyDirectorySearch">'.$userLabel.':<input id="kandySearchUserName" class="select2" />
+                    <div class="kandyDirectorySearch">' . $userLabel . ':<input id="kandySearchUserName" class="select2" />
                     <input type="button" value="' . $addContactLabel . '" onclick="addContacts();"/>
                     </div>
                     ';
-                if(isset($result['output'])){
+                if (isset($result['output'])) {
                     $output .= $result['output'];
                 }
             } else {
@@ -839,18 +867,19 @@ class KandyShortcode {
      * @param $attr
      * @return null|string
      */
-    function kandy_chat_shortcode_content($attr) {
+    function kandy_chat_shortcode_content($attr)
+    {
         $output = "";
-        if(!empty($attr)){
+        if (!empty($attr)) {
             $result = self::kandySetup();
-            if($result['success']) {
+            if ($result['success']) {
                 global $wp_scripts;
                 wp_enqueue_script("kandy_chat_js");
                 wp_enqueue_style("kandy_chat_css");
 
                 wp_enqueue_style('font-awesome', '//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css');
-                wp_enqueue_script( 'jquery-ui-core' );
-                wp_enqueue_script( 'jquery-ui-dialog' );
+                wp_enqueue_script('jquery-ui-core');
+                wp_enqueue_script('jquery-ui-dialog');
                 wp_enqueue_script("select-2-script", KANDY_PLUGIN_URL . '/js/select2-3.5.2/select2.js');
                 wp_enqueue_style("select-2-style", KANDY_PLUGIN_URL . '/js/select2-3.5.2/select2.css');
 
@@ -863,20 +892,20 @@ class KandyShortcode {
                 wp_enqueue_style('jquery-ui-smoothness', $url, false, null);
                 //init class attribute
                 $class = 'kandyChat ';
-                if(isset($attr['class'])){
-                    $class .= $attr['class'] ;
+                if (isset($attr['class'])) {
+                    $class .= $attr['class'];
                 }
 
                 // Init id attribute.
-                $id = 'kandy-chat'. rand() . ' ';
-                if(isset($attr['id'])){
-                    $id = $attr['id'] ;
+                $id = 'kandy-chat' . rand() . ' ';
+                if (isset($attr['id'])) {
+                    $id = $attr['id'];
                 }
 
                 // Init contactlabel label attribute.
                 $contactLabel = 'Contacts';
-                if(isset($attr['contactlabel'])){
-                    $contactLabel = $attr['contactlabel'] ;
+                if (isset($attr['contactlabel'])) {
+                    $contactLabel = $attr['contactlabel'];
                 }
 
                 // Init htmlOptions attribute.
@@ -890,13 +919,12 @@ class KandyShortcode {
                 // get current kandy user
                 $current_user = wp_get_current_user();
                 $assignUser = KandyApi::getAssignUser($current_user->ID);
-                if($assignUser) {
-                    $output = '<div class="' . $class .' cd-tabs" id="'. $id .'" '. $htmlOptionsAttributes .' >'.
-                        '<input type="hidden" class="kandy_current_username" value="'. $current_user->display_name .'"/>'.
-                        '<input type="hidden" class="kandy_user" value="'. $assignUser->user_id . '@' . $assignUser->domain_name .'"/>'.
+                if ($assignUser) {
+                    $output = '<div class="' . $class . ' cd-tabs" id="' . $id . '" ' . $htmlOptionsAttributes . ' >' .
+                        '<input type="hidden" class="kandy_current_username" value="' . $current_user->display_name . '"/>' .
                         '<div class="chat-heading">
                             <div class="contact-heading">
-                            <label>'. $contactLabel .'</label>
+                            <label>' . $contactLabel . '</label>
                             <select onchange="kandy_contactFilterChanged(jQuery(this).val())">
                             <option value="all">All</option>
                             <option value="offline">Offline</option>
@@ -915,15 +943,15 @@ class KandyShortcode {
                         </div>
                         <button id="btn-create-group-modal" class="chat-create-group">Create group</button>
                         <div class="clear-fix"></div>
-                    </div>'.
+                    </div>' .
                         '<nav>
                             <ul class="cd-tabs-navigation contacts"></ul>
                             <div class="separator hide group"><span>Groups</span></div>
                             <ul class="cd-tabs-navigation groups"></ul>
                             <div class="separator hide livechatgroup"><span>Live Chat</span></div>
                             <ul class="cd-tabs-navigation livechats "></ul>
-                        </nav>'.
-                        '<ul class="cd-tabs-content"></ul>'.
+                        </nav>' .
+                        '<ul class="cd-tabs-content"></ul>' .
                         '<div style="clear: both;"></div>';
 
 
@@ -935,9 +963,9 @@ class KandyShortcode {
                                     <label for="right-label" class="right inline">Username</label>
                                     <input class="select2" id="kandy-chat-invite-username" placeholder="Username">
                                 </div></div>';
-                    if($assignUser->type == KANDY_USER_TYPE_AGENT) {
-                        add_action('wp_footer', function(){
-                            echo    "<script>
+                    if ($assignUser->type == KANDY_USER_TYPE_AGENT) {
+                        add_action('wp_footer', function () {
+                            echo "<script>
                                     jQuery(document).ready(function()
                                         {
                                             heartBeat(60000);
@@ -950,7 +978,7 @@ class KandyShortcode {
                     $output = 'Not found kandy user';
                 }
 
-                if(isset($result['output'])){
+                if (isset($result['output'])) {
                     $output .= $result['output'];
                 }
 
@@ -965,20 +993,20 @@ class KandyShortcode {
     {
         $output = "";
         $defaults = array(
-            "class"                 => "",
-            'message_place_holder'  => "Your message",
-            'number_place_holder'   => "Phone number",
-            "btn_send_id"           => "btnSendSms",
-            "btn_send_label"        => "Send Sms"
+            "class" => "",
+            'message_place_holder' => "Your message",
+            'number_place_holder' => "Phone number",
+            "btn_send_id" => "btnSendSms",
+            "btn_send_label" => "Send Sms"
         );
         $params = shortcode_atts($defaults, $attr);
-        if(!empty($attr)) {
+        if (!empty($attr)) {
             $result = self::kandySetup();
-            if($result['success']){
+            if ($result['success']) {
                 $current_user = wp_get_current_user();
                 $assignUser = KandyApi::getAssignUser($current_user->ID);
                 wp_localize_script('kandy_wordpress_js', 'sms', $params);
-                if($assignUser){
+                if ($assignUser) {
                     $output = "<div class=\"{$params['class']} smsContainer \">
                         <div class=\"msgContainer\">
                             <textarea placeholder=\"{$params['message_place_holder']}\" name=\"msg\" id=\"msg\" cols=\"30\" rows=\"10\"></textarea>
@@ -990,7 +1018,7 @@ class KandyShortcode {
                         <!-- end oncall -->
                     </div>";
                 }
-                if(isset($result['output'])){
+                if (isset($result['output'])) {
                     $output .= $result['output'];
                 }
             }
@@ -1010,28 +1038,28 @@ class KandyShortcode {
         $assignUser = KandyApi::getAssignUser($current_user->ID);
         $output = "";
         $defaults = array(
-            'holder_id'                  => 'cobrowsing-holder',
-            'btn_terminate_id'            => 'btnTerminateSession',
-            'btn_stop_id'                 => 'btnStopCoBrowsing',
-            'btn_leave_id'                => 'btnLeaveSession',
-            'btn_start_browsing_viewer_id'  => 'btnStartCoBrowsingViewer',
-            'btn_start_cobrowsing_id'      => 'btnStartCoBrowsing',
-            'btn_connect_session_id'       => 'btnConnectSession',
-            'current_user'               => $assignUser,
-            'session_list_id'             => 'openSessions'
+            'holder_id' => 'cobrowsing-holder',
+            'btn_terminate_id' => 'btnTerminateSession',
+            'btn_stop_id' => 'btnStopCoBrowsing',
+            'btn_leave_id' => 'btnLeaveSession',
+            'btn_start_browsing_viewer_id' => 'btnStartCoBrowsingViewer',
+            'btn_start_cobrowsing_id' => 'btnStartCoBrowsing',
+            'btn_connect_session_id' => 'btnConnectSession',
+            'current_user' => $assignUser,
+            'session_list_id' => 'openSessions'
         );
 
-        $params = shortcode_atts($defaults,$attr);
+        $params = shortcode_atts($defaults, $attr);
 
-        if(!empty($params)){
+        if (!empty($params)) {
             $result = self::kandySetup();
             // get current kandy user
-            if($result['success']){
-                if($assignUser) {
+            if ($result['success']) {
+                if ($assignUser) {
                     $output = "";
                     wp_enqueue_script('kandy_cobrowsing_js');
-                    wp_enqueue_script( 'jquery-ui-core' );
-                    wp_enqueue_script( 'jquery-ui-dialog' );
+                    wp_enqueue_script('jquery-ui-core');
+                    wp_enqueue_script('jquery-ui-dialog');
 
                     // get registered script object for jquery-ui
                     $ui = $wp_scripts->query('jquery-ui-core');
@@ -1041,7 +1069,7 @@ class KandyShortcode {
                     $url = "$protocol://ajax.googleapis.com/ajax/libs/jqueryui/{$ui->ver}/themes/smoothness/jquery-ui.min.css";
                     wp_enqueue_style('jquery-ui-smoothness', $url, false, null);
                     wp_enqueue_script('kandy_cobrowsing_function', KANDY_PLUGIN_URL . '/js/kandyCoBrowsing.js', 'kandy_wordpress_js');
-                    wp_localize_script('kandy_cobrowsing_function','cobrowsing',$params);
+                    wp_localize_script('kandy_cobrowsing_function', 'cobrowsing', $params);
                     $output = "
                 <div id=\"coBrowsing\">
                     <button class=\"small tiny\" id=\"btnCreateSession\">Create Session</button>
@@ -1067,11 +1095,11 @@ class KandyShortcode {
                 </div>";
 
                 }
-                if(isset($result['output'])){
+                if (isset($result['output'])) {
                     $output .= $result['output'];
                 }
 
-            }else {
+            } else {
                 $output = '<p>' . __('Could not setup Kandy CoBrowsing. Please contact administrator') . '<p>';
             }
         }
@@ -1081,9 +1109,10 @@ class KandyShortcode {
     /**
      * @param $attr
      */
-    function kandy_live_chat_shortcode_content($attr) {
-		if(!empty($attr)){
-            if(get_option('kandy_jquery_reload', "0")){
+    function kandy_live_chat_shortcode_content($attr)
+    {
+        if (!empty($attr)) {
+            if (get_option('kandy_jquery_reload', "0")) {
                 wp_enqueue_script('kandy_jquery');
             }
             wp_enqueue_script("kandy_js_url");
@@ -1092,23 +1121,23 @@ class KandyShortcode {
             wp_enqueue_style('kandy_live_chat_css');
             wp_enqueue_style('kandy_rating_css');
             wp_localize_script('kandy_live_chat_js', 'ajax_object', array(
-                'ajax_url' => admin_url( 'admin-ajax.php' ), 'we_value' => 1234 )
+                    'ajax_url' => admin_url('admin-ajax.php'), 'we_value' => 1234)
             );
             $defaultAttr = array(
-                'id'    => 'liveChat',
+                'id' => 'liveChat',
                 'class' => '',
             );
             $attr = wp_parse_args($attr, $defaultAttr);
 
-            if(!isset($_SESSION['kandyLiveChatUserInfo'])){
+            if (!isset($_SESSION['kandyLiveChatUserInfo'])) {
                 $attr['class'] .= ' kandy_hidden';
                 $func = 'LiveChatUI.changeState();';
-            }else{
+            } else {
                 $userInfo = $_SESSION['kandyLiveChatUserInfo'];
                 $func = 'getKandyUsers()';
             }
             $output = '
-                <div id="'.$attr['id'].'" class="liveChat '.$attr['class'].'">
+                <div id="' . $attr['id'] . '" class="liveChat ' . $attr['class'] . '">
                     <div class="header">
                         Kandy live chat
                         <span class="closeChat handle" title="end chat" style="display: none">x</span>
@@ -1117,7 +1146,7 @@ class KandyShortcode {
                     </div>
                     <div class="liveChatBody">
                         <div id="waiting">
-                            <img id="loading" width="30px" height="30px" src="'.KANDY_PLUGIN_URL . '/img/loading.gif'.'" title="loading">
+                            <img id="loading" width="30px" height="30px" src="' . KANDY_PLUGIN_URL . '/img/loading.gif' . '" title="loading">
                             <p>Please wait a moment...</p>
                         </div>
                         <div id="registerForm">
@@ -1132,7 +1161,7 @@ class KandyShortcode {
                             </form>
                         </div>
                         <div id="ratingForm">
-                            <h3 class="formTitle">Rate for <span class="agentName">'.$userInfo['agent'].'</span> </h3>
+                            <h3 class="formTitle">Rate for <span class="agentName">' . $userInfo['agent'] . '</span> </h3>
                             <form>
                                 <select id="backing2b">
                                     <option title="" value="1">1</option>
@@ -1152,16 +1181,16 @@ class KandyShortcode {
                         </div>
                             <div class="customerService">
                                 <div class="avatar">
-                                    <img src="'.KANDY_PLUGIN_URL . '/img/icon-helpdesk.png'.'">
+                                    <img src="' . KANDY_PLUGIN_URL . '/img/icon-helpdesk.png' . '">
                                 </div>
                                 <div class="helpdeskInfo">
-                                    <span class="agentName">'.$userInfo['agent'].'</span>
+                                    <span class="agentName">' . $userInfo['agent'] . '</span>
                                     <p class="title">Support Agent</p>
                                 </div>
                             </div>
                             <div id="messageBox" class="" style="">
                                 <ul>
-                                    <li class="their-message"><span class="username">'.$userInfo['agent'].'</span>: Hi '.$userInfo['username'].', what brings you here?</li>
+                                    <li class="their-message"><span class="username">' . $userInfo['agent'] . '</span>: Hi ' . $userInfo['username'] . ', what brings you here?</li>
                                 </ul>
                             </div>
                             <div class="formChat" style="">
@@ -1176,9 +1205,9 @@ class KandyShortcode {
                     var agent;
                     var rateData;
                     jQuery(function(){
-                        '.
-                        $func
-                        .'
+                        ' .
+                $func
+                . '
                         jQuery(".liveChat #ratingForm .rateit").bind("rated", function(){
                             var ri = jQuery(this);
                             rateData = rateData || {};
@@ -1196,34 +1225,38 @@ class KandyShortcode {
                 </script>';
             return $output;
 
-		}
-	}
+        }
+    }
 
     /**
      * Setup for shortcode.
      * @return array
      */
-    static function kandySetup(){
+    static function kandySetup()
+    {
 
         $current_user = wp_get_current_user();
         $assignUser = KandyApi::getAssignUser($current_user->ID);
 
-        if($assignUser){
+        if ($assignUser) {
             $userName = $assignUser->user_id;
             $password = $assignUser->password;
             $kandyApiKey = get_option('kandy_api_key', KANDY_API_KEY);
-            if(get_option('kandy_jquery_reload', "0")){
+            if (get_option('kandy_jquery_reload', "0")) {
                 wp_enqueue_script('kandy_jquery');
             }
             wp_enqueue_script("kandy_js_url");
-            $output ="<script>if (window.login == undefined){window.login = function() {
+            $output = "<script>
+                var current_kandy_user = '{$userName}@$assignUser->domain_name';
+                if (window.login == undefined){window.login = function() {
                         kandy.login('" . $kandyApiKey . "', '" . $userName . "', '" . $password . "',kandyLoginSuccessCallback, kandyLoginFailedCallback );
                     };
-                }</script>";
+                }
+                </script>";
             wp_enqueue_script("kandy_wordpress_js");
             wp_enqueue_style("kandy_wordpress_css");
 
-            $result = array("success" => true, "message" => '', 'output' => $output);
+            $result = array("success" => true, "message" => '', 'output' => $output, 'assignUser' => $assignUser);
         } else {
             $result = array("success" => false, "message" => 'Can not found kandy user', 'output' => '');
         }
@@ -1238,14 +1271,15 @@ class KandyShortcode {
      * @param $buttons
      * @return mixed
      */
-    function register_kandy_tinymce_button( $buttons ) {
-        array_push( $buttons, "|", "kandyVideo" );
-        array_push( $buttons, "|", "kandyVoice" );
-        array_push( $buttons, "|", "kandyPresence" );
-        array_push( $buttons, "|", "kandyChat" );
-	    array_push( $buttons, "|", 'kandyLiveChat');
-        array_push( $buttons, "|", "kandyCoBrowsing" );
-        array_push( $buttons, "|", "kandySms" );
+    function register_kandy_tinymce_button($buttons)
+    {
+        array_push($buttons, "|", "kandyVideo");
+        array_push($buttons, "|", "kandyVoice");
+        array_push($buttons, "|", "kandyPresence");
+        array_push($buttons, "|", "kandyChat");
+        array_push($buttons, "|", 'kandyLiveChat');
+        array_push($buttons, "|", "kandyCoBrowsing");
+        array_push($buttons, "|", "kandySms");
         return $buttons;
     }
 
@@ -1255,7 +1289,8 @@ class KandyShortcode {
      * @param $plugin_array
      * @return mixed
      */
-    function add_kandy_tinymce_plugin( $plugin_array ) {
+    function add_kandy_tinymce_plugin($plugin_array)
+    {
 
         $plugin_array['kandyVideo'] = KANDY_PLUGIN_URL . '/js/tinymce/KandyVideo.js';
         $plugin_array['kandyVoice'] = KANDY_PLUGIN_URL . '/js/tinymce/KandyVoice.js';
@@ -1263,21 +1298,23 @@ class KandyShortcode {
         $plugin_array['kandyChat'] = KANDY_PLUGIN_URL . '/js/tinymce/KandyChat.js';
         $plugin_array['kandyCoBrowsing'] = KANDY_PLUGIN_URL . '/js/tinymce/KandyCoBrowsing.js';
         $plugin_array['kandyLiveChat'] = KANDY_PLUGIN_URL . '/js/tinymce/KandyLiveChat.js';
-        $plugin_array['kandySms'] = KANDY_PLUGIN_URL . '/js/tinymce/KandySms.js';        return $plugin_array;
+        $plugin_array['kandySms'] = KANDY_PLUGIN_URL . '/js/tinymce/KandySms.js';
+        return $plugin_array;
     }
 
     /**
      * Register Kandy Tiny Button.
      */
-    function my_kandy_tinymce_button() {
+    function my_kandy_tinymce_button()
+    {
 
-        if ( ! current_user_can('edit_posts') && ! current_user_can('edit_pages') ) {
+        if (!current_user_can('edit_posts') && !current_user_can('edit_pages')) {
             return;
         }
 
-        if ( get_user_option('rich_editing') == 'true' ) {
-            add_filter( 'mce_external_plugins', array(__CLASS__,'add_kandy_tinymce_plugin') );
-            add_filter( 'mce_buttons', array(__CLASS__,'register_kandy_tinymce_button') );
+        if (get_user_option('rich_editing') == 'true') {
+            add_filter('mce_external_plugins', array(__CLASS__, 'add_kandy_tinymce_plugin'));
+            add_filter('mce_buttons', array(__CLASS__, 'register_kandy_tinymce_button'));
         }
 
     }
@@ -1285,10 +1322,11 @@ class KandyShortcode {
     /**
      * Kandy Logout.
      */
-    function my_kandy_logout(){
+    function my_kandy_logout()
+    {
         $current_user = wp_get_current_user();
-        if($current_user) {
-            setcookie( 'kandy_logout', $current_user->ID, time() + 3600);
+        if ($current_user) {
+            setcookie('kandy_logout', $current_user->ID, time() + 3600);
         }
     }
 
@@ -1298,19 +1336,20 @@ class KandyShortcode {
      * @param $userId
      * @return string
      */
-    static   function getKandyUserOptionData(){
+    static function getKandyUserOptionData()
+    {
         $result = "";
         $userResults = get_users();
 
         foreach ($userResults as $row) {
             $kandyUser = KandyApi::getAssignUser($row->ID);
-            if($kandyUser) {
+            if ($kandyUser) {
                 $kandyFullName = $kandyUser->user_id . "@" . $kandyUser->domain_name;
-                $result .= "<option value ='" . $kandyFullName."'>". $row->display_name . "</option>";
+                $result .= "<option value ='" . $kandyFullName . "'>" . $row->display_name . "</option>";
             }
         }
-        if(empty($result)) {
-            $result .= "<option value =''>" . __('Please select assigned user') ."</option>";
+        if (empty($result)) {
+            $result .= "<option value =''>" . __('Please select assigned user') . "</option>";
         }
         return $result;
 
@@ -1321,10 +1360,11 @@ class KandyShortcode {
      *
      * @param $elementId
      */
-    static function activeSelect2($elementId){
+    static function activeSelect2($elementId)
+    {
         ?>
         <script type="text/javascript">
-            jQuery(document).ready(function($){
+            jQuery(document).ready(function ($) {
 
                 $("#<?php echo $elementId; ?>").select2();
             });
@@ -1338,28 +1378,30 @@ class KandyShortcode {
      */
     public function kandy_register_guest()
     {
-        if(isset($_POST) && !empty($_POST)){
+        if (isset($_POST) && !empty($_POST)) {
             $username = $_POST['customerName'];
             $userEmail = $_POST['customerEmail'];
             //Save user info to database
             $userInfo = array(
-                'username'  => $username,
-                'email'     => $userEmail
+                'username' => $username,
+                'email' => $userEmail
             );
             $errors = [];
-            if( !$userEmail || !is_email($userEmail)){
+            if (!$userEmail || !is_email($userEmail)) {
                 $errors['customerEmail'] = __('Please provide a valid email', 'kandy');
             }
-            if(!$username){
+            if (!$username) {
                 $errors['customerName'] = __('Please enter your name', 'kandy');
             }
-            if(empty($errors)){
-                if(!isset($_SESSION['kandyLiveChatUserInfo'])){
+            if (empty($errors)) {
+                if (!isset($_SESSION['kandyLiveChatUserInfo'])) {
                     $_SESSION['kandyLiveChatUserInfo'] = $userInfo;
                 }
-                echo json_encode($userInfo);exit;
-            }else{
-                echo json_encode(array('errors' => $errors));exit;
+                echo json_encode($userInfo);
+                exit;
+            } else {
+                echo json_encode(array('errors' => $errors));
+                exit;
             }
         }
 
@@ -1377,7 +1419,7 @@ class KandyShortcode {
         $fakeEndTime = PHP_INT_MAX;
         //get all unassigned users
         $kandyUserTable = $wpdb->prefix . 'kandy_users';
-        $kandyLiveChatUser = get_option('kandy_live_chat_users','[]');
+        $kandyLiveChatUser = get_option('kandy_live_chat_users', '[]');
         $kandyLiveChatUser = json_decode($kandyLiveChatUser);
         $kandyLiveChatUser = implode('","', $kandyLiveChatUser);
         $userLoginTable = $wpdb->prefix . 'kandy_user_login';
@@ -1386,10 +1428,10 @@ class KandyShortcode {
         $liveChatSessionInfo = $_SESSION['kandyLiveChatUserInfo'];
         $agentType = KANDY_USER_TYPE_AGENT;
         $userStatusOnline = KANDY_USER_STATUS_ONLINE;
-        if(isset($liveChatSessionInfo['user'])) {
+        if (isset($liveChatSessionInfo['user'])) {
             $user = $wpdb->get_results(
                 "SELECT * FROM {$kandyUserTable} WHERE user_id = '{$liveChatSessionInfo['user']}' LIMIT 0,1"
-            , OBJECT);
+                , OBJECT);
             $user = current($user);
         } else {
             $user = $wpdb->get_results(
@@ -1398,18 +1440,18 @@ class KandyShortcode {
                 FROM $kandyUserTable
                 LEFT JOIN $kandyLiveChatTable ON $kandyUserTable.user_id = $kandyLiveChatTable.customer_user_id
                 LEFT JOIN $userLoginTable ON $kandyUserTable.user_id = $userLoginTable.kandy_user_id
-                WHERE user_id IN (\"".$kandyLiveChatUser."\")
+                WHERE user_id IN (\"" . $kandyLiveChatUser . "\")
                 GROUP BY $kandyUserTable.user_id
                 HAVING last_end_chat < $fakeEndTime OR last_end_chat IS NULL
                 ORDER BY last_end_chat ASC
                 LIMIT 0,1"
-            ,OBJECT);
+                , OBJECT);
             $user = current($user);
-            if($user) {
+            if ($user) {
                 $liveChatSessionInfo['user'] = $user->user_id;
             }
         }
-        if(isset($liveChatSessionInfo['agent'])) {
+        if (isset($liveChatSessionInfo['agent'])) {
             $agent = $wpdb->get_results(
                 "SELECT user_id,CONCAT(user_id, '@', domain_name) as full_user_id, main_user_id
                 $kandyUserTable.password as password,$userTable.username as username
@@ -1417,7 +1459,7 @@ class KandyShortcode {
                 JOIN $userTable ON $kandyUserTable.main_user_id = $userTable.id
                 WHERE user_id = '{$liveChatSessionInfo['agent']}'
                 LIMIT 0,1"
-            ,OBJECT);
+                , OBJECT);
             $agent = current($agent);
         } else {
             $agent = $wpdb->get_results(
@@ -1436,21 +1478,21 @@ class KandyShortcode {
                 , OBJECT
             );
             $agent = current($agent);
-            if($agent) {
+            if ($agent) {
                 $liveChatSessionInfo['agent'] = $agent->user_id;
             }
         }
-        if($user && $agent){
+        if ($user && $agent) {
             $now = time();
             KandyApi::logKandyUserStatus($user->user_id, KANDY_USER_TYPE_END_USER);
             $wpdb->insert($kandyLiveChatTable,
                 array(
-                    'agent_user_id'     => $agent->user_id,
-                    'customer_user_id'  => $user->full_user_id,
-                    'customer_name'     => $liveChatSessionInfo['username'],
-                    'customer_email'    => $liveChatSessionInfo['email'],
-                    'begin_at'          => $now,
-                    'end_at'            => PHP_INT_MAX
+                    'agent_user_id' => $agent->user_id,
+                    'customer_user_id' => $user->full_user_id,
+                    'customer_name' => $liveChatSessionInfo['username'],
+                    'customer_email' => $liveChatSessionInfo['email'],
+                    'begin_at' => $now,
+                    'end_at' => PHP_INT_MAX
                 ),
                 array(
                     '%s', '%s', '%s', '%s', '%s'
@@ -1461,22 +1503,22 @@ class KandyShortcode {
             $_SESSION['kandyLiveChatUserInfo'] = $liveChatSessionInfo;
             $result = array(
                 'status' => 'success',
-                'user'  => $user,
+                'user' => $user,
                 'agent' => $agent,
                 'apiKey' => get_option('kandy_api_key', KANDY_API_KEY)
             );
-        }else{
+        } else {
             //clean inactive user status if there is something wrong with end chat session function
             $inActiveUsers = $wpdb->get_results(
                 "SELECT kandy_user_id
                  FROM $userLoginTable WHERE (UNIX_TIMESTAMP() - time)  > 60"
-            ,ARRAY_N);
-            if(!empty($inActiveUsers)){
+                , ARRAY_N);
+            if (!empty($inActiveUsers)) {
                 $now = time();
-                foreach($inActiveUsers as &$u) {
+                foreach ($inActiveUsers as &$u) {
                     $u = $u[0];
                 }
-                $inActiveUsersStr = "('". implode('\',\'', $inActiveUsers) . "')";
+                $inActiveUsersStr = "('" . implode('\',\'', $inActiveUsers) . "')";
                 $wpdb->query("UPDATE $kandyLiveChatTable SET end_at = $now WHERE agent_user_id IN $inActiveUsersStr AND end_at = $fakeEndTime");
             }
             /*
@@ -1485,18 +1527,21 @@ class KandyShortcode {
              */
             $code = (!$agent) ? '-2' : '-3';
             $result = array(
-                'code'      => $code,
-                'status'    => 'fail'
+                'code' => $code,
+                'status' => 'fail'
             );
         }
 
-        echo json_encode($result);exit;
+        echo json_encode($result);
+        exit;
     }
 
-    public function kandy_end_chat_session() {
+    public function kandy_end_chat_session()
+    {
         global $wpdb;
-        if(isset($_SESSION['kandyLiveChatUserInfo']) &&
-            ($chatSessionInfo = $_SESSION['kandyLiveChatUserInfo'])){
+        if (isset($_SESSION['kandyLiveChatUserInfo']) &&
+            ($chatSessionInfo = $_SESSION['kandyLiveChatUserInfo'])
+        ) {
             $currentSession = intval($chatSessionInfo['sessionId']);
             //save end session time
             $wpdb->update(
@@ -1504,107 +1549,115 @@ class KandyShortcode {
                 array(
                     'end_at' => time(),
                 ),
-                array( 'id' => $currentSession ),
+                array('id' => $currentSession),
                 array('%d'),
                 array('%d')
             );
             //delete cookie
             unset($_SESSION['kandyLiveChatUserInfo']);
         }
-        if((defined('DOING_AJAX') && DOING_AJAX)){
+        if ((defined('DOING_AJAX') && DOING_AJAX)) {
             echo json_encode(array(
-                'status'    => 'success',
-            ));exit;
+                'status' => 'success',
+            ));
+            exit;
         }
-        wp_redirect($_SERVER['HTTP_REFERER']);exit;
+        wp_redirect($_SERVER['HTTP_REFERER']);
+        exit;
     }
 
-    function kandy_rate_agent() {
+    function kandy_rate_agent()
+    {
         global $wpdb;
         $rate = $_POST['rate'];
         $userId = $rate['id'];
         $point = $rate['point'];
         $comment = $_POST['comment'];
-        if(!isset($_SESSION['kandyLiveChatUserInfo'])){
+        if (!isset($_SESSION['kandyLiveChatUserInfo'])) {
             echo json_encode(array(
                 'success' => false,
                 'message' => 'not allowed'
-            ));exit;
-        }else {
+            ));
+            exit;
+        } else {
             $liveChatSessionInfo = $_SESSION['kandyLiveChatUserInfo'];
-            if(!$userId){
+            if (!$userId) {
                 $result = array(
-                    'success'   => false,
-                    'message'   => 'agent is not specified'
+                    'success' => false,
+                    'message' => 'agent is not specified'
                 );
-            }else{
-                if(isset($liveChatSessionInfo['rated'])){
+            } else {
+                if (isset($liveChatSessionInfo['rated'])) {
                     $result = array(
-                        'success'   => true,
-                        'message'   => 'Already rated'
+                        'success' => true,
+                        'message' => 'Already rated'
                     );
-                }else{
+                } else {
                     $now = time();
 
-                    $wpdb->insert($wpdb->prefix . 'kandy_live_chat_rate',array(
-                        'main_user_id'  => $userId,
-                        'rated_time'    => $now,
-                        'point'         => intval($point),
-                        'rated_by'      => $liveChatSessionInfo['email'],
-                        'comment'       => htmlspecialchars($comment)
+                    $wpdb->insert($wpdb->prefix . 'kandy_live_chat_rate', array(
+                        'main_user_id' => $userId,
+                        'rated_time' => $now,
+                        'point' => intval($point),
+                        'rated_by' => $liveChatSessionInfo['email'],
+                        'comment' => htmlspecialchars($comment)
                     ));
                     $liveChatSessionInfo['rated'] = true;
                     $_SESSION['kandyLiveChatUserInfo'] = $liveChatSessionInfo;
                     $result = array(
-                        'success'   => true,
+                        'success' => true,
                     );
                 }
             }
         }
-        echo json_encode($result);exit;
+        echo json_encode($result);
+        exit;
     }
 
     /**
      * change a kandy user type to chat agent
      */
-    function kandy_add_chat_agent() {
+    function kandy_add_chat_agent()
+    {
         global $wpdb;
         $userId = $_GET['id'];
         $affectedRow = $wpdb->update(
             $wpdb->prefix . 'kandy_users',
             array(
-                'type'  => KANDY_USER_TYPE_AGENT,
+                'type' => KANDY_USER_TYPE_AGENT,
             ),
-            array('id'  => $userId)
+            array('id' => $userId)
         );
-        if($affectedRow){
+        if ($affectedRow) {
             $result = array(
-                'success'   => true,
+                'success' => true,
             );
-        }else{
+        } else {
             $result = array(
-                'success'   => false,
-                'message'   => 'Cannot add user'
+                'success' => false,
+                'message' => 'Cannot add user'
             );
         }
-        echo json_encode($result);exit;
+        echo json_encode($result);
+        exit;
     }
 
-    function updateKandyUserStatus() {
+    function updateKandyUserStatus()
+    {
         global $wpdb;
         $currentUser = wp_get_current_user();
         $kandyUser = '';
-        if($currentUser->ID != 0) {
+        if ($currentUser->ID != 0) {
             $kandyUser = KandyApi::getAssignUser($currentUser->ID);
-        }elseif(isset($_SESSION['kandyLiveChatUserInfo']['user'])) {
+        } elseif (isset($_SESSION['kandyLiveChatUserInfo']['user'])) {
             $kandyUserId = $_SESSION['kandyLiveChatUserInfo']['user'];
             $kandyUser = KandyApi::getUserByUserId($kandyUserId);
         }
-        if($kandyUser){
+        if ($kandyUser) {
             $wpdb->update(
                 $wpdb->prefix . 'kandy_user_login',
                 array(
-                    'time'  => time()
+                    'time' => time()
                 ),
                 array(
                     'kandy_user_id' => $kandyUser->user_id
@@ -1619,34 +1672,35 @@ class KandyShortcode {
     public static function getPresenceStatus()
     {
         $serverTimestamp = $_POST['server_timestamp'];
-        $users = (array) $_POST['users'];
-        foreach($users as $id => &$user) {
+        $users = (array)$_POST['users'];
+        foreach ($users as $id => &$user) {
             $lastActive = $serverTimestamp - $user['last_seen'];
-            if($lastActive > 10000) {
+            if ($lastActive > 10000) {
                 $user['presence_status'] = 'Offline';
             } else {
                 $userId = explode('@', $user['full_user_id']);
                 $userData = KandyApi::getUserByUserId($userId[0]);
-                $user['presence_status'] = ($userData->presence_status) ? ucfirst(str_replace('-',' ',$userData->presence_status)): 'Available';
+                $user['presence_status'] = ($userData->presence_status) ? ucfirst(str_replace('-', ' ', $userData->presence_status)) : 'Available';
             }
             $user['last_active_in'] = $lastActive;
         }
-        echo json_encode($users);exit;
+        echo json_encode($users);
+        exit;
     }
 
     public static function setPresenceStatus()
     {
         global $wpdb;
-        $presenceStatus = isset($_GET['presence_status'])?$_GET['presence_status']:'';
+        $presenceStatus = isset($_GET['presence_status']) ? $_GET['presence_status'] : '';
         $availableStatuses = array('available', 'away', 'out-to-lunch', 'be-right-back', 'on-vacation', 'busy', 'unavailable');
-        if(!in_array($presenceStatus, $availableStatuses)) {
+        if (!in_array($presenceStatus, $availableStatuses)) {
             exit;
         }
         $currentUser = wp_get_current_user();
         $kandyUser = KandyApi::getAssignUser($currentUser->ID);
-        if($kandyUser) {
+        if ($kandyUser) {
             $wpdb->update(
-                $wpdb->prefix ."kandy_users",
+                $wpdb->prefix . "kandy_users",
                 array(
                     'presence_status' => $presenceStatus
                 ),
@@ -1659,11 +1713,13 @@ class KandyShortcode {
             echo json_encode(array(
                 'status' => 'success',
                 'presence_status' => $presenceStatus
-            ));exit;
+            ));
+            exit;
         }
         echo json_encode(array(
             'status' => 'fail'
-        ));exit;
+        ));
+        exit;
     }
 
 }
