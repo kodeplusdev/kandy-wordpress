@@ -2,7 +2,7 @@
 Contributors: kandy-io
 Tags: kandy, webrtc, audio, video, chat, streaming, video-streaming, live-streaming, peer-to-peer video, collaboration
 Requires at least: 3.8
-Tested up to: 4.1
+Tested up to: 4.3.1
 Stable tag: 2.3.0
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -117,4 +117,3 @@ Home page: http://www.kandy.io/
 * Implement Video Call feature
 * Implement Address Book feature
 * Implement Chat feature
-
