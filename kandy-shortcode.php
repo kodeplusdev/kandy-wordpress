@@ -1203,19 +1203,17 @@ class KandyShortcode
                 <script>
                     //agent user id
                     var agent;
-                    var rateData;
+                    var rateData = {};
                     jQuery(function(){
                         ' .
                 $func
                 . '
                         jQuery(".liveChat #ratingForm .rateit").bind("rated", function(){
                             var ri = jQuery(this);
-                            rateData = rateData || {};
-                            rateData.rate = {id: agent.main_user_id, point: ri.rateit("value")}
+                            rateData.rate = {point: ri.rateit("value")}
                         });
 
                         jQuery(".liveChat #ratingForm .rateit").bind("reset", function(){
-                            rateData = rateData || {};
                             if(rateData.hasOwnProperty("rate")){
                                 delete rateData.rate;
                             }
@@ -1570,8 +1568,8 @@ class KandyShortcode
     {
         global $wpdb;
         $rate = $_POST['rate'];
-        $userId = $rate['id'];
-        $point = $rate['point'];
+        $userId = $_POST['agent_id'];
+        $point = $rate['point']?:5;
         $comment = $_POST['comment'];
         if (!isset($_SESSION['kandyLiveChatUserInfo'])) {
             echo json_encode(array(

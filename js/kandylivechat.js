@@ -92,6 +92,7 @@ var getKandyUsers = function(){
                 login(res.apiKey, username, res.user.password, login_success_callback, login_fail_callback);
                 setup();
                 agent = res.agent;
+                rateData.agent_id = agent.main_user_id;
                 heartBeat(60000);
             }else{
                 if(!checkAvailable){
@@ -118,7 +119,7 @@ var endChatSession = function(){
 };
 
 var sendIM = function(username, message){
-    KandyAPI.Phone.sendIm(username, message, function () {
+    kandy.messaging.sendIm(username, message, function () {
             var messageBox = jQuery("#messageBox");
             messageBox.find("ul").append("<li class='my-message'><span class='username'>Me: </span>"+jQuery("#messageToSend").val()+"</li>");
             jQuery("#formChat")[0].reset();

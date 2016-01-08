@@ -564,7 +564,7 @@ class KandyApi{
             $output .="<script type='text/javascript' src='". KANDY_JQUERY ."'></script>";
             $output .="<script type='text/javascript' src='". KANDY_JS_URL ."'></script>";
             $output .="<script>if (window.login == undefined){window.login = function() {
-                        KandyAPI.Phone.login('" . $kandyApiKey . "', '" . $userName . "', '" . $password . "');
+                        kandy.login('" . $kandyApiKey . "', '" . $userName . "', '" . $password . "');
                     };
                     window.kandy_logout = function() {
                                         KandyAPI.Phone.logout();
