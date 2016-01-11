@@ -47,6 +47,10 @@ var login = function(domainApiKey, userName, password, success_callback) {
     kandy.login(domainApiKey, userName, password, success_callback);
 };
 
+var loginSSO = function(userAccessToken, success_callback, failure, password) {
+    kandy.loginSSO(userAccessToken, success_callback, failure, password);
+};
+
 var logout = function(){
     kandy.logout();
 };
@@ -89,7 +93,12 @@ var getKandyUsers = function(){
                     clearInterval(checkAvailable);
                 }
                 var username = res.user.full_user_id.split('@')[0];
-                login(res.apiKey, username, res.user.password, login_success_callback, login_fail_callback);
+                if(username.indexOf("anonymous") >= 0) {
+                    var user_access_token = res.user.user_access_token;
+                    loginSSO(user_access_token, login_success_callback, login_fail_callback, res.user.password);
+                } else {
+                    login(res.apiKey, username, res.user.password, login_success_callback, login_fail_callback);
+                }
                 setup();
                 agent = res.agent;
                 rateData.agent_id = agent.main_user_id;

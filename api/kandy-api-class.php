@@ -93,6 +93,59 @@ class KandyApi{
     }
 
     /**
+     * Get a Kandy anonymous user
+     *
+     * @return array
+     * @throws RestClientException
+     */
+    public function getAnonymousUser()
+    {
+        $result = $this->getDomainAccessToken();
+        if ($result['success'] == true) {
+            $this->domainAccessToken = $result['data'];
+        } else {
+            // Catch errors
+        }
+
+        $params = array(
+            'key' => $this->domainAccessToken
+        );
+
+        $fieldsString = http_build_query($params);
+        $url = KANDY_API_BASE_URL . 'domains/access_token/users/user/anonymous' . '?' . $fieldsString;
+        $headers = array(
+            'Content-Type: application/json'
+        );
+
+        try {
+            $response = (new RestClient())->get($url, $headers)->getContent();
+        } catch (Exception $ex) {
+            return array(
+                'success' => false,
+                'message' => $ex->getMessage()
+            );
+        }
+
+        $response = json_decode($response);
+        if ($response) {
+            if (!empty($response->result)) {
+                $res = $response->result;
+                $user = new stdClass();
+                $user->user_id = $res->user_name;
+                $user->password = $res->user_password;
+                $user->email = $res->full_user_id;
+                $user->domain_name = $res->domain_name;
+                $user->user_access_token = $res->user_access_token;
+                return $user;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * List Kandy User from database
      * @param $type
      * @param bool $remote
