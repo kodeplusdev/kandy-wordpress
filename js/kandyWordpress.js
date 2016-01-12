@@ -10,6 +10,7 @@ var sessionNames = {};
 var $audioRingIn = jQuery('<audio>', { loop: 'loop', id: 'ring-in' });
 var $audioRingOut = jQuery('<audio>', { loop: 'loop', id: 'ring-out' });
 var kandyPresence = {};
+var last_seen_interval;
 // Load audio source to DOM to indicate call events
 var audioSource = {
     ringIn: [
@@ -824,8 +825,12 @@ var get_last_seen = function(contacts){
 };
 
 var get_last_seen_interval = function(contacts) {
-  get_last_seen(contacts);
-  setInterval(get_last_seen,10000, contacts);
+    get_last_seen(contacts);
+    //clear old interval
+    if(last_seen_interval) {
+        clearInterval(last_seen_interval);
+    }
+    last_seen_interval = setInterval(get_last_seen,10000, contacts);
 };
 
 

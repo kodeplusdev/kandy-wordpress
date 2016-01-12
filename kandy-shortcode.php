@@ -1460,22 +1460,36 @@ class KandyShortcode
                 , OBJECT);
             $agent = current($agent);
         } else {
-            $agent = $wpdb->get_results(
+            $agents = $wpdb->get_results(
                 $sql = "SELECT user_id, CONCAT(user_id, '@', domain_name) as full_user_id,
                         $kandyUserTable.password as password,$userTable.user_nicename as username, main_user_id,
-                        MAX($kandyLiveChatTable.end_at) as last_end_chat, $userLoginTable.time as last_active
+                        MAX($kandyLiveChatTable.end_at) as last_end_chat
                 FROM $kandyUserTable
                 LEFT JOIN $kandyLiveChatTable ON $kandyUserTable.user_id = $kandyLiveChatTable.agent_user_id
                 LEFT JOIN $userTable ON $kandyUserTable.main_user_id = $userTable.ID
-                JOIN $userLoginTable ON $kandyUserTable.user_id = $userLoginTable.kandy_user_id
-                WHERE $kandyUserTable.type = $agentType AND $userLoginTable.status = $userStatusOnline
+                WHERE $kandyUserTable.type = $agentType
                 GROUP BY $userTable.ID
                 HAVING last_end_chat < $fakeEndTime OR last_end_chat IS NULL
-                ORDER BY last_end_chat ASC
-                LIMIT 0,1"
+                ORDER BY last_end_chat ASC"
                 , OBJECT
             );
-            $agent = current($agent);
+            $agent = null;
+            $agentIds = [];
+            foreach($agents as $key => $item) {
+                array_push($agentIds,$item->full_user_id);
+            }
+            $kandyAPI = new KandyApi();
+            $lastSeen = $kandyAPI->getLastSeen($agentIds);
+            if($lastSeen->message == 'success') {
+                $lastSeenUsers = $lastSeen->result->users;
+                foreach($lastSeenUsers as $key => $u) {
+                    if(($lastActive = $lastSeen->result->server_timestamp - $u->last_seen) && $lastActive < 10000) {
+                        $agent = $agents[$key];
+                    } else {
+                        continue;
+                    }
+                }
+            }
             if ($agent) {
                 $liveChatSessionInfo['agent'] = $agent->user_id;
             }

@@ -73,6 +73,7 @@ var setup = function(){
 };
 
 var getKandyUsers = function(){
+    LiveChatUI.changeState('WAITING');
     jQuery.ajax({
         url: ajax_object.ajax_url + '?action=kandy_get_free_user',
         type: 'GET',
@@ -81,8 +82,6 @@ var getKandyUsers = function(){
         success: function(res){
             if(checkAvailable){
                 LiveChatUI.changeState('RECONNECTING');
-            }else{
-                LiveChatUI.changeState('WAITING');
             }
             if(res.status == 'success'){
                 if(checkAvailable){
