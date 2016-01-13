@@ -1475,24 +1475,27 @@ class KandyShortcode
             );
             $agent = null;
             $agentIds = [];
-            foreach($agents as $key => $item) {
-                array_push($agentIds,$item->full_user_id);
-            }
-            $kandyAPI = new KandyApi();
-            $lastSeen = $kandyAPI->getLastSeen($agentIds);
-            if($lastSeen->message == 'success') {
-                $lastSeenUsers = $lastSeen->result->users;
-                foreach($lastSeenUsers as $key => $u) {
-                    if(($lastActive = $lastSeen->result->server_timestamp - $u->last_seen) && $lastActive < 10000) {
-                        $agent = $agents[$key];
-                    } else {
-                        continue;
+            if($agents) {
+                foreach($agents as $key => $item) {
+                    array_push($agentIds,$item->full_user_id);
+                }
+                $kandyAPI = new KandyApi();
+                $lastSeen = $kandyAPI->getLastSeen($agentIds);
+                if($lastSeen->message == 'success') {
+                    $lastSeenUsers = $lastSeen->result->users;
+                    foreach($lastSeenUsers as $key => $u) {
+                        if(($lastActive = $lastSeen->result->server_timestamp - $u->last_seen) && $lastActive < 10000) {
+                            $agent = $agents[$key];
+                        } else {
+                            continue;
+                        }
                     }
                 }
+                if ($agent) {
+                    $liveChatSessionInfo['agent'] = $agent->user_id;
+                }
             }
-            if ($agent) {
-                $liveChatSessionInfo['agent'] = $agent->user_id;
-            }
+
         }
         if ($user && $agent) {
             $now = time();
