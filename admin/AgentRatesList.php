@@ -65,25 +65,17 @@ class AgentRatesList extends WP_List_Table
 
     function prepare_items()
     {
-        $data = $this->get_data();
         $columns = $this->get_columns();
         $hidden = array();
         $sortable = $this->get_sortable_columns();
         $this->_column_headers = array($columns, $hidden, $sortable);
 
         //pagination
-        $per_page = 5;
+        $per_page = 10;
         $current_page = $this->get_pagenum();
-        $total_items = count($data);
+        $data = $this->get_data($per_page, ($current_page-1)*$per_page);
+        $total_items = KandyApi::totalAgentRates($_GET['id']);
 
-        //search
-        $searchItem = array_slice(
-            $data,
-            (($current_page - 1) * $per_page),
-            $per_page
-        );
-        //sorting
-        usort($searchItem, array(&$this, 'usort_reorder'));
         $this->set_pagination_args(
             array(
                 'total_items' => $total_items,
@@ -92,7 +84,7 @@ class AgentRatesList extends WP_List_Table
                 //WE have to determine how many items to show on a page
             )
         );
-        $this->items = $searchItem;
+        $this->items = $data;
     }
 
     function get_sortable_columns()
