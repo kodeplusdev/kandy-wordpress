@@ -154,8 +154,6 @@ class KandyApi{
     public static function listUsers($type = KANDY_USER_ALL, $remote = false)
     {
         $result = array();
-        $excludedUsers = preg_split('/[\s,]+/',get_option('kandy_excluded_users', ''));
-        $excludedUsers = implode('","', $excludedUsers);
         require_once dirname(__FILE__) . '/RestClient.php';
         // get data from server
         if ($remote) {
@@ -201,8 +199,7 @@ class KandyApi{
                     $result = $wpdb->get_results(
                         "SELECT *
                              FROM {$wpdb->prefix}kandy_users
-                             WHERE domain_name = '". $domainName ."'
-                             AND user_id NOT IN(\"".$excludedUsers."\")"
+                             WHERE domain_name = '". $domainName ."'"
                     );
                 } else {
                     if ($type == KANDY_USER_ASSIGNED) {
@@ -219,7 +216,7 @@ class KandyApi{
                                 "SELECT *
                              FROM {$wpdb->prefix}kandy_users
                              WHERE (main_user_id = '' || main_user_id IS NULL)
-                             AND domain_name = '". $domainName ."' AND user_id NOT IN(\"".$excludedUsers."\")");
+                             AND domain_name = '". $domainName ."'");
                         }
                     }
                 }
