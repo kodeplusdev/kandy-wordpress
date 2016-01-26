@@ -61,14 +61,6 @@ class KandyAdmin {
             "kandy-chat-agent",
             array($this, "kandy_admin_pages")
         );
-        add_submenu_page(
-            "kandy",
-            "Kandy Live Chat Users",
-            "Live Chat User",
-            "administrator",
-            "kandy-chat-user",
-            array($this, "kandy_admin_pages")
-        );
     }
 
     /**
@@ -148,17 +140,6 @@ class KandyAdmin {
                 }else{
                     $kanddyLiveChat->render();
                 }
-                break;
-            case 'kandy-chat-user':
-                wp_register_script('kandy_admin_js',KANDY_PLUGIN_URL . '/js/kandylivechatadmin.js',array('jquery'));
-                wp_enqueue_script('kandy_admin_js');
-                wp_enqueue_script('select2-js', KANDY_PLUGIN_URL . '/js/select2-3.5.2/select2.min.js');
-                wp_enqueue_style("select2-css", KANDY_PLUGIN_URL . '/js/select2-3.5.2/select2.css');
-                require_once __DIR__ . '/admin/LiveChatUserPage.php';
-                $kandyUser = new LiveChatUserPage();
-
-                $kandyUser->render();
-
         }
     }
 }

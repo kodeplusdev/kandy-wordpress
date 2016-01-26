@@ -93,6 +93,59 @@ class KandyApi{
     }
 
     /**
+     * Get a Kandy anonymous user
+     *
+     * @return array
+     * @throws RestClientException
+     */
+    public function getAnonymousUser()
+    {
+        $result = $this->getDomainAccessToken();
+        if ($result['success'] == true) {
+            $this->domainAccessToken = $result['data'];
+        } else {
+            // Catch errors
+        }
+
+        $params = array(
+            'key' => $this->domainAccessToken
+        );
+
+        $fieldsString = http_build_query($params);
+        $url = KANDY_API_BASE_URL . 'domains/access_token/users/user/anonymous' . '?' . $fieldsString;
+        $headers = array(
+            'Content-Type: application/json'
+        );
+
+        try {
+            $response = (new RestClient())->get($url, $headers)->getContent();
+        } catch (Exception $ex) {
+            return array(
+                'success' => false,
+                'message' => $ex->getMessage()
+            );
+        }
+
+        $response = json_decode($response);
+        if ($response) {
+            if (!empty($response->result)) {
+                $res = $response->result;
+                $user = new stdClass();
+                $user->user_id = $res->user_name;
+                $user->password = $res->user_password;
+                $user->email = $res->full_user_id;
+                $user->domain_name = $res->domain_name;
+                $user->user_access_token = $res->user_access_token;
+                return $user;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * List Kandy User from database
      * @param $type
      * @param bool $remote
@@ -101,8 +154,6 @@ class KandyApi{
     public static function listUsers($type = KANDY_USER_ALL, $remote = false)
     {
         $result = array();
-        $excludedUsers = preg_split('/[\s,]+/',get_option('kandy_excluded_users', ''));
-        $excludedUsers = implode('","', $excludedUsers);
         require_once dirname(__FILE__) . '/RestClient.php';
         // get data from server
         if ($remote) {
@@ -148,8 +199,7 @@ class KandyApi{
                     $result = $wpdb->get_results(
                         "SELECT *
                              FROM {$wpdb->prefix}kandy_users
-                             WHERE domain_name = '". $domainName ."'
-                             AND user_id NOT IN(\"".$excludedUsers."\")"
+                             WHERE domain_name = '". $domainName ."'"
                     );
                 } else {
                     if ($type == KANDY_USER_ASSIGNED) {
@@ -166,7 +216,7 @@ class KandyApi{
                                 "SELECT *
                              FROM {$wpdb->prefix}kandy_users
                              WHERE (main_user_id = '' || main_user_id IS NULL)
-                             AND domain_name = '". $domainName ."' AND user_id NOT IN(\"".$excludedUsers."\")");
+                             AND domain_name = '". $domainName ."'");
                         }
                     }
                 }
@@ -610,6 +660,9 @@ class KandyApi{
 
     }
 
+    /**
+     * @return int
+     */
     public static function totalListAgents() {
         global $wpdb;
         $kandyUserTable = $wpdb->prefix . 'kandy_users';
@@ -623,7 +676,7 @@ class KandyApi{
                 WHERE $kandyUserTable.type = $agentType";
         ;
         $result = $wpdb->get_var($sql);
-        return $result;
+        return (int) $result;
     }
 
     public static function getListAgents($limit, $offset) {
@@ -679,13 +732,18 @@ class KandyApi{
 
     }
 
+    /**
+     * @param $agentId
+     *
+     * @return int
+     */
     public static function totalAgentRates($agentId) {
         global $wpdb;
         $tableRate = $wpdb->prefix . 'kandy_live_chat_rate';
         $agentId = intval($agentId);
-        $sql = "SELECT * FROM $tableRate WHERE main_user_id = $agentId ORDER BY rated_time DESC";
+        $sql = "SELECT count(*) FROM $tableRate WHERE main_user_id = $agentId ORDER BY rated_time DESC";
         $result = $wpdb->get_var($sql);
-        return $result;
+        return (int) $result;
     }
 
     /**
