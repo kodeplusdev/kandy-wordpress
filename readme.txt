@@ -105,6 +105,7 @@ Home page: http://www.kandy.io/
 = 2.4.2 =
 * Upgrade Kandy JS SDK 2.4.2
 * Implement getLastSeen function for presence
+* Apply anonymous user to Live chat support
 * Fix bugs
 = 2.3 =
 * Upgrade Kandy JS SDK 2.3.0
