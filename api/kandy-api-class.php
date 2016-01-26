@@ -19,7 +19,7 @@ class KandyApi{
     {
 
         // Change the number of rows with the limit() call.
-        $result = get_users(array("number" => $limit, "offset" => $offset));
+        $result = get_users(array("number" => $limit, "offset" => $offset, 'orderby' => 'id'));
 
         $rows = array();
         foreach ($result as $row) {
@@ -663,6 +663,24 @@ class KandyApi{
 
     }
 
+    /**
+     * @return int
+     */
+    public static function totalListAgents() {
+        global $wpdb;
+        $kandyUserTable = $wpdb->prefix . 'kandy_users';
+        $mainUserTable = $wpdb->prefix . 'users';
+        $agentType = KANDY_USER_TYPE_AGENT;
+        $rateTable = $wpdb->prefix . 'kandy_live_chat_rate';
+        $sql = "SELECT count($kandyUserTable.id)
+                FROM $mainUserTable
+                INNER JOIN $kandyUserTable ON $mainUserTable.ID = $kandyUserTable.main_user_id
+                LEFT JOIN $rateTable ON $mainUserTable.id = $rateTable.main_user_id
+                WHERE $kandyUserTable.type = $agentType";
+        ;
+        $result = $wpdb->get_var($sql);
+        return (int) $result;
+    }
 
     public static function getListAgents($limit, $offset) {
         global $wpdb;
@@ -715,6 +733,20 @@ class KandyApi{
         $users = $wpdb->get_results($sql);
         return $users;
 
+    }
+
+    /**
+     * @param $agentId
+     *
+     * @return int
+     */
+    public static function totalAgentRates($agentId) {
+        global $wpdb;
+        $tableRate = $wpdb->prefix . 'kandy_live_chat_rate';
+        $agentId = intval($agentId);
+        $sql = "SELECT count(*) FROM $tableRate WHERE main_user_id = $agentId ORDER BY rated_time DESC";
+        $result = $wpdb->get_var($sql);
+        return (int) $result;
     }
 
     /**
