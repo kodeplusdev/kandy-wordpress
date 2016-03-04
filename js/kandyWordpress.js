@@ -279,6 +279,9 @@ changeAnswerButtonState = function (state, target) {
             break;
 
         case 'ON_CALL':
+            if (jQuery('#labelConnecting').length > 0) {
+                jQuery('#labelConnecting').text('');
+            }
             kandyButton.find('.kandyVideoButtonSomeonesCalling').hide();
             kandyButton.find('.kandyVideoButtonCallOut').hide();
             kandyButton.find('.kandyVideoButtonCalling').hide();
@@ -389,6 +392,37 @@ kandy_makeVoiceCall = function (target) {
     changeAnswerButtonState("CALLING",'#'+kandyButtonId);
 };
 
+/**
+ * Event when click call button SSO
+ */
+kandy_makeVoiceCallSSO = function () {
+    if (typeof loginSSO == 'function') {
+        setup();
+        jQuery('#labelConnecting').text('Connecting...');
+        loginSSO();
+    }
+};
+
+/**
+ * Result success when login SSO
+ */
+onLoginSuccess = function () {
+    console.log('login SSO is successful....');
+    // Make a video call to support
+    var kandyButtonId = jQuery('#callBtnSSO').data('container');
+    activeContainerId = kandyButtonId;
+    var userName = jQuery('#'+kandyButtonId+ ' .kandyVideoButtonCallOut #'+kandyButtonId+'-callOutUserId').val();
+
+    kandy.call.makeCall(userName, true);
+    changeAnswerButtonState("CALLING",'#'+kandyButtonId);
+};
+
+/**
+ * Result error when login SSO
+ */
+onLoginFailure = function () {
+    console.log('Error! Login SSO ....');
+};
 /**
  * Event when click end call button.
  */
