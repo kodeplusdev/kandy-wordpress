@@ -309,7 +309,13 @@ class KandyShortcode
             if(!is_ssl()) {
                 $output = '<p>' . __('Can not setup kandy video. In order to use this feature, you need a secure origin, such as HTTPS') . '<p>';
             } else {
-                $result = self::kandySetup();
+                $current_user = wp_get_current_user();
+                if(!empty($current_user->ID)) {
+                    $result = self::kandySetup();
+                } else {
+                    $result = self::kandyAnonymousSetup();
+                }
+
                 if ($result['success']) {
                     // init title attribute
                     if (isset($attr['title'])) {
@@ -343,8 +349,10 @@ class KandyShortcode
                     $output .= '<p class="title">' . $title . '</p>';
                     $output .= '<span class="video" id="' . $id . '"  ' . $htmlOptionsAttributes . '></span>';
                     $output .= '</div>';
+                } elseif (!empty($result['message'])) {
+                    $output = '<p>' . __($result['message'] . '. Please contact administrator') . '<p>';
                 } else {
-                    $output = '<p>' . __('Can not setup kandy video. Please contact administrator') . '<p>';
+                    $output = '<p>' . __('Can not setup kandy voice button. Please contact administrator') . '<p>';
                 }
 
                 if (isset($result['output'])) {
@@ -370,7 +378,13 @@ class KandyShortcode
             if (!is_ssl()) {
                 $output = '<p>' . __('Can not setup kandy video button. In order to use this feature, you need a secure origin, such as HTTPS') . '<p>';
             } else {
-                $result = self::kandySetup();
+                $current_user = wp_get_current_user();
+                if(!empty($current_user->ID)) {
+                    $result = self::kandySetup();
+                } else {
+                    $result = self::kandyAnonymousSetup();
+                }
+
                 if ($result['success']) {
 
                     wp_enqueue_script("kandy_video_js");
@@ -389,6 +403,18 @@ class KandyShortcode
                     $id = 'kandy-video-button' . rand();
                     if (isset($attr['id'])) {
                         $id = $attr['id'];
+                    }
+
+                    //init anonymous attribute
+                    $anonymous = false;
+                    if (isset($attr['anonymous']) && empty($current_user->ID)) {
+                        $anonymous = $attr['anonymous'];
+                    }
+
+                    // Init incominglabel attribute.
+                    $callTo = '';
+                    if (isset($attr['callto']) && empty($current_user->ID)) {
+                        $callTo = ($attr['callto']);
                     }
 
                     // Init incominglabel attribute.
@@ -459,35 +485,63 @@ class KandyShortcode
 
                     $ajaxUserSearchUrl = admin_url('admin-ajax.php');
 
-                    $output = '<div class="' . $class . '" id ="' . $id . '" data-call-id="0">' .
-                        '<div class="kandyButtonComponent kandyVideoButtonSomeonesCalling" id="' . $id . '-incomingCall">' .
-                        '<label>' . $incomingLabel . '</label>' .
-                        '<input data-container="' . $id . '" class="btmAnswerVideoCall" type="button" value="' . $incomingButtonText . '" onclick="kandy_answer_video_call(this)"/>' .
-                        '<input style="visibility: hidden" class="btmAnswerRejectCall" type="button" onclick="kandy_reject_video_call(this)" value="' . $rejectButtonText . '"/>' .
-                        '</div>' .
+                    if (empty($anonymous) && empty($callTo)) {
+                        $output = '<div class="' . $class . '" id ="' . $id . '" data-call-id="0">' .
+                            '<div class="kandyButtonComponent kandyVideoButtonSomeonesCalling" id="' . $id . '-incomingCall">' .
+                            '<label>' . $incomingLabel . '</label>' .
+                            '<input data-container="' . $id . '" class="btmAnswerVideoCall" type="button" value="' . $incomingButtonText . '" onclick="kandy_answer_video_call(this)"/>' .
+                            '<input style="visibility: hidden" class="btmAnswerRejectCall" type="button" onclick="kandy_reject_video_call(this)" value="' . $rejectButtonText . '"/>' .
+                            '</div>' .
 
-                        '<div class="kandyButtonComponent kandyVideoButtonCallOut" id="' . $id . '-callOut">' .
-                        '<label>' . $callOutLabel . '</label><input id="' . $id . '-callOutUserId" data-ajax-url="' . $ajaxUserSearchUrl . '" type="text" value="" class="select2"/>' .
-                        '<input data-container="' . $id . '"  class="btnCall" id="callBtn" type="button" value="' . $callOutButtonText . '" onclick="kandy_make_video_call(this)"/>' .
-                        '</div>' .
+                            '<div class="kandyButtonComponent kandyVideoButtonCallOut" id="' . $id . '-callOut">' .
+                            '<label>' . $callOutLabel . '</label><input id="' . $id . '-callOutUserId" data-ajax-url="' . $ajaxUserSearchUrl . '" type="text" value="" class="select2"/>' .
+                            '<input data-container="' . $id . '"  class="btnCall" id="callBtn" type="button" value="' . $callOutButtonText . '" onclick="kandy_make_video_call(this)"/>' .
+                            '</div>' .
 
-                        '<div class="kandyButtonComponent kandyVideoButtonCalling" id="' . $id . '-calling">' .
-                        '<label>' . $callingLabel . '</label>' .
-                        '<input data-container="' . $id . '"  type="button" class="btnEndCall" value="' . $callingButtonText . '" onclick="kandy_end_call(this)"/>' .
-                        '</div>' .
-                        '<div class="kandyButtonComponent kandyVideoButtonOnCall" id="' . $id . '-onCall">' .
-                        '<label>' . $onCallLabel . '</label>' .
-                        '<input data-container="' . $id . '"  class="btnEndCall" type="button" value="' . $onCallButtonText . '" onclick="kandy_end_call(this)"/>' .
-                        '<input style="visibility: hidden" class="btnHoldCall" type="button" value="' . $holdCallButtonText . '" onclick="kandy_hold_call(this)"/>' .
-                        '<input style="visibility: hidden" class="btnResumeCall" type="button" value="' . $resumeCallButtonText . '" onclick="kandy_resume_call(this)"/>' .
-                        '</div></div>';
+                            '<div class="kandyButtonComponent kandyVideoButtonCalling" id="' . $id . '-calling">' .
+                            '<label>' . $callingLabel . '</label>' .
+                            '<input data-container="' . $id . '"  type="button" class="btnEndCall" value="' . $callingButtonText . '" onclick="kandy_end_call(this)"/>' .
+                            '</div>' .
+                            '<div class="kandyButtonComponent kandyVideoButtonOnCall" id="' . $id . '-onCall">' .
+                            '<label>' . $onCallLabel . '</label>' .
+                            '<input data-container="' . $id . '"  class="btnEndCall" type="button" value="' . $onCallButtonText . '" onclick="kandy_end_call(this)"/>' .
+                            '<input style="visibility: hidden" class="btnHoldCall" type="button" value="' . $holdCallButtonText . '" onclick="kandy_hold_call(this)"/>' .
+                            '<input style="visibility: hidden" class="btnResumeCall" type="button" value="' . $resumeCallButtonText . '" onclick="kandy_resume_call(this)"/>' .
+                            '</div></div>';
+                    } elseif (!empty($anonymous) && !empty($callTo)) {
+                        $output = '<div class="' . $class . '" id ="' . $id . '" data-call-id="0">' .
+                            '<div class="kandyButtonComponent kandyVideoButtonSomeonesCalling" id="' . $id . '-incomingCall">' .
+                            '<label>' . $incomingLabel . '</label>' .
+                            '<input data-container="' . $id . '" class="btmAnswerVideoCall" type="button" value="' . $incomingButtonText . '" onclick="kandy_answer_video_call(this)"/>' .
+                            '<input style="visibility: hidden" class="btmAnswerRejectCall" type="button" onclick="kandy_reject_video_call(this)" value="' . $rejectButtonText . '"/>' .
+                            '</div>' .
+
+                            '<div class="kandyButtonComponent kandyVideoButtonCallOut" id="' . $id . '-callOut">' .
+                            '<input id="' . $id . '-callOutUserId" type="text" value ="' . $callTo . '"/>' .
+                            '<label id="labelConnecting"></label>' .
+                            '<input data-container="' . $id . '"  class="btnCall" id="callBtn" type="button" value="' . $callOutButtonText . '" onclick="kandy_make_video_call_sso(this)" disabled/>' .
+                            '</div>' .
+
+                            '<div class="kandyButtonComponent kandyVideoButtonCalling" id="' . $id . '-calling">' .
+                            '<label>' . $callingLabel . '</label>' .
+                            '<input data-container="' . $id . '"  type="button" class="btnEndCall" value="' . $callingButtonText . '" onclick="kandy_end_call(this)"/>' .
+                            '</div>' .
+                            '<div class="kandyButtonComponent kandyVideoButtonOnCall" id="' . $id . '-onCall">' .
+                            '<label>' . $onCallLabel . '</label>' .
+                            '<input data-container="' . $id . '"  class="btnEndCall" type="button" value="' . $onCallButtonText . '" onclick="kandy_end_call(this)"/>' .
+                            '<input style="visibility: hidden" class="btnHoldCall" type="button" value="' . $holdCallButtonText . '" onclick="kandy_hold_call(this)"/>' .
+                            '<input style="visibility: hidden" class="btnResumeCall" type="button" value="' . $resumeCallButtonText . '" onclick="kandy_resume_call(this)"/>' .
+                            '</div></div>';
+                    }
 
                     if (isset($result['output'])) {
                         $output .= $result['output'];
                     }
 
+                } elseif (!empty($result['message'])) {
+                    $output = '<p>' . __($result['message'] . '. Please contact administrator') . '<p>';
                 } else {
-                    $output = '<p>' . __('Can not setup kandy video button. Please contact administrator') . '<p>';
+                    $output = '<p>' . __('Can not setup kandy voice button. Please contact administrator') . '<p>';
                 }
             }
 
@@ -752,6 +806,8 @@ class KandyShortcode
                     if (isset($result['output'])) {
                         $output .= $result['output'];
                     }
+                } elseif (!empty($result['message'])) {
+                    $output = '<p>' . __($result['message'] . '. Please contact administrator') . '<p>';
                 } else {
                     $output = '<p>' . __('Can not setup kandy voice button. Please contact administrator') . '<p>';
                 }
@@ -1332,7 +1388,7 @@ class KandyShortcode
 
             $result = array("success" => true, "message" => '', 'output' => $output, 'user' => $user);
         } else {
-            $result = array("success" => false, "message" => 'Can not found kandy user', 'output' => '');
+            $result = array("success" => false, "message" => 'Failed to register anonymous user phase 0', 'output' => '');
         }
 
         return $result;
@@ -1443,7 +1499,7 @@ class KandyShortcode
                 $("#<?php echo $elementId; ?>").select2();
             });
         </script>
-    <?php
+        <?php
     }
 
     /**
