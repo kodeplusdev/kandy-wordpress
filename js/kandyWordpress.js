@@ -395,12 +395,15 @@ kandy_makeVoiceCall = function (target) {
 /**
  * Event when click call button SSO
  */
-kandy_makeVoiceCallSSO = function () {
-    if (typeof loginSSO == 'function') {
-        setup();
-        jQuery('#labelConnecting').text('Connecting...');
-        loginSSO();
-    }
+kandy_makeVoiceCallSSO = function (target) {
+    jQuery('#labelConnecting').text('Connecting...');
+    // Make a video call to support
+    var kandyButtonId = jQuery(target).data('container');
+    activeContainerId = kandyButtonId;
+    var userName = jQuery('#'+kandyButtonId+ ' .kandyVideoButtonCallOut #'+kandyButtonId+'-callOutUserId').val();
+
+    kandy.call.makeCall(userName, true);
+    changeAnswerButtonState("CALLING",'#'+kandyButtonId);
 };
 
 /**
@@ -408,13 +411,7 @@ kandy_makeVoiceCallSSO = function () {
  */
 onLoginSuccess = function () {
     console.log('login SSO is successful....');
-    // Make a video call to support
-    var kandyButtonId = jQuery('#callBtnSSO').data('container');
-    activeContainerId = kandyButtonId;
-    var userName = jQuery('#'+kandyButtonId+ ' .kandyVideoButtonCallOut #'+kandyButtonId+'-callOutUserId').val();
-
-    kandy.call.makeCall(userName, true);
-    changeAnswerButtonState("CALLING",'#'+kandyButtonId);
+    jQuery('#callBtn').removeAttr('disabled');
 };
 
 /**
@@ -1618,6 +1615,9 @@ jQuery(document).ready(function (jQuery) {
         setup();
         login();
         console.log('login....');
+    } else if (typeof loginSSO == 'function') {
+        setup();
+        loginSSO();
     }
 
     // Active Select2.

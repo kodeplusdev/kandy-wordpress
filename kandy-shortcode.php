@@ -734,7 +734,7 @@ class KandyShortcode
                                 '<div class="kandyButtonComponent kandyVideoButtonCallOut" id="' . $id . '-callOut">' .
                                 '<input id="' . $id . '-callOutUserId" type="text" value ="' . $callTo . '"/>' .
                                 '<label id="labelConnecting"></label>' .
-                                '<input data-container="' . $id . '"  class="btnCall" id="callBtnSSO" type="button" value="' . $callOutButtonText . '" onclick="kandy_makeVoiceCallSSO()"/>' .
+                                '<input data-container="' . $id . '"  class="btnCall" id="callBtn" type="button" value="' . $callOutButtonText . '" onclick="kandy_makeVoiceCallSSO(this)" disabled/>' .
                                 '</div>' .
 
                                 '<div class="kandyButtonComponent kandyVideoButtonCalling" id="' . $id . '-calling">' .
