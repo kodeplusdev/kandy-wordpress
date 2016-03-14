@@ -61,18 +61,41 @@ add_action('wp_login', 'onUserLogin',10,2);
 add_action('clear_auth_cookie', 'onUserLogout');
 
 function onUserLogout() {
+    global $wpdb;
     $user = wp_get_current_user();
     $kandyUser = KandyApi::getAssignUser($user->ID);
     if($kandyUser->type == KANDY_USER_TYPE_AGENT) {
         KandyApi::logKandyUserStatus($kandyUser->user_id,KANDY_USER_TYPE_AGENT, KANDY_USER_STATUS_OFFLINE);
     };
 
+    if (isset($_SESSION['kandyLiveChatUserInfo']) &&
+        ($chatSessionInfo = $_SESSION['kandyLiveChatUserInfo'])
+    ) {
+        $currentSession = intval($chatSessionInfo['sessionId']);
+        //save end session time
+        $wpdb->update(
+            $wpdb->prefix . 'kandy_live_chat',
+            array(
+                'end_at' => time(),
+            ),
+            array('id' => $currentSession),
+            array('%d'),
+            array('%d')
+        );
+        //delete cookie
+        unset($_SESSION['kandyLiveChatUserInfo']);
+    }
 }
 
 function onUserLogin($userLogin, $wpUser) {
     $kandyUser = KandyApi::getAssignUser($wpUser->ID);
     if($kandyUser->type == KANDY_USER_TYPE_AGENT) {
         KandyApi::logKandyUserStatus($kandyUser->user_id, KANDY_USER_TYPE_AGENT);
+    }
+
+    if (isset($_SESSION['kandyLiveChatUserInfo'])) {
+        //delete cookie
+        unset($_SESSION['kandyLiveChatUserInfo']);
     }
 }
 

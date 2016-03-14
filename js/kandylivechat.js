@@ -44,7 +44,9 @@ LiveChatUI.changeState = function(state){
 };
 
 var login = function(domainApiKey, userName, password, success_callback) {
-    kandy.login(domainApiKey, userName, password, success_callback);
+    if (typeof userName != 'undefined') {
+        kandy.login(domainApiKey, userName, password, success_callback);
+    }
 };
 
 var loginSSO = function(userAccessToken, success_callback, failure, password) {
@@ -67,13 +69,6 @@ var heartBeat = function(interval){
     return setInterval(function(){
         jQuery.get(ajax_object.ajax_url + '?action=kandy_still_alive');
     },parseInt(interval));
-};
-var setup = function(){
-    kandy.setup({
-        listeners: {
-            message: onMessage
-        }
-    })
 };
 
 var getKandyUsers = function(){
@@ -98,7 +93,11 @@ var getKandyUsers = function(){
                 } else {
                     login(res.apiKey, username, res.user.password, login_success_callback, login_fail_callback);
                 }
-                setup();
+                kandy.setup({
+                    listeners: {
+                        message: onMessage
+                    }
+                });
                 agent = res.agent;
                 rateData.agent_id = agent.main_user_id;
                 heartBeat(60000);
@@ -127,16 +126,19 @@ var endChatSession = function(){
 };
 
 var sendIM = function(username, message){
-    kandy.messaging.sendIm(username, message, function () {
-            var messageBox = jQuery("#messageBox");
-            messageBox.find("ul").append("<li class='my-message'><span class='username'>Me: </span>"+jQuery("#messageToSend").val()+"</li>");
-            jQuery("#formChat")[0].reset();
-            messageBox.scrollTop(messageBox[0].scrollHeight);
-        },
-        function () {
-            alert("IM send failed");
-        }
-    );
+    var contentChat = jQuery("#messageToSend").val();
+    if(contentChat.trim().length > 0) {
+        kandy.messaging.sendIm(username, message, function () {
+                var messageBox = jQuery("#messageBox");
+                messageBox.find("ul").append("<li class='my-message'><span class='username'>Me: </span>"+jQuery("#messageToSend").val()+"</li>");
+                jQuery("#formChat")[0].reset();
+                messageBox.scrollTop(messageBox[0].scrollHeight);
+            },
+            function () {
+                alert("IM send failed");
+            }
+        );
+    }
 };
 
 var onMessage = function(msg){
