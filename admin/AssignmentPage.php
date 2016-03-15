@@ -44,10 +44,10 @@ class KandyAssignmentPage extends KandyPage
             } else {
                 echo "<div  class='error'><p>". __('Auto Sync Kandy Users fail', 'kandy') . "</p></div>";
             }
-            $usercount=count_users()['total_users'];
-            if($usercount<=10)
+            $usercount = count_users()['total_users'];
+            if($usercount <= KANDY_USER_NUM_FIRST_VISIT)
             {
-                $count =KandyApi::autoAssignmentUsers();
+                $count = KandyApi::autoAssignmentUsers();
                 echo "<div class='updated'><p>" . __('Auto Assign Kandy Users successfully, '.$count.' user(s)', 'kandy') ."</div></p>";
             }
         }

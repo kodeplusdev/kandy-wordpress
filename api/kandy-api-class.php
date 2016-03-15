@@ -3,6 +3,7 @@
 define('KANDY_USER_ALL', 1);
 define('KANDY_USER_ASSIGNED', 2);
 define('KANDY_USER_UNASSIGNED', 3);
+define('KANDY_USER_NUM_FIRST_VISIT', 10);
 class KandyApi{
     /**
      * Get Kandy User Data for assignment table.
@@ -17,57 +18,50 @@ class KandyApi{
     public static function isFristVisit()
     {
         global $wpdb;
-        $results = $wpdb->get_results( 'SELECT COUNT(*) as count from wp_kandy_users', OBJECT );
-        if($results[0]->count > 0) return false;
+        $results = $wpdb->get_results('SELECT COUNT(*) AS COUNT FROM wp_kandy_users', OBJECT );
+        if($results[0]->COUNT > 0) return false;
         else return true;
     }
+
     public static function autoAssignmentUsers()
     {
         $done_count=0;
-        $users = KandyApi::getUserDataV2();
+        $usercount = count_users()['total_users'];
+        $users = KandyApi::getUserData($usercount);
         $kandyUsers = KandyApi::listUsers(KANDY_USER_UNASSIGNED);
-        $kandy_user_count= count($kandyUsers);
+        $kandy_user_count = count($kandyUsers);
         foreach($users as $user)
         {
-            if($user->main_user_id == '') {
+            if($user['kandy_user_id'] == '') {
                 if ($kandy_user_count == 0) break;
                 $kandy_user_id = $kandyUsers[$kandy_user_count - 1]->user_id;
-                KandyApi::assignUser($kandy_user_id, $user->ID);
+                KandyApi::assignUser($kandy_user_id, $user['ID']);
                 $kandy_user_count--;
                 $done_count++;
             }
         }
         return $done_count;
     }
-    public static function getUserDataV2()
-    {
-        global $wpdb;
-        $results = $wpdb->get_results( 'select a.*,b.main_user_id from wp_users a left join wp_kandy_users b on  a.ID=b.main_user_id', OBJECT );
-        return $results;
 
-    }
     public static function getUserData($limit = 10, $offset = 0)
     {
-
-        // Change the number of rows with the limit() call.
-        $result = get_users(array("number" => $limit, "offset" => $offset, 'orderby' => 'id'));
+        global $wpdb;
+        $query='SELECT u.*, ku.user_id FROM wp_users u LEFT JOIN wp_kandy_users ku ON u.ID = ku.main_user_id ORDER BY u.id LIMIT '.$offset.','.$limit;
+        $results = $wpdb->get_results( $query, OBJECT );
 
         $rows = array();
-        foreach ($result as $row) {
+        foreach ($results as $row) {
             $url = self::page_url(
                 array(
                     "action" => "edit",
                     "id" => $row->ID
                 )
             );
-
-            $kandyUser = self::getAssignUser($row->ID);
-
             $tableCell = array(
                 'ID'  => $row->ID,
                 'username' => $row->user_login,
                 'name' => $row->display_name,
-                "kandy_user_id"=> ($kandyUser) ? $kandyUser->user_id : null,
+                "kandy_user_id"=> ($row->user_id) ? $row->user_id : null,
                 "action" => "<a href='". $url."' class='button kandy_edit'>". __("Edit", 'kandy'). "</a>"
             );
             $rows[] = $tableCell;
