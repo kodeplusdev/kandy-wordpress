@@ -103,6 +103,9 @@ var getKandyUsers = function(){
                 rateData.agent_id = agent.main_user_id;
                 heartBeat(60000);
             }else{
+                if (res.message) {
+                    console.log('Error! ' + res.message);
+                }
                 if(!checkAvailable){
                     checkAvailable = setInterval(getKandyUsers, 5000);
                 }
