@@ -24,21 +24,27 @@ class KandyApi{
     public static function autoAssignmentUsers()
     {
         $done_count=0;
-        $users=KandyApi::getUserData();;
+        $users = KandyApi::getUserDataV2();
         $kandyUsers = KandyApi::listUsers(KANDY_USER_UNASSIGNED);
         $kandy_user_count= count($kandyUsers);
         foreach($users as $user)
         {
-            if($user['kandy_user_id'] == '')
-            {
-                if($kandy_user_count==0) break;
-                $kandy_user_id=$kandyUsers[$kandy_user_count-1]->user_id;
-                KandyApi::assignUser($kandy_user_id, $user['ID']);
+            if($user->main_user_id == '') {
+                if ($kandy_user_count == 0) break;
+                $kandy_user_id = $kandyUsers[$kandy_user_count - 1]->user_id;
+                KandyApi::assignUser($kandy_user_id, $user->ID);
                 $kandy_user_count--;
                 $done_count++;
             }
         }
         return $done_count;
+    }
+    public static function getUserDataV2()
+    {
+        global $wpdb;
+        $results = $wpdb->get_results( 'select a.*,b.main_user_id from wp_users a left join wp_kandy_users b on  a.ID=b.main_user_id', OBJECT );
+        return $results;
+
     }
     public static function getUserData($limit = 10, $offset = 0)
     {

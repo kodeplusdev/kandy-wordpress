@@ -44,9 +44,8 @@ class KandyAssignmentPage extends KandyPage
             } else {
                 echo "<div  class='error'><p>". __('Auto Sync Kandy Users fail', 'kandy') . "</p></div>";
             }
-            $users=KandyApi::getUserData();;
-
-            if(count($users)<=5)
+            $usercount=count_users()['total_users'];
+            if($usercount<=10)
             {
                 $count =KandyApi::autoAssignmentUsers();
                 echo "<div class='updated'><p>" . __('Auto Assign Kandy Users successfully, '.$count.' user(s)', 'kandy') ."</div></p>";
