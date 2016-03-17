@@ -138,10 +138,7 @@ Two **kandyVideo** object should be inline because some editor will insert a bre
 
 **Live chat configuration:**
 Live chat feature needs some configurations before using:
-- **Configure "Excluded Kandy Users" in Kandy Settings page**: these Kandy users will not be assigned to your users. They are reserved to live chat feature or some features in future. Each user separated by comma or whitespace.   
-- **Add Excluded Kandy Users to live chat feature**: From Kandy component menu, chose *Live chat users management*, this page display your excluded users in previous step. You can assign a user to live chat feature by chosing from select box and click *Save*.
-- **Add Live Chat Agent**: From Kandy component menu, chose *Live chat agents management*
-. You can add a user from your user system to assign him as a Live Chat Agent
+- **Add Live Chat Agent**: From Kandy component menu, chose *Live chat agents management*. You can add a user from your user system to assign him as a Live Chat Agent
 
 
 **Style customization**: help you edit kandy shortcode(video, voice, chat...) style. Select appropriate file(.css) then click edit them.

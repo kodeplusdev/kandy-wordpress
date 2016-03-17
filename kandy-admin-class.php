@@ -35,7 +35,6 @@ class KandyAdmin {
             "kandy-user-assignment",
             array($this, "kandy_admin_pages")
         );
-
         add_submenu_page(
             "kandy",
             "Kandy Customization",
@@ -44,21 +43,20 @@ class KandyAdmin {
             "kandy-customization",
             array($this, "kandy_admin_pages")
         );
-
-        add_submenu_page(
-            "kandy",
-            "Kandy Help",
-            "Help",
-            "administrator",
-            "kandy-help",
-            array($this, "kandy_admin_pages")
-        );
         add_submenu_page(
             "kandy",
             "Kandy Live Chat Agents",
             "Live Chat Agent",
             "administrator",
             "kandy-chat-agent",
+            array($this, "kandy_admin_pages")
+        );
+        add_submenu_page(
+            "kandy",
+            "Kandy Help",
+            "Help",
+            "administrator",
+            "kandy-help",
             array($this, "kandy_admin_pages")
         );
     }
@@ -81,10 +79,16 @@ class KandyAdmin {
                         $kandyAssignmentPage = new KandyAssignmentEditPage();
                         $kandyAssignmentPage->render();
                     } elseif($action == "sync"){
-                        require_once (dirname(__FILE__) . "/admin/AssignmentSyncPage.php");
-                        $kandyAssignmentPage = new KandyAssignmentSyncPage();
+                        require_once (dirname(__FILE__) . "/admin/AssignmentPage.php");
+                        $kandyAssignmentPage = new KandyAssignmentPage();
                         $kandyAssignmentPage->render();
-                    } else{
+                    } elseif($action == "autoassign"){
+                        require_once (dirname(__FILE__) . "/admin/AssignmentPage.php");
+                        $kandyAssignmentPage = new KandyAssignmentPage();
+                        $kandyAssignmentPage->render();
+                    }
+
+                    else{
                         require_once (dirname(__FILE__) . "/admin/AssignmentPage.php");
                         $kandyAssignmentPage = new KandyAssignmentPage();
                         $kandyAssignmentPage->render();

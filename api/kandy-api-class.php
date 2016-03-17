@@ -14,7 +14,32 @@ class KandyApi{
      * @return array
      *   Array User Object
      */
-
+    public static function isFristVisit()
+    {
+        global $wpdb;
+        $results = $wpdb->get_results( 'SELECT COUNT(*) as count from wp_kandy_users', OBJECT );
+        if($results[0]->count > 0) return false;
+        else return true;
+    }
+    public static function autoAssignmentUsers()
+    {
+        $done_count=0;
+        $users=KandyApi::getUserData();;
+        $kandyUsers = KandyApi::listUsers(KANDY_USER_UNASSIGNED);
+        $kandy_user_count= count($kandyUsers);
+        foreach($users as $user)
+        {
+            if($user['kandy_user_id'] == '')
+            {
+                if($kandy_user_count==0) break;
+                $kandy_user_id=$kandyUsers[$kandy_user_count-1]->user_id;
+                KandyApi::assignUser($kandy_user_id, $user['ID']);
+                $kandy_user_count--;
+                $done_count++;
+            }
+        }
+        return $done_count;
+    }
     public static function getUserData($limit = 10, $offset = 0)
     {
 
