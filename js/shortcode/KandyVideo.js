@@ -92,3 +92,32 @@ window.remote_video_initialized_callback = function(videoTag){
 window.local_video_initialized_callback = function(videoTag){
     //do something here
 };
+
+jQuery("span.video").each(function (index, value) {
+    jQuery(this).on("DOMSubtreeModified", appendFullScreen);
+});
+
+function appendFullScreen(event) {
+    if (jQuery(event.target).find('video').length > 0 && jQuery(event.target).find('.icon-full-screen').length == 0) {
+        jQuery(event.target).off( "DOMSubtreeModified" );
+        jQuery(event.target).append('<span class="icon-full-screen"></span>');
+        jQuery(event.target).on( "DOMSubtreeModified", appendFullScreen );
+    }
+}
+
+jQuery(document).on('click', "span.icon-full-screen", function (e) {
+    launchIntoFullscreen(jQuery(this).prev('video')[0]);
+});
+
+// Find the right method, call on correct element
+function launchIntoFullscreen(element) {
+    if(element.requestFullscreen) {
+        element.requestFullscreen();
+    } else if(element.mozRequestFullScreen) {
+        element.mozRequestFullScreen();
+    } else if(element.webkitRequestFullscreen) {
+        element.webkitRequestFullscreen();
+    } else if(element.msRequestFullscreen) {
+        element.msRequestFullscreen();
+    }
+}
