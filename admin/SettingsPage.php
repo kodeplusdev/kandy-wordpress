@@ -102,7 +102,7 @@ class KandySettingsPage extends KandyPage
                     </td>
                 </tr>
 
-                <tr valign="top" id="kandy_js_url_row">
+                <tr valign="top" id="kandy_js_url_row" class="hidden">
                     <th scope="row" id="kandy_js_url_label">
                         <label for="kandy_js_url_key">
                             <?php _e("Javascript Library Url", "kandy") ?>
