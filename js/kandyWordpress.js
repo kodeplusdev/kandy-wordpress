@@ -264,7 +264,9 @@ kandyIncomingCallCallback = function (call, isAnonymous) {
     $audioRingIn[0].play();
 
     var target = jQuery('.kandyVideoButtonCallOut:visible').get(0).closest('.kandyButton');
-    jQuery(target).attr("data-call-id", call.getId());
+    // Store the callId.
+    callId = call.getId();
+    jQuery(target).attr("data-call-id", callId);
     changeAnswerButtonState('BEING_CALLED',target);
 };
 
