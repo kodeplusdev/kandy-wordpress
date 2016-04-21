@@ -3,7 +3,7 @@ Contributors: kandy-io
 Tags: kandy, webrtc, audio, video, chat, streaming, video-streaming, live-streaming, peer-to-peer video, collaboration
 Requires at least: 3.8
 Tested up to: 4.3.1
-Stable tag: 2.4.2
+Stable tag: 2.5.0
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -102,6 +102,11 @@ Home page: http://www.kandy.io/
 7. Kandy Help
 
 == Changelog ==
+= 2.5.0 =
+* Upgrade Kandy JS SDK 2.5.0
+* Implement Screen Sharing feature
+* Implement File Sharing feature
+* Support "anonymous click to call"
 = 2.4.2 =
 * Upgrade Kandy JS SDK 2.4.2
 * Implement getLastSeen function for presence

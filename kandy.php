@@ -3,19 +3,19 @@
  * Plugin Name: Kandy
  * Plugin URI: https://github.com/Kandy-IO/kandy-wordpress
  * Description: Kandy Plugin is a full-service cloud platform that enables real-time communications for business applications.
- * Version: 2.4.2
+ * Version: 2.5.0
  * Text Domain: kandy
  * Author: Kandy-IO
  * Author URI: https://github.com/Kandy-IO
  * License: GPL2
  */
 $pluginURL = is_ssl() ? str_replace("http://", "https://", WP_PLUGIN_URL) : WP_PLUGIN_URL;
-define("KANDY_PLUGIN_VERSION", "2.4.2");
+define("KANDY_PLUGIN_VERSION", "2.5.0");
 define("KANDY_PLUGIN_PREFIX", "kandy");
 define("KANDY_PLUGIN_URL", $pluginURL . "/" . plugin_basename(dirname(__FILE__)));
 define('KANDY_PLUGIN_DIR', dirname(__FILE__));
 define('KANDY_API_BASE_URL', 'https://api.kandy.io/v1.2/');
-define('KANDY_JS_URL', 'https://kandy-portal.s3.amazonaws.com/public/javascript/kandy/2.4.2/kandy.js');
+define('KANDY_JS_URL', 'https://kandy-portal.s3.amazonaws.com/public/javascript/kandy/2.5.0/kandy.js');
 
 define('KANDY_JQUERY', "https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js");
 define('KANDY_JQUERY_RELOAD', false);
