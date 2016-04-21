@@ -149,7 +149,7 @@
 }
 
 .kandyChat .imMessageToSend {
-    width: 96%;
+    width: 100%;
     padding: 7px 2px;
 }
 
@@ -424,11 +424,12 @@
 
 .kandyChat .input-message {
     float: left;
-    width: 87%;
+    width: 84%;
+    position: relative;
 }
 
 .kandyChat .button-send {
-    width: 12%;
+    width: 59px;
     float: right;
 }
 
@@ -631,13 +632,46 @@ iframe {
     display: none !important;
 }
 
-
-
-
-
-
-
 /* Pace */
 .pace .pace-progress {
     z-index: 999999;
+}
+input[type="submit"][disabled]:hover {
+    padding: 10px 2px!important;
+}
+
+.send-file {
+    position: absolute;
+    right: 4px;
+    top: 5px;
+}
+
+.send-file > input {
+    display: none;
+}
+
+.send-file span.icon-file {
+    background: #c4ccbe url(../img/icon-file-black.png) no-repeat center center;
+    display: none;
+    width: 25px;
+    height: 25px;
+    background-size: 15px 15px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.send-file span.icon-file:hover {
+    background-color: #8b9ba5;
+}
+.imMessage > img {
+    width: 75px;
+    border-radius: 5px;
+}
+.imMessage .icon-download {
+    cursor: pointer;
+    color: #007acc;
+    margin-top: 15px;
+    margin-left: 5px;
+    float: right;
+    font-size: 13px;
 }
