@@ -20,7 +20,14 @@ class KandyAssignmentEditPage extends KandyPage
             <a href="<?php echo KandyApi::page_url(array('action' => 'sync')); ?>"
                class="button-primary">
                 <?php _e(
-                    "Sync",
+                    "Sync Kandy Users",
+                    "kandy"
+                ); ?>
+            </a>
+            <a href="<?php echo KandyApi::page_url(array('action' => 'autoassign')); ?>"
+               class="button-primary">
+                <?php _e(
+                    "Auto Assign Kandy Users",
                     "kandy"
                 ); ?>
             </a>
