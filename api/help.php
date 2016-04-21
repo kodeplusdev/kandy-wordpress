@@ -179,6 +179,14 @@
     <li>
         <span style="font-family: 'Lucida Grande', 'Lucida Sans Unicode', sans-serif; font-size: 12px; line-height: 20px;">Shortcode only work with inline format</span>
     </li>
+    <li><strong>Screen Sharing</strong> feature:</li>
+    <ul>
+        <li>Screen sharing can only be used over a secure connection (https)</li>
+        <li>Before testing it, please install this extension on chrome browser:<br/>
+            <a href="https://chrome.google.com/webstore/detail/kandyio-screen-sharing/daohbhpgnnlgkipndobecbmahalalhcp" target="_blank">https://chrome.google.com/webstore/detail/kandyio-screen-sharing/daohbhpgnnlgkipndobecbmahalalhcp</a></li>
+        <li>This extension only works on localhost domain.</li>
+        <li>Finally, you test it on video call feature.</li>
+    </ul>
 </ul>
 
 <p>
