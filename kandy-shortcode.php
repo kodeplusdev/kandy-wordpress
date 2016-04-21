@@ -1570,8 +1570,8 @@ class KandyShortcode
             $user = $liveChatSessionInfo['user'];
         } else {
             $user = (new KandyApi())->getAnonymousUser();
-            $user->full_user_id = $user->email;
             if ($user) {
+                $user->full_user_id = $user->email;
                 $liveChatSessionInfo['user'] = $user;
             }
         }
