@@ -88,6 +88,7 @@ setup = function () {
  */
 kandyLoginSuccessCallback = function () {
     console.log('login success');
+    jQuery('#callBtn').removeAttr('disabled');
     // Have kandy Address Book widget.
     if (jQuery(".kandyAddressBook").length) {
         kandyLoadContactsAddressBook();
@@ -323,6 +324,9 @@ changeAnswerButtonState = function (state, target) {
     var kandyButton = (typeof target !== 'undefined')?jQuery(target):jQuery('.kandyButton');
     switch (state) {
         case 'READY_FOR_CALLING':
+            if (jQuery('#labelConnecting').length > 0) {
+                jQuery('#labelConnecting').text('');
+            }
             $audioRingIn[0].pause();
             $audioRingOut[0].pause();
             kandyButton.find('.kandyVideoButtonSomeonesCalling').hide();
@@ -332,6 +336,9 @@ changeAnswerButtonState = function (state, target) {
             break;
 
         case 'BEING_CALLED':
+            if (jQuery('#labelConnecting').length > 0) {
+                jQuery('#labelConnecting').text('');
+            }
             kandyButton.find('.kandyVideoButtonSomeonesCalling').show();
             kandyButton.find('.kandyVideoButtonCallOut').hide();
             kandyButton.find('.kandyVideoButtonCalling').hide();
@@ -339,6 +346,9 @@ changeAnswerButtonState = function (state, target) {
             break;
 
         case 'CALLING':
+            if (jQuery('#labelConnecting').length > 0) {
+                jQuery('#labelConnecting').text('');
+            }
             kandyButton.find('.kandyVideoButtonSomeonesCalling').hide();
             kandyButton.find('.kandyVideoButtonCallOut').hide();
             kandyButton.find('.kandyVideoButtonCalling').show();
@@ -357,6 +367,9 @@ changeAnswerButtonState = function (state, target) {
             break;
 
         case 'ON_CALL':
+            if (jQuery('#labelConnecting').length > 0) {
+                jQuery('#labelConnecting').text('');
+            }
             kandyButton.find('.kandyVideoButtonSomeonesCalling').hide();
             kandyButton.find('.kandyVideoButtonCallOut').hide();
             kandyButton.find('.kandyVideoButtonCalling').hide();
@@ -443,6 +456,21 @@ kandy_make_video_call = function (target) {
 };
 
 /**
+ * Event when click call button for anonymous user.
+ *
+ * @param target
+ */
+kandy_make_video_call_sso = function (target) {
+    jQuery('#labelConnecting').text('Connecting...');
+    var kandyButtonId = jQuery(target).data('container');
+    activeContainerId = kandyButtonId;
+    var userName = jQuery('#'+kandyButtonId+ ' .kandyVideoButtonCallOut #'+kandyButtonId+'-callOutUserId').val();
+
+    kandy.call.makeCall(userName, true);
+    changeAnswerButtonState("CALLING", '#'+kandyButtonId);
+};
+
+/**
  * Event when answer a voice call.
  *
  * @param target
@@ -475,6 +503,34 @@ kandy_makeVoiceCall = function (target) {
     changeAnswerButtonState("CALLING",'#'+kandyButtonId);
 };
 
+/**
+ * Event when click call button SSO
+ */
+kandy_makeVoiceCallSSO = function (target) {
+    jQuery('#labelConnecting').text('Connecting...');
+    // Make a video call to support
+    var kandyButtonId = jQuery(target).data('container');
+    activeContainerId = kandyButtonId;
+    var userName = jQuery('#'+kandyButtonId+ ' .kandyVideoButtonCallOut #'+kandyButtonId+'-callOutUserId').val();
+
+    kandy.call.makeCall(userName, true);
+    changeAnswerButtonState("CALLING",'#'+kandyButtonId);
+};
+
+/**
+ * Result success when login SSO
+ */
+onLoginSuccess = function () {
+    console.log('login SSO is successful....');
+    jQuery('#callBtn').removeAttr('disabled');
+};
+
+/**
+ * Result error when login SSO
+ */
+onLoginFailure = function () {
+    console.log('Error! Login SSO ....');
+};
 /**
  * Event when click end call button.
  */
@@ -1748,6 +1804,9 @@ jQuery(document).ready(function (jQuery) {
         setup();
         login();
         console.log('login....');
+    } else if (typeof loginSSO == 'function') {
+        setup();
+        loginSSO();
     }
 
     // Active Select2.
