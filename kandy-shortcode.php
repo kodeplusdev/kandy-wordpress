@@ -471,6 +471,12 @@ class KandyShortcode
                         $onCallButtonText = ($attr['oncallbuttontext']);
                     }
 
+                    // Init oncallbuttontext attribute.
+                    $onScreenSharingButtonText = 'Screen Sharing';
+                    if (isset($attr['onscreensharingbuttontext'])) {
+                        $onScreenSharingButtonText = ($attr['onscreensharingbuttontext']);
+                    }
+
                     // Init $holdCallButtonText attribute.
                     $holdCallButtonText = 'Hold Call';
                     if (isset($attr['holdcallbuttontext'])) {
@@ -505,6 +511,7 @@ class KandyShortcode
                             '<div class="kandyButtonComponent kandyVideoButtonOnCall" id="' . $id . '-onCall">' .
                             '<label>' . $onCallLabel . '</label>' .
                             '<input data-container="' . $id . '"  class="btnEndCall" type="button" value="' . $onCallButtonText . '" onclick="kandy_end_call(this)"/>' .
+                            '<input data-container="' . $id . '"  class="btnScreenSharing" type="button" value="' . $onScreenSharingButtonText . '" onclick="toggle_screen_sharing()"/>' .
                             '<input style="visibility: hidden" class="btnHoldCall" type="button" value="' . $holdCallButtonText . '" onclick="kandy_hold_call(this)"/>' .
                             '<input style="visibility: hidden" class="btnResumeCall" type="button" value="' . $resumeCallButtonText . '" onclick="kandy_resume_call(this)"/>' .
                             '</div></div>';
