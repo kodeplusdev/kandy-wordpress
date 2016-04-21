@@ -654,6 +654,7 @@ var get_display_name_for_contact = function (data, url) {
             url: ajax_object.ajax_url,
             type: "POST",
             data: {data: data, 'action': 'kandy_get_name_for_contact'},
+            async: false
         }).done(function (response) {
                 data = JSON.parse(response);
             }).fail(function (e) {
@@ -680,7 +681,8 @@ var getDisplayNameForChatContent = function (msg) {
             jQuery.ajax({
                 url: ajax_object.ajax_url,
                 type: "POST",
-                data: {data: msg, action: 'kandy_get_name_for_chat_content'}
+                data: {data: msg, action: 'kandy_get_name_for_chat_content'},
+                async: false
             }).done(function (response) {
                 msg = JSON.parse(response);
             }).fail(function (e) {

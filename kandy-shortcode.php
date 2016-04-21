@@ -1087,7 +1087,7 @@ class KandyShortcode
                 }
 
             } else {
-                $output = '<p>' . __('Can not setup kandy video. Please contact administrator') . '<p>';
+                $output = '<p>' . __('Can not setup kandy chat. Please contact administrator') . '<p>';
             }
         }
         return $output;
