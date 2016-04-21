@@ -11,6 +11,11 @@ var $audioRingIn = jQuery('<audio>', { loop: 'loop', id: 'ring-in' });
 var $audioRingOut = jQuery('<audio>', { loop: 'loop', id: 'ring-out' });
 var kandyPresence = {};
 var last_seen_interval;
+// Keep track of the callId.
+var callId;
+// Keep track of screen sharing status.
+var isSharing = false;
+
 // Load audio source to DOM to indicate call events
 var audioSource = {
     ringIn: [
@@ -49,7 +54,16 @@ setup = function () {
             callendedfailed: kandyOnCallEndedFailed,
             callinitiated: kandyOnCallInitiate,
             callinitiatefailed: kandyOnCallInitiateFail,
-            callrejected: kandyOnCallRejected
+            callrejected: kandyOnCallRejected,
+
+            // Media Event
+            media: onMediaError,
+            // Screensharing Event
+            callscreenstopped: onStopSuccess
+        },
+        // Reference the default Chrome extension.
+        chromeExtensionId: {
+            chromeExtensionId: 'daohbhpgnnlgkipndobecbmahalalhcp'
         }
     });
 
@@ -140,8 +154,11 @@ kandyPresenceNotificationCallback = function (userId, state, description, activi
  * Event handler for callinitiate
  * @param call
  */
-function kandyOnCallInitiate(call) {
-    jQuery("#" + activeContainerId).attr("data-call-id", call.getId());
+function kandyOnCallInitiate(call, calleeName) {
+    console.log('Making call to ' + calleeName);
+    // Store the callId.
+    callId = call.getId();
+    jQuery("#" + activeContainerId).attr("data-call-id", callId);
     $audioRingIn[0].pause();
     $audioRingOut[0].play();
 }
@@ -150,6 +167,7 @@ function kandyOnCallInitiate(call) {
  * Event handler for callinitiatefail event.
  */
 function kandyOnCallInitiateFail() {
+    callId = null;
     $audioRingOut[0].pause();
 
 }
@@ -158,10 +176,65 @@ function kandyOnCallInitiateFail() {
  * Event handler for callrejected event
  */
 function kandyOnCallRejected() {
+    callId = null;
     $audioRingIn[0].pause();
     UIState.callrejected();
 }
 
+/*-------------Screen Sharing--------------*/
+
+// Called when the media event is triggered.
+function onMediaError(error) {
+    switch(error.type)
+    {
+        case kandy.call.MediaErrors.NOT_FOUND:
+            console.log("No WebRTC support was found.");
+            break;
+        case kandy.call.MediaErrors.NO_SCREENSHARING_WARNING:
+            console.log("WebRTC supported, but no screensharing support was found.");
+            break;
+        default:
+            console.log('Other error or warning encountered.');
+            break;
+    }
+}
+
+// Executed when the user clicks on the 'Toggle Screensharing' button.
+toggle_screen_sharing = function () {
+    // Check if we should start or stop sharing.
+    if(callId && isSharing) {
+        // Stop screensharing.
+        kandy.call.stopScreenSharing(callId, onStopSuccess, onStopFailure);
+    } else {
+        // Start screensharing.
+        kandy.call.startScreenSharing(callId, onStartSuccess, onStartFailure);
+    }
+};
+
+// What to do on a successful screenshare start.
+function onStartSuccess() {
+    console.log('Screensharing started.');
+    jQuery('.btnScreenSharing').val('Stop Screen Sharing');
+    isSharing = true;
+}
+
+// What to do on a failed screenshare start.
+function onStartFailure() {
+    console.log('Failed to start screensharing.');
+}
+
+// What to do on a successful screenshare stop.
+function onStopSuccess() {
+    console.log('Screensharing stopped.');
+    jQuery('.btnScreenSharing').val('Screen Sharing');
+    isSharing = false;
+}
+
+// What to do on a failed screenshare stop.
+function onStopFailure() {
+    console.log('Failed to stop screensharing.');
+}
+/*------------------End screen sharing------------------*/
 /**
  * OnCall Callback.
  *
@@ -191,7 +264,9 @@ kandyIncomingCallCallback = function (call, isAnonymous) {
     $audioRingIn[0].play();
 
     var target = jQuery('.kandyVideoButtonCallOut:visible').get(0).closest('.kandyButton');
-    jQuery(target).attr("data-call-id", call.getId());
+    // Store the callId.
+    callId = call.getId();
+    jQuery(target).attr("data-call-id", callId);
     changeAnswerButtonState('BEING_CALLED',target);
 };
 
@@ -227,6 +302,9 @@ kandyCallEndedCallback = function (call) {
 
     var target = jQuery('.kandyButton[data-call-id="'+ call.getId() +'"]');
     changeAnswerButtonState("READY_FOR_CALLING", target);
+
+    // Update screensharing status.
+    isSharing = false;
 };
 
 /**
@@ -296,6 +374,7 @@ changeAnswerButtonState = function (state, target) {
 kandy_answer_video_call = function (target) {
     var kandyButtonId = jQuery(target).data('container');
     var currentCallId = jQuery("div#" + kandyButtonId).attr("data-call-id");
+    callId = currentCallId;
 
     activeContainerId = kandyButtonId;
     kandy.call.answerCall(currentCallId, true);
@@ -314,6 +393,7 @@ kandy_reject_video_call = function (target) {
 
     var kandyButtonId = jQuery(target).data('container');
     var currentCallId = jQuery("div#" + kandyButtonId).attr("data-call-id");
+    callId = currentCallId;
     kandy.call.rejectCall(currentCallId);
 
     target = jQuery(target).closest('.kandyButton');
@@ -348,12 +428,18 @@ kandy_make_pstn_call = function (target) {
  */
 kandy_make_video_call = function (target) {
 
-    var kandyButtonId = jQuery(target).data('container');
-    activeContainerId = kandyButtonId;
-    var userName = jQuery('#'+kandyButtonId+ ' .kandyVideoButtonCallOut #'+kandyButtonId+'-callOutUserId').val();
+    if (callId) {
+        // Tell Kandy to end the call.
+        kandy.call.endCall(callId);
+        callId = null;
+    } else {
+        var kandyButtonId = jQuery(target).data('container');
+        activeContainerId = kandyButtonId;
+        var userName = jQuery('#'+kandyButtonId+ ' .kandyVideoButtonCallOut #'+kandyButtonId+'-callOutUserId').val();
 
-    kandy.call.makeCall(userName, true);
-    changeAnswerButtonState("CALLING", '#'+kandyButtonId);
+        kandy.call.makeCall(userName, true);
+        changeAnswerButtonState("CALLING", '#'+kandyButtonId);
+    }
 };
 
 /**
@@ -397,6 +483,9 @@ kandy_end_call = function (target) {
 
     var currentCallId = jQuery("div#" + kandyButtonId).attr("data-call-id");
     kandy.call.endCall(currentCallId);
+    if (callId) {
+        callId = null;
+    }
     activeContainerId = kandyButtonId;
     if (typeof end_call_callback == 'function') {
         end_call_callback('READY_FOR_CALLING');
@@ -410,7 +499,7 @@ kandy_end_call = function (target) {
 kandy_hold_call = function (target) {
     var kandyButtonId = jQuery(target).data('container');
     var currentCallId = jQuery("#" + kandyButtonId).attr("data-call-id");
-
+    callId = currentCallId;
     kandy.call.holdCall(currentCallId);
 
     activeContainerId = kandyButtonId;
@@ -427,7 +516,7 @@ kandy_hold_call = function (target) {
 kandy_resume_call = function (target) {
     var kandyButtonId = jQuery(target).data('container');
     var currentCallId = jQuery("#" + kandyButtonId).attr("data-call-id");
-
+    callId = currentCallId;
     kandy.call.unHoldCall(currentCallId);
 
     activeContainerId = kandyButtonId;
