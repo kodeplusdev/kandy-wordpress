@@ -20,6 +20,10 @@ class RestClient
      */
     public function get($uri, $headers = array(), $timeout = 30)
     {
+        if (!function_exists('curl_init')) {
+            throw new RestClientException('curl_init functions are not available.');
+        }
+
         $ch = curl_init($uri);
 
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
@@ -57,6 +61,10 @@ class RestClient
      */
     public function post($uri, $payload, $headers = array(), $timeout = 30)
     {
+        if (!function_exists('curl_init')) {
+            throw new RestClientException('curl_init functions are not available.');
+        }
+
         $ch = curl_init($uri);
 
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
@@ -95,6 +103,10 @@ class RestClient
      */
     public function put($uri, $payload, $headers = array(), $timeout = 30)
     {
+        if (!function_exists('curl_init')) {
+            throw new RestClientException('curl_init functions are not available.');
+        }
+
         $ch = curl_init($uri);
 
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
@@ -132,6 +144,10 @@ class RestClient
      */
     public function delete($uri, $headers = array(), $timeout = 30)
     {
+        if (!function_exists('curl_init')) {
+            throw new RestClientException('curl_init functions are not available.');
+        }
+
         $ch = curl_init($uri);
 
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
