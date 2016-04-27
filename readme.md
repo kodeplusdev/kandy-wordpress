@@ -25,8 +25,13 @@ Kandy Wordpress Plugin help you use kandy in your website easily by following st
         callingLabel = "Calling..."
         callingButtonText = "End Call"
         onCallLabel = "You are connected!"
-        onCallButtonText = "End Call"]
+        onCallButtonText = "End Call"
+        callto = "user_kandy@domain.com"
+        anonymous = "true"]
 ```
+*Note*:
+Attribute "callto" and anonymous are optional
+
 **Kandy Video**: make a video component (video call)
 ```sh
 [kandyVideo 
@@ -52,7 +57,11 @@ Kandy Wordpress Plugin help you use kandy in your website easily by following st
         callto = "0123456789"
         anonymous = "true"]
 ```
-  
+*Note*:
+Attribute "type", "callto" and "anonymous" are optional
+Attribute "type" is PSTN and callto is phone number or "type" is empty
+If anonymous is true, callto attribute is kandy email.
+
 **Kandy Status**: make a kandy user status component (available, unavailable, awway, busy....). Kandy Status usually use with kandy address book component.
 ```sh
 [kandyStatus
@@ -113,7 +122,7 @@ or
 
 **Kandy Video Call**: use a video call button and two video(**myVideo** and **theirVideo** id is required).
    ```sh
-[kandyVideoButton class="myButtonStyle"]
+[kandyVideoButton class="myButtonStyle" callto="user_kandy@domain.com" anonymous="true"]
 [kandyVideo title="Me" id="myVideo" style = "width: 300px;height: 225px;"]
 [kandyVideo title="Their" id="theirVideo" style = "width:300px;height: 225px;"]
 ```
