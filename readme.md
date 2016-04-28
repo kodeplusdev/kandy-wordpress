@@ -58,9 +58,12 @@ Attribute "callto" and anonymous are optional
         anonymous = "true"]
 ```
 *Note*:
-Attribute "type", "callto" and "anonymous" are optional
-Attribute "type" is PSTN and callto is phone number or "type" is empty
-If anonymous is true, callto attribute is kandy email.
+
+If `type` is `PSTN`, `callto` is a phone number.
+If `type` is not specified, `callto` is `kandy_user_name@domain.com`.
+
+If `anonymous` is `true`, users don't need to login to call.
+If `anonymous` is `false` (default), `callto` could be removed as the callee will be entered through GUI.
 
 **Kandy Status**: make a kandy user status component (available, unavailable, awway, busy....). Kandy Status usually use with kandy address book component.
 ```sh
