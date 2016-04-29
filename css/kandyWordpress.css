@@ -686,7 +686,9 @@ input[type="submit"][disabled]:hover {
 }
 .imMessage > img {
     width: 75px;
+    height: 75px;
     border-radius: 5px;
+    object-fit: cover;
 }
 .imMessage .icon-download {
     cursor: pointer;

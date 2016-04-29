@@ -1970,8 +1970,15 @@ jQuery(document).ready(function (jQuery) {
                 // Set focus.
                 selectedContent.find(".imMessageToSend").focus();
 
-                var sendFile = jQuery(liContentWrapSelector + ' li[data-content="'+selectedTab+'"] form .icon-file');
-                sendFile.css('display', 'block');
+                var realId = selectedItem.data('real-id');
+                if (typeof realId == "undefined") {
+                    realId = selectedTab;
+                }
+
+                if (realId.indexOf("anonymous") < 0) {
+                    var sendFile = jQuery(liContentWrapSelector + ' li[data-content="'+selectedTab+'"] form .icon-file');
+                    sendFile.css('display', 'block');
+                }
 
                 // Set chat heading.
                 jQuery(".chat-with-message").show();
