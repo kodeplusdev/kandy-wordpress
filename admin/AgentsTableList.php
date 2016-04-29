@@ -49,7 +49,7 @@ class AgentsTableList extends WP_List_Table
             'id'            => __("ID", 'kandy'),
             'user_email'      => __('Email', 'kandy'),
             'user_nicename'      => __('Name', 'kandy'),
-            'kandy_user' => __('Kandy User', 'kandy'),
+            'kandy_user' => __('Kandy Username', 'kandy'),
             'average' => __('Average', 'kandy'),
             'action'        => __('Action', 'kandy')
         );

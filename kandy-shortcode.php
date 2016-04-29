@@ -1412,12 +1412,15 @@ class KandyShortcode
     function register_kandy_tinymce_button($buttons)
     {
         array_push($buttons, "|", "kandyVideo");
+        array_push($buttons, "|", "kandyVideoAnonymous");
         array_push($buttons, "|", "kandyVoice");
-        array_push($buttons, "|", "kandyPresence");
+        array_push($buttons, "|", "kandyVoiceAnonymous");
         array_push($buttons, "|", "kandyChat");
-        array_push($buttons, "|", 'kandyLiveChat');
-        array_push($buttons, "|", "kandyCoBrowsing");
         array_push($buttons, "|", "kandySms");
+        array_push($buttons, "|", "kandyCoBrowsing");
+        array_push($buttons, "|", 'kandyLiveChat');
+        array_push($buttons, "|", "kandyPresence");
+
         return $buttons;
     }
 
@@ -1431,12 +1434,15 @@ class KandyShortcode
     {
 
         $plugin_array['kandyVideo'] = KANDY_PLUGIN_URL . '/js/tinymce/KandyVideo.js';
+        $plugin_array['kandyVideoAnonymous'] = KANDY_PLUGIN_URL . '/js/tinymce/KandyVideoAnonymous.js';
         $plugin_array['kandyVoice'] = KANDY_PLUGIN_URL . '/js/tinymce/KandyVoice.js';
-        $plugin_array['kandyPresence'] = KANDY_PLUGIN_URL . '/js/tinymce/KandyPresence.js';
+        $plugin_array['kandyVoiceAnonymous'] = KANDY_PLUGIN_URL . '/js/tinymce/KandyVoiceAnonymous.js';
         $plugin_array['kandyChat'] = KANDY_PLUGIN_URL . '/js/tinymce/KandyChat.js';
+        $plugin_array['kandySms'] = KANDY_PLUGIN_URL . '/js/tinymce/KandySms.js';
         $plugin_array['kandyCoBrowsing'] = KANDY_PLUGIN_URL . '/js/tinymce/KandyCoBrowsing.js';
         $plugin_array['kandyLiveChat'] = KANDY_PLUGIN_URL . '/js/tinymce/KandyLiveChat.js';
-        $plugin_array['kandySms'] = KANDY_PLUGIN_URL . '/js/tinymce/KandySms.js';
+        $plugin_array['kandyPresence'] = KANDY_PLUGIN_URL . '/js/tinymce/KandyPresence.js';
+
         return $plugin_array;
     }
 

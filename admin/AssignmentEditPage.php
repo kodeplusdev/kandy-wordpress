@@ -83,9 +83,9 @@ class KandyAssignmentEditPage extends KandyPage
                                 </tr>
 
                                 <tr valign="top" id="kandy_user_row">
-                                    <th style="width:100px;" scope="row" id="kandy_user_id_label">
+                                    <th style="width:150px;" scope="row" id="kandy_user_id_label">
                                         <label for="kandy_user_id">
-                                            <?php _e("Kandy User", "kandy") ?>
+                                            <?php _e("Kandy Username", "kandy") ?>
                                         </label>
                                     </th>
                                     <td id="kandy_user_id_field">

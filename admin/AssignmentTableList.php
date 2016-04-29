@@ -48,7 +48,7 @@ class AssignTableList extends WP_List_Table
             'ID'            => __("ID", 'kandy'),
             'username'      => __('Username', 'kandy'),
             'name'      => __('Name', 'kandy'),
-            'kandy_user_id' => __('Kandy User', 'kandy'),
+            'kandy_user_id' => __('Kandy Username', 'kandy'),
             'action'        => __('Action', 'kandy')
         );
         return $columns;
