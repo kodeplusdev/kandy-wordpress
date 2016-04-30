@@ -1300,6 +1300,12 @@ class KandyShortcode
                             <div class="formChat" style="">
                                 <form id="formChat">
                                     <input type="text" value="" name="message" id="messageToSend" placeholder="Type here and press Enter to send">
+                                    <div class="send-file">
+                                        <label for="send-file">
+                                            <span class="icon-file"></span>
+                                        </label>
+                                        <input id="send-file" type="file" />
+                                    </div>
                                 </form>
                             </div>
                     </div>
@@ -1783,7 +1789,9 @@ class KandyShortcode
             $kandyUser = KandyApi::getAssignUser($currentUser->ID);
         } elseif (isset($_SESSION['kandyLiveChatUserInfo']['user'])) {
             $kandyUserId = $_SESSION['kandyLiveChatUserInfo']['user'];
-            $kandyUser = KandyApi::getUserByUserId($kandyUserId);
+            if (!is_object($kandyUserId)) {
+                $kandyUser = KandyApi::getUserByUserId($kandyUserId);
+            }
         }
         if ($kandyUser) {
             $wpdb->update(

@@ -24,6 +24,10 @@
     display: none;
 }
 
+.liveChat #customerInfo > button[type=submit] {
+    margin-top: 10px;
+}
+
 .liveChat #registerForm {
     padding: 20px;
     display: none;
@@ -51,10 +55,12 @@
 
 .liveChat form {
     margin-top: 20px;
+    position: relative;
 }
 
 .liveChat input[type="text"]{
     height: 40px;
+    padding-right: 35px;
 }
 
 .liveChat #messageBox .my-message {
@@ -63,6 +69,7 @@
 
 .liveChat #messageBox .their-message {
     color: #ff2f5d;
+    display: inline-block;
 }
 
 .liveChat #messageBox .username {
@@ -80,6 +87,47 @@
 .liveChat .formChat {
     padding: 20px 20px 0 20px;
     display: none;
+}
+
+.send-file {
+    position: absolute;
+    right: 4px;
+    top: 8px;
+}
+
+.send-file > input {
+    display: none;
+}
+
+.send-file span.icon-file {
+    background: #c4ccbe url(../img/icon-file-black.png) no-repeat center center;
+    display: none;
+    width: 25px;
+    height: 25px;
+    background-size: 15px 15px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.send-file span.icon-file:hover {
+    background-color: #8b9ba5;
+}
+
+.imMessage {
+    display: inline-block;
+}
+
+.imMessage > img {
+    width: 75px;
+    height: 75px;
+    border-radius: 5px;
+    object-fit: cover;
+}
+.imMessage .icon-download {
+    cursor: pointer;
+    color: #007acc;
+    font-size: 13px;
+    float: left;
 }
 
 .liveChat #restoreBtn {

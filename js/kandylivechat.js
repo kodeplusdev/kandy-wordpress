@@ -10,13 +10,20 @@ LiveChatUI.changeState = function(state){
             jQuery('.liveChat #waiting').show();
             jQuery(".liveChat #registerForm").hide();
             jQuery(".liveChat .customerService ,.liveChat #messageBox, .liveChat .formChat").hide();
+            jQuery("div.send-file span.icon-file").css("display", "none");
             break;
         case 'READY':
             jQuery(".liveChat #registerForm").hide();
             jQuery('.liveChat #waiting').hide();
             jQuery(".liveChat .customerService, .liveChat #messageBox, .liveChat .formChat").show();
             jQuery('.liveChat .agentName').html(agent.username);
-            jQuery(".liveChat #messageBox li.their-message span.username").html(agent.username);
+            jQuery('.liveChat .agentName').attr("data-full_user_id", agent.full_user_id);
+            if (!agent.full_user_id) {
+                jQuery(".liveChat .icon-file").hide();
+            } else {
+                jQuery("div.send-file span.icon-file").css("display", "block");
+            }
+            jQuery(".liveChat ul > li.their-message:first-child span.username").html(agent.username);
             jQuery(".liveChat .handle.closeChat").show();
             break;
         case "UNAVAILABLE":
@@ -30,6 +37,7 @@ LiveChatUI.changeState = function(state){
         case "RATING":
             jQuery(".liveChat #ratingForm").show();
             jQuery(".liveChat .customerService, .liveChat #messageBox, .liveChat .formChat").hide();
+            jQuery("div.send-file span.icon-file").css("display", "none");
             break;
         case "ENDING_CHAT":
             jQuery(".liveChat #ratingForm form").hide();
@@ -39,6 +47,7 @@ LiveChatUI.changeState = function(state){
         default :
             jQuery('.liveChat #registerForm').show();
             jQuery(".liveChat .customerService, .liveChat #messageBox, .liveChat .formChat").hide();
+            jQuery("div.send-file span.icon-file").css("display", "none");
             break;
     }
 };
@@ -100,6 +109,9 @@ var getKandyUsers = function(){
                 }
                 setup();
                 agent = res.agent;
+                if (typeof agent.main_user_id == "undefined") {
+                    getKandyUsers();
+                }
                 rateData.agent_id = agent.main_user_id;
                 heartBeat(60000);
             }else{
@@ -141,20 +153,85 @@ var sendIM = function(username, message){
 
 var onMessage = function(msg){
     if(msg){
-        if(msg.messageType == 'chat' && msg.contentType === 'text' && msg.message.mimeType == 'text/plain') {
-            if (msg.messageType == 'chat') {
-                var sender = agent.username;
-                var message = msg.message.text;
-                var messageBox = jQuery("#messageBox");
-                messageBox.find("ul").append("<li class='their-message'><span class='username'>" + sender + ": </span>" + message + "</li>");
-                messageBox.scrollTop(messageBox[0].scrollHeight);
+        if(msg.messageType == 'chat') {
+            var sender = agent.username;
+            var message = msg.message.text;
+            var messageBox = jQuery("#messageBox");
+            var newMessage = "<li class='their-message'><span class='username'>" + sender + ": </span>";
+
+            if (msg.contentType === 'text' && msg.message.mimeType == 'text/plain') {
+                newMessage += '<span class="imMessage">' + message + '</span>';
+            } else {
+                var fileUrl = kandy.messaging.buildFileUrl(msg.message.content_uuid);
+                var html = '';
+                if (msg.contentType == 'image') {
+                    html = '<img src="' + fileUrl + '">';
+                }
+                html += '<a class="icon-download" href="' + fileUrl + '" target="_blank">' + msg.message.content_name + '</a>';
+                newMessage += '<span class="imMessage">' + html + '</span>';
             }
+
+            newMessage += '</li>';
+
+            messageBox.find("ul").append(newMessage);
+            messageBox.scrollTop(messageBox[0].scrollHeight);
         }
     }
 
 };
 
+// Gather the user input then send the image.
+send_file = function () {
+    // Gather user input.
+    var recipient = jQuery('.liveChat .agentName').data("full_user_id");
+    var file = jQuery("#send-file")[0].files[0];
+
+    if (file.type.indexOf('image') >=0) {
+        kandy.messaging.sendImWithImage(recipient, file, onFileSendSuccess, onFileSendFailure);
+    } else if (file.type.indexOf('audio') >=0) {
+        kandy.messaging.sendImWithAudio(recipient, file, onFileSendSuccess, onFileSendFailure);
+    } else if (file.type.indexOf('video') >=0) {
+        kandy.messaging.sendImWithVideo(recipient, file, onFileSendSuccess, onFileSendFailure);
+    } else if (file.type.indexOf('vcard') >=0) {
+        kandy.messaging.sendImWithContact(recipient, file, onFileSendSuccess, onFileSendFailure);
+    } else {
+        kandy.messaging.sendImWithFile(recipient, file, onFileSendSuccess, onFileSendFailure);
+    }
+};
+
+// What to do on a file send success.
+function onFileSendSuccess(message) {
+    console.log(message.message.content_name + " sent successfully.");
+    var messageBox = jQuery("#messageBox");
+    var newMessage = "<li class='my-message'><span class='username'>Me: </span>";
+    var fileUrl = kandy.messaging.buildFileUrl(message.message.content_uuid);
+    var html = '';
+    if (message.contentType == 'image') {
+        html = '<img src="' + fileUrl + '">';
+    }
+    html += '<a class="icon-download" href="' + fileUrl + '" target="_blank">' + message.message.content_name + '</a>';
+    newMessage += '<span class="imMessage">' + html + '</span>';
+    newMessage += '</li>';
+
+    messageBox.find("ul").append(newMessage);
+    messageBox.scrollTop(messageBox[0].scrollHeight);
+}
+
+// What to do on a file send failure.
+function onFileSendFailure() {
+    console.log("File send failure.");
+}
+
 jQuery(function(){
+    if (jQuery(".liveChat").length) {
+        jQuery(document).on('change', "input[type=file]", function (e){
+            var fileName = jQuery(this).val();
+            if (fileName != '') {
+                send_file();
+            }
+        });
+    }
+
     //hide vs restore box chat
     jQuery(".handle.minimize, #restoreBtn").click(function(){
         jQuery(".liveChat").toggleClass('kandy_hidden');

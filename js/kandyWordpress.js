@@ -1067,11 +1067,10 @@ var kandy_onMessage = function(msg) {
         // Process message
         if ((msg.hasOwnProperty('message'))) {
             var message = msg.message.text;
-            var newMessage = '<div class="their-message">\
-                            <b><span class="imUsername">' + displayName + ': </span></b>';
+            var newMessage = '<div class="their-message"><span class="imUsername">' + displayName + ':</span>';
 
             if (msg.contentType === 'text' && msg.message.mimeType == 'text/plain') {
-                newMessage += '<span class="imMessage">' + message + '</span>';
+                newMessage += '<span class="imMessage" style="margin-left: 5px">' + message + '</span>';
             } else {
                 var fileUrl = kandy.messaging.buildFileUrl(msg.message.content_uuid);
                 var html = '';
@@ -1095,7 +1094,14 @@ var kandy_onMessage = function(msg) {
 // Gather the user input then send the image.
 send_file = function () {
     // Gather user input.
-    var recipient = jQuery(".contacts a.selected").data('content');
+    var recipient = jQuery(".livechats a.selected").data('real-id');
+    if (typeof recipient == "undefined") {
+        recipient = jQuery(".contacts a.selected").data('content');
+        if (typeof recipient == "undefined") {
+            recipient = jQuery(".cd-tabs-content form.send-message").data('real-id');
+        }
+    }
+
     var file = jQuery("#send-file")[0].files[0];
 
     if (file.type.indexOf('image') >=0) {
@@ -1970,15 +1976,8 @@ jQuery(document).ready(function (jQuery) {
                 // Set focus.
                 selectedContent.find(".imMessageToSend").focus();
 
-                var realId = selectedItem.data('real-id');
-                if (typeof realId == "undefined") {
-                    realId = selectedTab;
-                }
-
-                if (realId.indexOf("anonymous") < 0) {
-                    var sendFile = jQuery(liContentWrapSelector + ' li[data-content="'+selectedTab+'"] form .icon-file');
-                    sendFile.css('display', 'block');
-                }
+                var sendFile = jQuery(liContentWrapSelector + ' li[data-content="'+selectedTab+'"] form .icon-file');
+                sendFile.css('display', 'block');
 
                 // Set chat heading.
                 jQuery(".chat-with-message").show();

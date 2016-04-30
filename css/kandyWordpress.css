@@ -224,6 +224,10 @@
     width: 100%;
 }
 
+.kandyChat .their-message .imUsername {
+    font-weight: bold;
+}
+
 .kandyChat .cd-tabs-navigation li a{
 
     text-indent: 16px;
