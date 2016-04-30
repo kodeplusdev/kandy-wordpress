@@ -1075,7 +1075,7 @@ var kandy_onMessage = function(msg) {
                 var fileUrl = kandy.messaging.buildFileUrl(msg.message.content_uuid);
                 var html = '';
                 if (msg.contentType == 'image') {
-                    html = '<img src="' + fileUrl + '">';
+                    html = '<div class="wrapper-img"><img src="' + fileUrl + '"></div>';
                 }
                 html += '<a class="icon-download" href="' + fileUrl + '" target="_blank">' + msg.message.content_name + '</a>';
                 newMessage += '<span class="imMessage">' + html + '</span>';
@@ -1129,7 +1129,7 @@ function onFileSendSuccess(message) {
     var fileUrl = kandy.messaging.buildFileUrl(message.message.content_uuid);
     var html = '';
     if (message.contentType == 'image') {
-        html = '<img src="' + fileUrl + '">';
+        html = '<div class="wrapper-img"><img src="' + fileUrl + '"></div>';
     }
     html += '<a class="icon-download" href="' + fileUrl + '" target="_blank">' + message.message.content_name + '</a>';
     newMessage += '<span class="imMessage">' + html + '</span>';

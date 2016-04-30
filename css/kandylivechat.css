@@ -9,23 +9,25 @@
 }
 
 .liveChat .header {
-    background-color: #34302A;
+    background-color: #287484;
     color: #FFFFFF;
-    font-size: 20px;
+    font-size: 16px;
     font-weight: bold;
-    padding: 10px;
+    padding: 5px 10px;
 }
 
 .liveChat #messageBox {
-    height: 200px;
-    padding: 20px;
+    height: 220px;
+    padding: 10px;
     overflow-x: hidden;
     overflow-y: auto;
     display: none;
+    font-size: 13px;
 }
 
 .liveChat #customerInfo > button[type=submit] {
     margin-top: 10px;
+    background-color: #287484;
 }
 
 .liveChat #registerForm {
@@ -39,8 +41,8 @@
 
 .liveChat .handle, .liveChat #restoreBtn {
     display: inline-block;
-    width: 18px;
-    height: 18px;
+    width: 15px;
+    height: 15px;
     color: #FFFFFF;
     float: right;
 }
@@ -61,6 +63,11 @@
 .liveChat input[type="text"]{
     height: 40px;
     padding-right: 35px;
+    font-size: 13px;
+}
+
+#messageBox .imMessage {
+    margin-left: 5px;
 }
 
 .liveChat #messageBox .my-message {
@@ -69,11 +76,12 @@
 
 .liveChat #messageBox .their-message {
     color: #ff2f5d;
-    display: inline-block;
+    font-size: 13px;
 }
 
 .liveChat #messageBox .username {
     font-weight: bold;
+    float: left;
 }
 
 .liveChat.kandy_hidden .liveChatBody, .liveChat.kandy_hidden .handle{
@@ -82,10 +90,11 @@
 
 .liveChat.kandy_hidden #restoreBtn {
     display: inline-block;
+    margin-top: 7px;
 }
 
 .liveChat .formChat {
-    padding: 20px 20px 0 20px;
+    padding: 0 10px;
     display: none;
 }
 
@@ -117,11 +126,12 @@
     display: inline-block;
 }
 
-.imMessage > img {
+.imMessage img {
     width: 75px;
     height: 75px;
     border-radius: 5px;
     object-fit: cover;
+    display: block;
 }
 .imMessage .icon-download {
     cursor: pointer;
@@ -135,22 +145,20 @@
 }
 
 .liveChat .customerService {
-    padding: 20px;
-    margin-bottom: 20px;
+    padding: 10px 20px;
     background-color: #f6f6f6;
-    height: 80px;
+    height: 70px;
     display: none;
 }
 
-.liveChat .customerService .helpdeskInfo {
-    padding: 10px;
+.liveChat #btnSendRate {
+    margin-top: 15px;
 }
-
 
 .liveChat .customerService .helpdeskInfo .title {
     font-size: 13px;
     line-height: 10px;
-    padding: 5px;
+    padding-top: 5px;
 }
 
 .liveChat .customerService .avatar {

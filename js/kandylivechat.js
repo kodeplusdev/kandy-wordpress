@@ -141,7 +141,7 @@ var endChatSession = function(){
 var sendIM = function(username, message){
     kandy.messaging.sendIm(username, message, function () {
             var messageBox = jQuery("#messageBox");
-            messageBox.find("ul").append("<li class='my-message'><span class='username'>Me: </span>"+jQuery("#messageToSend").val()+"</li>");
+            messageBox.find("ul").append("<li class='my-message'><span class='username'>Me:</span><span class='imMessage'>"+jQuery("#messageToSend").val()+"</span></li>");
             jQuery("#formChat")[0].reset();
             messageBox.scrollTop(messageBox[0].scrollHeight);
         },
@@ -165,7 +165,7 @@ var onMessage = function(msg){
                 var fileUrl = kandy.messaging.buildFileUrl(msg.message.content_uuid);
                 var html = '';
                 if (msg.contentType == 'image') {
-                    html = '<img src="' + fileUrl + '">';
+                    html = '<div class="wrapper-img"><img src="' + fileUrl + '"></div>';
                 }
                 html += '<a class="icon-download" href="' + fileUrl + '" target="_blank">' + msg.message.content_name + '</a>';
                 newMessage += '<span class="imMessage">' + html + '</span>';
@@ -207,7 +207,7 @@ function onFileSendSuccess(message) {
     var fileUrl = kandy.messaging.buildFileUrl(message.message.content_uuid);
     var html = '';
     if (message.contentType == 'image') {
-        html = '<img src="' + fileUrl + '">';
+        html = '<div class="wrapper-img"><img src="' + fileUrl + '"></div>';
     }
     html += '<a class="icon-download" href="' + fileUrl + '" target="_blank">' + message.message.content_name + '</a>';
     newMessage += '<span class="imMessage">' + html + '</span>';
