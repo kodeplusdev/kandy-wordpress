@@ -66,6 +66,10 @@
     font-size: 13px;
 }
 
+#waiting > p:first-letter {
+    text-transform:capitalize;
+}
+
 #messageBox .imMessage {
     margin-left: 5px;
 }

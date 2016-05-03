@@ -1581,10 +1581,16 @@ class KandyShortcode
         if (isset($liveChatSessionInfo['user'])) {
             $user = $liveChatSessionInfo['user'];
         } else {
-            $user = (new KandyApi())->getAnonymousUser();
-            if ($user) {
-                $user->full_user_id = $user->email;
+            $result = (new KandyApi())->getAnonymousUser();
+            if ($result['success'] == true) {
+                $user = $result['user'];
                 $liveChatSessionInfo['user'] = $user;
+            } else {
+                echo json_encode(array(
+                    'message' => $result['message'],
+                    'status' => 'fail'
+                ));
+                exit;
             }
         }
         if (isset($liveChatSessionInfo['agent'])) {

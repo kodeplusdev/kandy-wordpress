@@ -1,7 +1,7 @@
 /**
  * Created by Khanh on 28/5/2015.
  */
-
+var message;
 var LiveChatUI = {};
 var checkAvailable;
 LiveChatUI.changeState = function(state){
@@ -31,7 +31,11 @@ LiveChatUI.changeState = function(state){
             jQuery(".liveChat #loading").hide();
             break;
         case "RECONNECTING":
-            jQuery(".liveChat #waiting p").html('Chat agents not available, please wait...');
+            if (message != null) {
+                jQuery(".liveChat #waiting p").html(message);
+            } else {
+                jQuery(".liveChat #waiting p").html('Chat agents not available, please wait...');
+            }
             jQuery(".liveChat #loading").show();
             break;
         case "RATING":
@@ -97,6 +101,7 @@ var getKandyUsers = function(){
                 LiveChatUI.changeState('RECONNECTING');
             }
             if(res.status == 'success'){
+                message = null;
                 if(checkAvailable){
                     clearInterval(checkAvailable);
                 }
@@ -115,6 +120,10 @@ var getKandyUsers = function(){
                 rateData.agent_id = agent.main_user_id;
                 heartBeat(60000);
             }else{
+                if (res.message) {
+                    console.log('Error! ' + res.message);
+                    message = res.message;
+                }
                 if(!checkAvailable){
                     checkAvailable = setInterval(getKandyUsers, 5000);
                 }
