@@ -407,14 +407,14 @@ class KandyShortcode
 
                     //init anonymous attribute
                     $anonymous = false;
-                    if (isset($attr['anonymous']) && empty($current_user->ID)) {
-                        $anonymous = $attr['anonymous'];
+                    if (isset($attr['anonymous']) && $attr['anonymous'] == "true") {
+                        $anonymous = true;
                     }
 
                     // Init incominglabel attribute.
                     $callTo = '';
-                    if (isset($attr['callto']) && empty($current_user->ID)) {
-                        $callTo = ($attr['callto']);
+                    if (isset($attr['callto'])) {
+                        $callTo = $attr['callto'];
                     }
 
                     // Init incominglabel attribute.
@@ -592,13 +592,13 @@ class KandyShortcode
 
                     //init anonymous attribute
                     $anonymous = false;
-                    if (isset($attr['anonymous'])) {
-                        $anonymous = $attr['anonymous'];
+                    if (isset($attr['anonymous']) && $attr['anonymous'] == "true") {
+                        $anonymous = true;
                     }
 
                     // Init incominglabel attribute.
                     $callTo = '';
-                    if (isset($attr['callto']) && ((strtoupper($callType) == KANDY_PSTN_TYPE && !empty($current_user->ID)) || (strtoupper($callType) != KANDY_PSTN_TYPE && empty($current_user->ID)))) {
+                    if (isset($attr['callto']) && ((strtoupper($callType) == KANDY_PSTN_TYPE && !empty($current_user->ID)) || (strtoupper($callType) != KANDY_PSTN_TYPE))) {
                         $callTo = ($attr['callto']);
                     }
 
@@ -762,7 +762,7 @@ class KandyShortcode
                                 '<input data-container="' . $id . '"  style="visibility: hidden" class="btnHoldCall" type="button" value="' . $holdCallButtonText . '" onclick="kandy_hold_call(this)"/>' .
                                 '<input data-container="' . $id . '"  style="visibility: hidden" class="btnResumeCall" type="button" value="' . $resumeCallButtonText . '" onclick="kandy_resume_call(this)"/>' .
                                 '</div><div class="videoVoiceCallHolder"><div id="theirVideo" class="video"></div></div></div>';
-                        } elseif (!empty($callTo) && !empty($result['assignUser'])) {
+                        } elseif (!empty($callTo) && !empty($result['assignUser']) && $anonymous == false) {
                             $output = '<div class="' . $class . '" id ="' . $id . '" data-call-id="">' .
                                 '<div class="kandyButtonComponent kandyVideoButtonSomeonesCalling" id="' . $id . '-incomingCall">' .
                                 '<label>' . $incomingLabel . '</label>' .

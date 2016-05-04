@@ -7,7 +7,7 @@
                 onclick : function() {
                     //var posts = prompt("Number of posts", "1");
                     //var text = prompt("List Heading", "This is the heading text");
-                    ed.execCommand('mceInsertContent', false, '[kandyVoiceButton class= "myButtonStyle" id ="my-voice-button" callto="kandy_username@domain.com" anonymous=true]');
+                    ed.execCommand('mceInsertContent', false, '[kandyVoiceButton class= "myButtonStyle" id ="my-voice-button" callOutButtonText="Call Us" callto="kandy_username@domain.com" anonymous="true"]');
                 }
             });
         },
