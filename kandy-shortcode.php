@@ -1573,9 +1573,6 @@ class KandyShortcode
         $fakeEndTime = PHP_INT_MAX;
         //get all unassigned users
         $kandyUserTable = $wpdb->prefix . 'kandy_users';
-        $kandyLiveChatUser = get_option('kandy_live_chat_users', '[]');
-        $kandyLiveChatUser = json_decode($kandyLiveChatUser);
-        $kandyLiveChatUser = implode('","', $kandyLiveChatUser);
         $userLoginTable = $wpdb->prefix . 'kandy_user_login';
         $kandyLiveChatTable = $wpdb->prefix . 'kandy_live_chat';
         $userTable = $wpdb->prefix . 'users';
@@ -1589,6 +1586,7 @@ class KandyShortcode
             if ($result['success'] == true) {
                 $user = $result['user'];
                 $liveChatSessionInfo['user'] = $user;
+                $_SESSION['kandyLiveChatUserInfo']['user'] = $user;
             } else {
                 echo json_encode(array(
                     'message' => $result['message'],
@@ -1624,6 +1622,7 @@ class KandyShortcode
             $agent = current($agent);
             if ($agent) {
                 $liveChatSessionInfo['agent'] = $agent->user_id;
+                $_SESSION['kandyLiveChatUserInfo']['agent'] = $agent->user_id;
             }
         }
         if ($user && $agent) {
