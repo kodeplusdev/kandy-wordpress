@@ -39,6 +39,7 @@ class KandyShortcode
         add_action('wp_ajax_kandy_get_name_for_chat_content', array(__CLASS__, 'kandy_get_name_for_chat_content_callback'));
         add_action('wp_ajax_nopriv_kandy_register_guest', array(__CLASS__, 'kandy_register_guest'));
         add_action('wp_ajax_nopriv_kandy_get_free_user', array(__CLASS__, 'kandy_get_free_user'));
+        add_action('wp_ajax_kandy_get_free_user', array(__CLASS__, 'kandy_get_free_user'));
         add_action('wp_ajax_nopriv_kandy_end_chat_session', array(__CLASS__, 'kandy_end_chat_session'));
         add_action('wp_ajax_nopriv_kandy_rate_agent', array(__CLASS__, 'kandy_rate_agent'));
         add_action('wp_ajax_kandy_add_chat_agent', array(__CLASS__, 'kandy_add_chat_agent'));
