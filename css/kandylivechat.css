@@ -30,6 +30,11 @@
     background-color: #287484;
 }
 
+.liveChat #customerInfo span.error {
+    color: red;
+    display: block;
+}
+
 .liveChat #registerForm {
     padding: 20px;
     display: none;
