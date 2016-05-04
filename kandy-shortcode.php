@@ -1385,7 +1385,7 @@ class KandyShortcode
     {
         $result = (new KandyApi())->getAnonymousUser();
 
-        if (!empty($result['success']) && $result['success'] == true) {
+        if ($result['success'] == true) {
             $user = $result['user'];
             $userAccessToken = $user->user_access_token;
             $password = $user->password;
