@@ -1586,7 +1586,6 @@ class KandyShortcode
             if ($result['success'] == true) {
                 $user = $result['user'];
                 $liveChatSessionInfo['user'] = $user;
-                $_SESSION['kandyLiveChatUserInfo']['user'] = $user;
             } else {
                 echo json_encode(array(
                     'message' => $result['message'],
@@ -1622,7 +1621,6 @@ class KandyShortcode
             $agent = current($agent);
             if ($agent) {
                 $liveChatSessionInfo['agent'] = $agent->user_id;
-                $_SESSION['kandyLiveChatUserInfo']['agent'] = $agent->user_id;
             }
         }
         if ($user && $agent) {
@@ -1643,7 +1641,6 @@ class KandyShortcode
             );
             //save last insert id for user later
             $liveChatSessionInfo['sessionId'] = $wpdb->insert_id;
-            $_SESSION['kandyLiveChatUserInfo'] = $liveChatSessionInfo;
             $agentUser = new stdClass();
             $agentUser->full_user_id = $agent->full_user_id;
             $agentUser->username = $agent->username;
@@ -1678,6 +1675,8 @@ class KandyShortcode
                 'status' => 'fail'
             );
         }
+
+        $_SESSION['kandyLiveChatUserInfo'] = $liveChatSessionInfo;
 
         echo json_encode($result);
         exit;
