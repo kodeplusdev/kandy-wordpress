@@ -198,6 +198,10 @@ div.entry-content .contacts a {
     color: #0995FF;
 }
 
+.kandyChat .my-message > b {
+    float: left;
+}
+
 .kandyChat .their-message {
     color: #F47063;
 }

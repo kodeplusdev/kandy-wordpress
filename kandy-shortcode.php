@@ -1383,10 +1383,18 @@ class KandyShortcode
      */
     static function kandyAnonymousSetup()
     {
-        $result = (new KandyApi())->getAnonymousUser();
+        if (!isset($_SESSION['userAnonymous'])) {
+            $result = (new KandyApi())->getAnonymousUser();
+        } else {
+            $result = array(
+                'success' => true,
+                'user' => $_SESSION['userAnonymous']
+            );
+        }
 
-        if (!empty($result['success']) && $result['success'] == true) {
+        if ($result['success'] == true) {
             $user = $result['user'];
+            $_SESSION['userAnonymous'] = $user;
             $userAccessToken = $user->user_access_token;
             $password = $user->password;
             if (get_option('kandy_jquery_reload', "0")) {
@@ -1585,10 +1593,19 @@ class KandyShortcode
         if (isset($liveChatSessionInfo['user'])) {
             $user = $liveChatSessionInfo['user'];
         } else {
-            $result = (new KandyApi())->getAnonymousUser();
+            if (!isset($_SESSION['userAnonymous'])) {
+                $result = (new KandyApi())->getAnonymousUser();
+            } else {
+                $result = array(
+                    'success' => true,
+                    'user' => $_SESSION['userAnonymous']
+                );
+            }
+
             if ($result['success'] == true) {
                 $user = $result['user'];
                 $liveChatSessionInfo['user'] = $user;
+                $_SESSION['userAnonymous'] = $user;
             } else {
                 echo json_encode(array(
                     'message' => $result['message'],
