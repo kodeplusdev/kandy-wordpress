@@ -1383,10 +1383,10 @@ class KandyShortcode
      */
     static function kandyAnonymousSetup()
     {
-        $kandyApi = new KandyApi();
-        $user = $kandyApi->getAnonymousUser();
+        $result = (new KandyApi())->getAnonymousUser();
 
-        if (!empty($user)) {
+        if (!empty($result['success']) && $result['success'] == true) {
+            $user = $result['user'];
             $userAccessToken = $user->user_access_token;
             $password = $user->password;
             if (get_option('kandy_jquery_reload', "0")) {
