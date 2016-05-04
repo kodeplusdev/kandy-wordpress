@@ -513,7 +513,7 @@ kandy_makeVoiceCallSSO = function (target) {
     activeContainerId = kandyButtonId;
     var userName = jQuery('#'+kandyButtonId+ ' .kandyVideoButtonCallOut #'+kandyButtonId+'-callOutUserId').val();
 
-    kandy.call.makeCall(userName, true);
+    kandy.call.makeCall(userName, false);
     changeAnswerButtonState("CALLING",'#'+kandyButtonId);
 };
 
