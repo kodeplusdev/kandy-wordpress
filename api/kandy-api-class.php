@@ -118,6 +118,55 @@ class KandyApi{
     }
 
     /**
+     * Get user access token
+     *
+     * @param string $userId
+     * @return array A list of message and data
+     * @throws RestClientException
+     */
+    public static function getUserAccessToken($userId)
+    {
+        require_once dirname(__FILE__) . '/RestClient.php';
+
+        $kandyApiKey = get_option('kandy_api_key', KANDY_API_KEY);
+        $kandyDomainSecretKey = get_option(
+            'kandy_domain_secret_key',
+            KANDY_DOMAIN_SECRET_KEY
+        );
+        $params = array(
+            'key'               => $kandyApiKey,
+            'domain_api_secret' => $kandyDomainSecretKey,
+            'user_id' => $userId
+        );
+
+        $fieldsString = http_build_query($params);
+        $url = KANDY_API_BASE_URL . 'domains/users/accesstokens' . '?'
+            . $fieldsString;
+
+        try {
+            $response = (new RestClient())->get($url)->getContent();
+        } catch (Exception $ex) {
+            return array(
+                'success' => false,
+                'message' => $ex->getMessage()
+            );
+        }
+
+        $response = json_decode($response);
+        if ($response->message == 'success') {
+            return array(
+                'success' => true,
+                'data'    => $response->result->user_access_token,
+            );
+        } else {
+            return array(
+                'success' => false,
+                'message' => $response->message
+            );
+        }
+    }
+
+    /**
      * Get a Kandy anonymous user
      *
      * @return array
@@ -469,13 +518,19 @@ class KandyApi{
                         'user_id' => $kandyUser->user_id,
                         'first_name' => $kandyUser->user_first_name,
                         'last_name' => $kandyUser->user_last_name,
-                        'password' => $kandyUser->user_password,
                         'email' => $kandyUser->user_email,
                         'domain_name' => $kandyUser->domain_name,
                         'api_key' => $kandyUser->user_api_key,
                         'api_secret' => $kandyUser->user_api_secret,
                         'updated_at' => date("Y-m-d H:i:s"),
                     );
+
+                    if (!empty($kandyUser->user_password)) {
+                        $dataValues['password'] = $kandyUser->user_password;
+                    } else {
+                        $dataValues['password'] = '';
+                    }
+                    
                     $kandyUserModel = self::getUserByUserId($kandyUser->user_id);
 
                     if(!$kandyUserModel){
@@ -649,18 +704,39 @@ class KandyApi{
         if($assignUser){
             $userName = $assignUser->user_id;
             $password = $assignUser->password;
+            if (empty($password)) {
+                if (isset($_SESSION['userAccessToken'][$assignUser->user_id])) {
+                    $userAccessToken = $_SESSION['userAccessToken'][$assignUser->user_id];
+                } else {
+                    $result = KandyApi::getUserAccessToken($assignUser->user_id);
+                    if ($result['success'] == true) {
+                        $userAccessToken = $result['data'];
+                        $_SESSION['userAccessToken'][$assignUser->user_id] = $userAccessToken;
+                    } else {
+                        return array("success" => false, "message" => $result['message'], 'output' => '');
+                    }
+                }
+            }
             $kandyApiKey = get_option('kandy_api_key', KANDY_API_KEY);
             wp_enqueue_script("kandy_js_url");
             $output = "";
             $output .="<script type='text/javascript' src='". KANDY_JQUERY ."'></script>";
             $output .="<script type='text/javascript' src='". KANDY_JS_URL ."'></script>";
-            $output .="<script>if (window.login == undefined){window.login = function() {
-                        kandy.login('" . $kandyApiKey . "', '" . $userName . "', '" . $password . "');
-                    };
-                    window.kandy_logout = function() {
-                                        KandyAPI.Phone.logout();
-                    };
-                }</script>";
+            $output .="<script>
+                        if (window.login == undefined){
+                            var password = '{$password}';
+                            window.login = function() {
+                                if (password != '') {
+                                    kandy.login('" . $kandyApiKey . "', '" . $userName . "', '" . $password . "',kandyLoginSuccessCallback, kandyLoginFailedCallback );
+                                } else {
+                                    kandy.loginSSO('" . $userAccessToken . "', kandyLoginSuccessCallback, kandyLoginFailedCallback, '');
+                                }                       
+                            };
+                            window.kandy_logout = function() {
+                                KandyAPI.Phone.logout();
+                            };
+                        }
+                        </script>";
             $output .="<script type='text/javascript' src='". KANDY_PLUGIN_URL . "/js/kandyWordpress.js" ."'></script>";
             setcookie( 'kandy_logout', '1', time() - 3600);
             echo $output;

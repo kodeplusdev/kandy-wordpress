@@ -74,6 +74,9 @@ function onUserLogin($userLogin, $wpUser) {
     if($kandyUser->type == KANDY_USER_TYPE_AGENT) {
         KandyApi::logKandyUserStatus($kandyUser->user_id, KANDY_USER_TYPE_AGENT);
     }
+    if (isset($_SESSION['userAccessToken'][$kandyUser->user_id])) {
+        unset($_SESSION['userAccessToken'][$kandyUser->user_id]);
+    }
 }
 
 //active plugin

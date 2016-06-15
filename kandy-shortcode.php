@@ -1353,6 +1353,19 @@ class KandyShortcode
         if ($assignUser) {
             $userName = $assignUser->user_id;
             $password = $assignUser->password;
+            if (empty($password)) {
+                if (isset($_SESSION['userAccessToken'][$assignUser->user_id])) {
+                    $userAccessToken = $_SESSION['userAccessToken'][$assignUser->user_id];
+                } else {
+                    $result = KandyApi::getUserAccessToken($assignUser->user_id);
+                    if ($result['success'] == true) {
+                        $userAccessToken = $result['data'];
+                        $_SESSION['userAccessToken'][$assignUser->user_id] = $userAccessToken;
+                    } else {
+                        return array("success" => false, "message" => $result['message'], 'output' => '');
+                    }
+                }
+            }
             $kandyApiKey = get_option('kandy_api_key', KANDY_API_KEY);
             if (get_option('kandy_jquery_reload', "0")) {
                 wp_enqueue_script('kandy_jquery');
@@ -1360,8 +1373,14 @@ class KandyShortcode
             wp_enqueue_script("kandy_js_url");
             $output = "<script>
                 var current_kandy_user = '{$userName}@$assignUser->domain_name';
-                if (window.login == undefined){window.login = function() {
-                        kandy.login('" . $kandyApiKey . "', '" . $userName . "', '" . $password . "',kandyLoginSuccessCallback, kandyLoginFailedCallback );
+                var password = '{$password}';
+                if (window.login == undefined){
+                    window.login = function() {
+                        if (password != '') {
+                            kandy.login('" . $kandyApiKey . "', '" . $userName . "', '" . $password . "',kandyLoginSuccessCallback, kandyLoginFailedCallback );
+                        } else {
+                            kandy.loginSSO('" . $userAccessToken . "', kandyLoginSuccessCallback, kandyLoginFailedCallback, '');
+                        }                       
                     };
                 }
                 </script>";
