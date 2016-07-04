@@ -59,7 +59,7 @@ class KandyHelpPage extends KandyPage
         </p>
 
         <div class="highlight highlight-sh" style="box-sizing: border-box; margin-bottom: 16px; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif; font-size: 16px; line-height: 28px;">
-        <pre style="box-sizing: border-box; overflow: auto; font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13px; margin-top: 0px; margin-bottom: 0px; font-stretch: normal; line-height: 1.45; padding: 16px; border-radius: 3px; word-wrap: normal; word-break: normal; background-color: rgb(247, 247, 247);">
+        <pre style="box-sizing: border-box; overflow: auto; font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13px; margin-top: 0px; margin-bottom: 0px; font-stretch: normal; line-height: 1.45; padding: 16px 16px 0; border-radius: 3px; word-wrap: normal; word-break: normal; background-color: rgb(247, 247, 247);">
         [kandyVideoButton
             class = <span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>myButtonStype<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span>
             id = <span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>my-video-button<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span>
@@ -79,7 +79,7 @@ class KandyHelpPage extends KandyPage
         </p>
 
         <div class="highlight highlight-sh" style="box-sizing: border-box; margin-bottom: 16px; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif; font-size: 16px; line-height: 28px;">
-        <pre style="box-sizing: border-box; overflow: auto; font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13px; margin-top: 0px; margin-bottom: 0px; font-stretch: normal; line-height: 1.45; padding: 16px; border-radius: 3px; word-wrap: normal; word-break: normal; background-color: rgb(247, 247, 247);">
+        <pre style="box-sizing: border-box; overflow: auto; font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13px; margin-top: 0px; margin-bottom: 0px; font-stretch: normal; line-height: 1.45; padding: 16px 16px 0; border-radius: 3px; word-wrap: normal; word-break: normal; background-color: rgb(247, 247, 247);">
         [kandyVideo
         title = <span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>Me<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span>
         id = <span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>myVideo<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span>
@@ -93,7 +93,7 @@ class KandyHelpPage extends KandyPage
         </p>
 
         <div class="highlight highlight-sh" style="box-sizing: border-box; margin-bottom: 16px; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif; font-size: 16px; line-height: 28px;">
-        <pre style="box-sizing: border-box; overflow: auto; font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13px; margin-top: 0px; margin-bottom: 0px; font-stretch: normal; line-height: 1.45; padding: 16px; border-radius: 3px; word-wrap: normal; word-break: normal; background-color: rgb(247, 247, 247);">
+        <pre style="box-sizing: border-box; overflow: auto; font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13px; margin-top: 0px; margin-bottom: 0px; font-stretch: normal; line-height: 1.45; padding: 16px 16px 0; border-radius: 3px; word-wrap: normal; word-break: normal; background-color: rgb(247, 247, 247);">
         [kandyVoiceButton
             class = <span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>myButtonStype<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span>
             id = <span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>my-video-button<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span>
@@ -104,8 +104,19 @@ class KandyHelpPage extends KandyPage
             callingLabel = <span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>Calling...<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span>
             callingButtonText = <span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>End Call<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span>
             onCallLabel = <span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>You are connected!<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span>
-            onCallButtonText = <span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>End Call<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span>]
+            onCallButtonText = <span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>End Call<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span>
+            type = <span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>PSTN<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span>
+            callto = <span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>0123456789<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span>
+            anonymous = <span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>true<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span>]
         </pre>
+
+            <p style="padding: 0 10px;">
+                <span style="font-style: italic">Note:</span><br/>
+            <p style="padding: 0 10px;">If <code>type</code> is <code>PSTN</code>, <code>callto</code> is a phone number.
+                If <code>type</code> is not specified, <code>callto</code> is <code>kandy_user_name@domain.com</code>.</p>
+            <p style="padding: 0 10px 10px 10px;">If <code>anonymous</code> is <code>true</code>, users don't need to login to call.
+                If <code>anonymous</code> is <code>false</code> (default), <code>callto</code> could be removed as the callee will be entered through GUI.</p>
+            </p>
 
         </div>
 
@@ -114,7 +125,7 @@ class KandyHelpPage extends KandyPage
         </p>
 
         <div class="highlight highlight-sh" style="box-sizing: border-box; margin-bottom: 16px; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif; font-size: 16px; line-height: 28px;">
-        <pre style="box-sizing: border-box; overflow: auto; font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13px; margin-top: 0px; margin-bottom: 0px; font-stretch: normal; line-height: 1.45; padding: 16px; border-radius: 3px; word-wrap: normal; word-break: normal; background-color: rgb(247, 247, 247);">
+        <pre style="box-sizing: border-box; overflow: auto; font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13px; margin-top: 0px; margin-bottom: 0px; font-stretch: normal; line-height: 1.45; padding: 16px 16px 0; border-radius: 3px; word-wrap: normal; word-break: normal; background-color: rgb(247, 247, 247);">
         [kandyStatus
             class = <span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>myStatusStyle<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span>
             id = <span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>myStatus<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span>
@@ -127,7 +138,7 @@ class KandyHelpPage extends KandyPage
         </p>
 
         <div class="highlight highlight-sh" style="box-sizing: border-box; margin-bottom: 16px; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif; font-size: 16px; line-height: 28px;">
-        <pre style="box-sizing: border-box; overflow: auto; font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13px; margin-top: 0px; margin-bottom: 0px; font-stretch: normal; line-height: 1.45; padding: 16px; border-radius: 3px; word-wrap: normal; word-break: normal; background-color: rgb(247, 247, 247);">
+        <pre style="box-sizing: border-box; overflow: auto; font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13px; margin-top: 0px; margin-bottom: 0px; font-stretch: normal; line-height: 1.45; padding: 16px 16px 0; border-radius: 3px; word-wrap: normal; word-break: normal; background-color: rgb(247, 247, 247);">
     [kandyAddressBook
             class = <span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>myAddressBookStyle<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span>
             id = <span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>myContact<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span>
@@ -143,7 +154,7 @@ class KandyHelpPage extends KandyPage
         </p>
 
         <div class="highlight highlight-sh" style="box-sizing: border-box; margin-bottom: 16px; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif; font-size: 16px; line-height: 28px;">
-        <pre style="box-sizing: border-box; overflow: auto; font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13px; margin-top: 0px; margin-bottom: 0px; font-stretch: normal; line-height: 1.45; padding: 16px; border-radius: 3px; word-wrap: normal; word-break: normal; background-color: rgb(247, 247, 247);">
+        <pre style="box-sizing: border-box; overflow: auto; font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13px; margin-top: 0px; margin-bottom: 0px; font-stretch: normal; line-height: 1.45; padding: 16px 16px 0; border-radius: 3px; word-wrap: normal; word-break: normal; background-color: rgb(247, 247, 247);">
     [kandyChat
             class = <span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>myChatStyle<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span>
             id = <span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>my-chat<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span>
@@ -156,7 +167,7 @@ class KandyHelpPage extends KandyPage
         </p>
 
         <div class="highlight highlight-sh" style="box-sizing: border-box; margin-bottom: 16px; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif; font-size: 16px; line-height: 28px;">
-        <pre style="box-sizing: border-box; overflow: auto; font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13px; margin-top: 0px; margin-bottom: 0px; font-stretch: normal; line-height: 1.45; padding: 16px; border-radius: 3px; word-wrap: normal; word-break: normal; background-color: rgb(247, 247, 247);">
+        <pre style="box-sizing: border-box; overflow: auto; font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13px; margin-top: 0px; margin-bottom: 0px; font-stretch: normal; line-height: 1.45; padding: 16px 16px 0; border-radius: 3px; word-wrap: normal; word-break: normal; background-color: rgb(247, 247, 247);">
     [kandyLiveChat
             class = <span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>liveChat<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span>
             id = <span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>liveChat<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span>]
@@ -168,7 +179,7 @@ class KandyHelpPage extends KandyPage
         </p>
 
         <div class="highlight highlight-sh" style="box-sizing: border-box; margin-bottom: 16px; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif; font-size: 16px; line-height: 28px;">
-        <pre style="box-sizing: border-box; overflow: auto; font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13px; margin-top: 0px; margin-bottom: 0px; font-stretch: normal; line-height: 1.45; padding: 16px; border-radius: 3px; word-wrap: normal; word-break: normal; background-color: rgb(247, 247, 247);">
+        <pre style="box-sizing: border-box; overflow: auto; font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13px; margin-top: 0px; margin-bottom: 0px; font-stretch: normal; line-height: 1.45; padding: 16px 16px 0; border-radius: 3px; word-wrap: normal; word-break: normal; background-color: rgb(247, 247, 247);">
     [kandyCoBrowsing
             class = <span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>coBrowsing<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span>
             id = <span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>coBrowsing<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span>]
@@ -180,7 +191,7 @@ class KandyHelpPage extends KandyPage
         </p>
 
         <div class="highlight highlight-sh" style="box-sizing: border-box; margin-bottom: 16px; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif; font-size: 16px; line-height: 28px;">
-        <pre style="box-sizing: border-box; overflow: auto; font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13px; margin-top: 0px; margin-bottom: 0px; font-stretch: normal; line-height: 1.45; padding: 16px; border-radius: 3px; word-wrap: normal; word-break: normal; background-color: rgb(247, 247, 247);">
+        <pre style="box-sizing: border-box; overflow: auto; font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13px; margin-top: 0px; margin-bottom: 0px; font-stretch: normal; line-height: 1.45; padding: 16px 16px 0; border-radius: 3px; word-wrap: normal; word-break: normal; background-color: rgb(247, 247, 247);">
     [kandySms
             class = <span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>kandySms<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span>
             id = <span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>kandySms<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span>]
@@ -196,8 +207,48 @@ class KandyHelpPage extends KandyPage
         </p>
 
         <div class="highlight highlight-sh" style="box-sizing: border-box; margin-bottom: 16px; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif; font-size: 16px; line-height: 28px;">
-        <pre style="box-sizing: border-box; overflow: auto; font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13px; margin-top: 0px; margin-bottom: 0px; font-stretch: normal; line-height: 1.45; padding: 16px; border-radius: 3px; word-wrap: normal; word-break: normal; background-color: rgb(247, 247, 247);">
+        <pre style="box-sizing: border-box; overflow: auto; font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13px; margin-top: 0px; margin-bottom: 0px; font-stretch: normal; line-height: 1.45; padding: 16px 16px 0; border-radius: 3px; word-wrap: normal; word-break: normal; background-color: rgb(247, 247, 247);">
     [kandyVoiceButton class= <span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>myButtonStyle<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span> id =<span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>my-voice-button<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span>]
+        </pre>
+        </div>
+
+        <p style="box-sizing: border-box; margin-top: 0px; margin-bottom: 16px; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif; font-size: 16px; line-height: 28px;">
+            <span>Or</span>
+        </p>
+
+        <div class="highlight highlight-sh" style="box-sizing: border-box; margin-bottom: 16px; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif; font-size: 16px; line-height: 28px;">
+        <pre style="box-sizing: border-box; overflow: auto; font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13px; margin-top: 0px; margin-bottom: 0px; font-stretch: normal; line-height: 1.45; padding: 16px 16px 0; border-radius: 3px; word-wrap: normal; word-break: normal; background-color: rgb(247, 247, 247);">
+    [kandyVoiceButton class= <span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>myButtonStyle<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span> id =<span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>my-voice-button<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span> callto=<span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>kandy_user_name@domain.com<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span> anonymous=<span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>true<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span>]
+        </pre>
+        </div>
+
+        <p style="box-sizing: border-box; margin-top: 0px; margin-bottom: 16px; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif; font-size: 16px; line-height: 28px;">
+            <strong style="box-sizing: border-box;">Kandy Voice PSTN Call</strong>
+        </p>
+
+        <div class="highlight highlight-sh" style="box-sizing: border-box; margin-bottom: 16px; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif; font-size: 16px; line-height: 28px;">
+        <pre style="box-sizing: border-box; overflow: auto; font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13px; margin-top: 0px; margin-bottom: 0px; font-stretch: normal; line-height: 1.45; padding: 16px 16px 0; border-radius: 3px; word-wrap: normal; word-break: normal; background-color: rgb(247, 247, 247);">
+    [kandyVoiceButton class= <span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>myButtonStyle<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span> type= <span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>PSTN<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span> id =<span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>my-voice-button<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span>]
+        </pre>
+        </div>
+
+        <p style="box-sizing: border-box; margin-top: 0px; margin-bottom: 16px; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif; font-size: 16px; line-height: 28px;">
+            <strong style="box-sizing: border-box;">Kandy Voice PSTN Call With Number</strong>
+        </p>
+
+        <div class="highlight highlight-sh" style="box-sizing: border-box; margin-bottom: 16px; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif; font-size: 16px; line-height: 28px;">
+        <pre style="box-sizing: border-box; overflow: auto; font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13px; margin-top: 0px; margin-bottom: 0px; font-stretch: normal; line-height: 1.45; padding: 16px 16px 0; border-radius: 3px; word-wrap: normal; word-break: normal; background-color: rgb(247, 247, 247);">
+    [kandyVoiceButton class= <span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>myButtonStyle<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span> type= <span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>PSTN<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span> callto=<span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>0123456xxxx<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span> id =<span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>my-voice-button<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span>]
+        </pre>
+        </div>
+
+        <p style="box-sizing: border-box; margin-top: 0px; margin-bottom: 16px; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif; font-size: 16px; line-height: 28px;">
+            <span>Or</span>
+        </p>
+
+        <div class="highlight highlight-sh" style="box-sizing: border-box; margin-bottom: 16px; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif; font-size: 16px; line-height: 28px;">
+        <pre style="box-sizing: border-box; overflow: auto; font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13px; margin-top: 0px; margin-bottom: 0px; font-stretch: normal; line-height: 1.45; padding: 16px 16px 0; border-radius: 3px; word-wrap: normal; word-break: normal; background-color: rgb(247, 247, 247);">
+    [kandyVoiceButton class= <span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>myButtonStyle<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span> type= <span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>PSTN<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span> callto=<span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>0123456xxxx<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span> anonymous=<span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>true<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span> id =<span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>my-voice-button<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span>]
         </pre>
         </div>
 
@@ -206,8 +257,8 @@ class KandyHelpPage extends KandyPage
         </p>
 
         <div class="highlight highlight-sh" style="box-sizing: border-box; margin-bottom: 16px; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif; font-size: 16px; line-height: 28px;">
-        <pre style="box-sizing: border-box; overflow: auto; font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13px; margin-top: 0px; margin-bottom: 0px; font-stretch: normal; line-height: 1.45; padding: 16px; border-radius: 3px; word-wrap: normal; word-break: normal; background-color: rgb(247, 247, 247);">
-        [kandyVideoButton class=<span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>myButtonStype<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span>]
+        <pre style="box-sizing: border-box; overflow: auto; font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13px; margin-top: 0px; margin-bottom: 0px; font-stretch: normal; line-height: 1.45; padding: 16px 16px 0; border-radius: 3px; word-wrap: normal; word-break: normal; background-color: rgb(247, 247, 247);">
+        [kandyVideoButton class=<span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>myButtonStype<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span> callto=<span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>kandy_user_name@domain.com<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span> anonymous=<span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>true<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span>]
         [kandyVideo title=<span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>Me<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span> id=<span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>myVideo<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span> style = <span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>width: 300px;height: 225px;<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span>]
         [kandyVideo title=<span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>Their<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span> id=<span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>theirVideo<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span> style = <span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>width:300px;height: 225px;<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span>]
         </pre>
@@ -218,11 +269,22 @@ class KandyHelpPage extends KandyPage
         </p>
 
         <p style="box-sizing: border-box; margin-top: 0px; margin-bottom: 16px; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif; font-size: 16px; line-height: 28px;">
+            <strong style="box-sizing: border-box;">Screen Sharing</strong>:<br/>
+        <ul style="padding-left: 30px;">
+            <li style="list-style: disc; font-size: 15px; line-height: 28px;">Screen sharing can only be used over a secure connection (https).</li>
+            <li style="list-style: disc; font-size: 15px; line-height: 28px;">Before testing it, please install this extension on chrome browser:<br/>
+                <a href="https://chrome.google.com/webstore/detail/kandyio-screen-sharing/daohbhpgnnlgkipndobecbmahalalhcp">https://chrome.google.com/webstore/detail/kandyio-screen-sharing/daohbhpgnnlgkipndobecbmahalalhcp</a></li>
+            <li style="list-style: disc; font-size: 15px; line-height: 28px;">This extension only works on localhost domain.</li>
+            <li style="list-style: disc; font-size: 15px; line-height: 28px;">Finally, you test it on video call feature.</li>
+        </ul>
+        </p>
+
+        <p style="box-sizing: border-box; margin-top: 0px; margin-bottom: 16px; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif; font-size: 16px; line-height: 28px;">
             <strong style="box-sizing: border-box;">Kandy Presence</strong>: use a kandyStatus and kandy addressBook compobent
         </p>
 
         <div class="highlight highlight-sh" style="box-sizing: border-box; margin-bottom: 16px; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif; font-size: 16px; line-height: 28px;">
-        <pre style="box-sizing: border-box; overflow: auto; font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13px; margin-top: 0px; margin-bottom: 0px; font-stretch: normal; line-height: 1.45; padding: 16px; border-radius: 3px; word-wrap: normal; word-break: normal; background-color: rgb(247, 247, 247);">
+        <pre style="box-sizing: border-box; overflow: auto; font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13px; margin-top: 0px; margin-bottom: 0px; font-stretch: normal; line-height: 1.45; padding: 16px 16px 0; border-radius: 3px; word-wrap: normal; word-break: normal; background-color: rgb(247, 247, 247);">
         [kandyStatus class=<span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>myStatusStyle<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span> id=<span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>myStatus<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span>]
         [kandyAddressBook class=<span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>myAddressBookStyle<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span> id=<span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>myContact<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span>]
         </pre>
@@ -233,7 +295,7 @@ class KandyHelpPage extends KandyPage
         </p>
 
         <div class="highlight highlight-sh" style="box-sizing: border-box; margin-bottom: 16px; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif; font-size: 16px; line-height: 28px;">
-        <pre style="box-sizing: border-box; overflow: auto; font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13px; margin-top: 0px; margin-bottom: 0px; font-stretch: normal; line-height: 1.45; padding: 16px; border-radius: 3px; word-wrap: normal; word-break: normal; background-color: rgb(247, 247, 247);">
+        <pre style="box-sizing: border-box; overflow: auto; font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13px; margin-top: 0px; margin-bottom: 0px; font-stretch: normal; line-height: 1.45; padding: 16px 16px 0; border-radius: 3px; word-wrap: normal; word-break: normal; background-color: rgb(247, 247, 247);">
         [kandyChat class=<span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>myChatStyle<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span> id =<span class="pl-s1" style="box-sizing: border-box; color: rgb(223, 80, 0);"><span class="pl-pds" style="box-sizing: border-box;">&quot;</span>my-chat<span class="pl-pds" style="box-sizing: border-box;">&quot;</span></span>]
         </pre>
         </div>

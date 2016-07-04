@@ -602,7 +602,7 @@ class KandyShortcode
 
                     // Init incominglabel attribute.
                     $callTo = '';
-                    if (isset($attr['callto']) && ((strtoupper($callType) == KANDY_PSTN_TYPE && !empty($current_user->ID)) || (strtoupper($callType) != KANDY_PSTN_TYPE))) {
+                    if (isset($attr['callto'])) {
                         $callTo = ($attr['callto']);
                     }
 
@@ -687,7 +687,7 @@ class KandyShortcode
                     $ajaxUserSearchUrl = admin_url('admin-ajax.php');
                     if (strtoupper($callType) == KANDY_PSTN_TYPE) {
 
-                        if (!isset($attr['calloutlabel'])) {
+                        if (!isset($attr['calloutlabel']) && $anonymous == false) {
                             $callOutLabel = 'Enter Number';
                         }
 
@@ -725,7 +725,7 @@ class KandyShortcode
                                 '</div>' .
 
                                 '<div class="kandyButtonComponent kandyVideoButtonCallOut" id="' . $id . '-callOut">' .
-                                '<input id="' . $id . '-callOutUserId" type="text" value ="' . $callTo . '"/>' .
+                                '<input id="' . $id . '-callOutUserId" ' . ($anonymous == false ? 'style="display:block;" ' : '') . 'type="text" value ="' . $callTo . '"/>' .
                                 '<input data-container="' . $id . '" class="btnCall" id="callBtn" type="button" value="' . $callOutButtonText . '" onclick="kandy_make_pstn_call(this)"/>' .
                                 '</div>' .
 
@@ -1613,6 +1613,11 @@ class KandyShortcode
                 exit;
             }
         }
+
+        if (!empty($user)) {
+            KandyApi::logKandyUserStatus($user->user_id, KANDY_USER_TYPE_END_USER);
+        }
+
         if (isset($liveChatSessionInfo['agent'])) {
             $agent = $wpdb->get_results(
                 "SELECT user_id, main_user_id, CONCAT(user_id, '@', domain_name) as full_user_id, $userTable.username as username
@@ -1644,7 +1649,6 @@ class KandyShortcode
         }
         if ($user && $agent) {
             $now = time();
-            KandyApi::logKandyUserStatus($user->user_id, KANDY_USER_TYPE_END_USER);
             $wpdb->insert($kandyLiveChatTable,
                 array(
                     'agent_user_id' => $agent->user_id,
