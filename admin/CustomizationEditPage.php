@@ -10,7 +10,7 @@ class KandyCustomizationEditPage extends KandyPage
 
         ?>
         <h3>
-            <?php _e("Kandy User Assignment", "kandy"); ?>
+            <?php _e("Kandy Edit Customization", "kandy"); ?>
         </h3>
         <?php
 
