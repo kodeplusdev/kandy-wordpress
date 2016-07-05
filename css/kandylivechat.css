@@ -138,7 +138,6 @@
 .imMessage img {
     width: 75px;
     height: 75px;
-    border-radius: 5px;
     object-fit: cover;
     display: block;
 }

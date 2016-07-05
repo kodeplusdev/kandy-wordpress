@@ -7,7 +7,7 @@
                 onclick : function() {
                     //var posts = prompt("Number of posts", "1");
                     //var text = prompt("List Heading", "This is the heading text");
-                    ed.execCommand('mceInsertContent', false, '[kandyVideoButton class="myButtonStyle"]\n[kandyVideo title="Me" id="myVideo" style = "width: 300px;height: 225px;"][kandyVideo title="Their" id="theirVideo" style = "width:300px;height: 225px;"]');
+                    ed.execCommand('mceInsertContent', false, '[kandyVideoButton class="myButtonStyle"]\n[kandyVideo title="You" id="myVideo" style = "width: 300px;height: 225px;"][kandyVideo title="Them" id="theirVideo" style = "width:300px;height: 225px;"]');
                 }
             });
         },

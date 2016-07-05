@@ -70,7 +70,7 @@
 <p>
     &nbsp; &nbsp; + <strong>Kandy Video</strong><br />
     &nbsp; &nbsp; &nbsp; &nbsp;<span style="color:#696969;"> [kandyVideo<br />
-	&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; title = &quot;Me&quot;<br />
+	&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; title = &quot;You&quot;<br />
 	&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; id = &quot;myVideo&quot;<br />
 	&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; style = &quot;width: 300px; height: 225px;background-color: darkslategray;&quot;]<br />
 	&nbsp; &nbsp; &nbsp; &nbsp; [/kandyVideo]</span>
@@ -129,8 +129,8 @@
 <p>
     <strong>&nbsp; &nbsp; + Kandy Video Call</strong><br />
     &nbsp; &nbsp; &nbsp; &nbsp;<span style="color:#696969;">[kandyVideoButton class="myButtonStyle"][/kandyVideoButton]<br />
-	&nbsp; &nbsp; &nbsp; &nbsp;[kandyVideo title="Me" id="myVideo" style = "width: 300px; height: 225px;background-color: darkslategray;"] [/kandyVideo]<br />
-	&nbsp; &nbsp; &nbsp; &nbsp;[kandyVideo title="Their" &nbsp;id="theirVideo" style = "width: 300px; height: 225px;background-color: darkslategray;"][/kandyVideo]</span>
+	&nbsp; &nbsp; &nbsp; &nbsp;[kandyVideo title="You" id="myVideo" style = "width: 300px; height: 225px;background-color: darkslategray;"] [/kandyVideo]<br />
+	&nbsp; &nbsp; &nbsp; &nbsp;[kandyVideo title="Them" &nbsp;id="theirVideo" style = "width: 300px; height: 225px;background-color: darkslategray;"][/kandyVideo]</span>
 </p>
 
 <p>

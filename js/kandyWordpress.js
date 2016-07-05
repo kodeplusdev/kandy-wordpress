@@ -1002,6 +1002,7 @@ kandy_load_contacts_chat = function () {
               }
               addExampleBox();
               get_last_seen_interval(contactListForPresence);
+              jQuery('.cd-tabs-navigation > li:first-child > a').trigger('click');
             } else {
               get_last_seen_interval();
             }
@@ -1025,19 +1026,21 @@ kandy_send_message = function (username, dataHolder) {
     var inputMessage = jQuery('.kandyChat .imMessageToSend[data-user="' + dataHolder + '"]');
     var message = inputMessage.val();
     inputMessage.val('');
-    kandy.messaging.sendIm(username, message, function () {
-            var newMessage = '<div class="my-message">\
+    if (message.trim() != '') {
+        kandy.messaging.sendIm(username, message, function () {
+                var newMessage = '<div class="my-message">\
                     <b><span class="imUsername">' + displayName + ':</span></b>\
                     <span class="imMessage">' + message + '</span>\
                 </div>';
-            var messageDiv = jQuery('.kandyChat .kandyMessages[data-user="' + dataHolder + '"]');
-            messageDiv.append(newMessage);
-            messageDiv.scrollTop(messageDiv[0].scrollHeight);
-        },
-        function () {
-            alert("IM send failed");
-        }
-    );
+                var messageDiv = jQuery('.kandyChat .kandyMessages[data-user="' + dataHolder + '"]');
+                messageDiv.append(newMessage);
+                messageDiv.scrollTop(messageDiv[0].scrollHeight);
+            },
+            function () {
+                alert("IM send failed");
+            }
+        );
+    }
 };
 
 /**
@@ -1070,7 +1073,7 @@ var kandy_onMessage = function(msg) {
             var newMessage = '<div class="their-message"><span class="imUsername">' + displayName + ':</span>';
 
             if (msg.contentType === 'text' && msg.message.mimeType == 'text/plain') {
-                newMessage += '<span class="imMessage" style="margin-left: 5px">' + message + '</span>';
+                newMessage += '<span class="imMessage" style="margin-left: 5px">' + message.replace(/\\'/g, "'").replace(/\\"/g, '"') + '</span>';
             } else {
                 var fileUrl = kandy.messaging.buildFileUrl(msg.message.content_uuid);
                 var html = '';
@@ -1333,14 +1336,16 @@ var kandy_onGroupMessage = function(msg){
         var sender = displayNames[msg.sender.full_user_id] || msg.sender.user_id;
         if(msgType == 'groupChat'){
             if(msg.contentType == 'text'){
-                var newMessage = '<div class="their-message">\
+                if (msg.message.text.trim() != '') {
+                    var newMessage = '<div class="their-message">\
                             <b><span class="imUsername">' + sender + ':</span></b>\
                             <span class="imMessage">' + msg.message.text + '</span>\
                         </div>';
 
-                var messageDiv = jQuery('.kandyChat .kandyMessages[data-group="'+msg.group_id+'"]');
-                messageDiv.append(newMessage);
-                messageDiv.scrollTop(messageDiv[0].scrollHeight);
+                    var messageDiv = jQuery('.kandyChat .kandyMessages[data-group="'+msg.group_id+'"]');
+                    messageDiv.append(newMessage);
+                    messageDiv.scrollTop(messageDiv[0].scrollHeight);
+                }
             }
 
         }
@@ -1436,21 +1441,23 @@ var kandy_createGroup = function(groupName, successCallback, failCallback){
  * @param msg
  */
 var kandy_sendGroupIm = function(groupId,msg){
-    var username = jQuery("input.kandy_current_username").val();
-    kandy.messaging.sendGroupIm(groupId, msg,
-        function() {
-            var newMessage = '<div class="my-message">\
+    if (typeof msg != 'undefined' && msg.trim() != '') {
+        var username = jQuery("input.kandy_current_username").val();
+        kandy.messaging.sendGroupIm(groupId, msg,
+            function() {
+                var newMessage = '<div class="my-message">\
                     <b><span class="imUsername">' + username + ':</span></b>\
                     <span class="imMessage">' + msg + '</span>\
                 </div>';
-            var messageDiv = jQuery('.kandyChat .kandyMessages[data-group="' + groupId + '"]');
-            messageDiv.append(newMessage);
-            messageDiv.scrollTop(messageDiv[0].scrollHeight);
-        },
-        function(msg, code) {
-            console.log('Error sending Data (' + code + '): ' + msg);
-        }
-    );
+                var messageDiv = jQuery('.kandyChat .kandyMessages[data-group="' + groupId + '"]');
+                messageDiv.append(newMessage);
+                messageDiv.scrollTop(messageDiv[0].scrollHeight);
+            },
+            function(msg, code) {
+                console.log('Error sending Data (' + code + '): ' + msg);
+            }
+        );
+    }
 };
 /**
  * on join request callback, currently use for co-browser

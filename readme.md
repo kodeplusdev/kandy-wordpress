@@ -35,7 +35,7 @@ Attribute "callto" and anonymous are optional
 **Kandy Video**: make a video component (video call)
 ```sh
 [kandyVideo 
-    title = "Me" 
+    title = "You"
     id = "myVideo" 
     style = "width: 300px; height: 225px;background-color: darkslategray;"]
   ```
@@ -126,8 +126,8 @@ or
 **Kandy Video Call**: use a video call button and two video(**myVideo** and **theirVideo** id is required).
    ```sh
 [kandyVideoButton class="myButtonStyle" callto="user_kandy@domain.com" anonymous="true"]
-[kandyVideo title="Me" id="myVideo" style = "width: 300px;height: 225px;"]
-[kandyVideo title="Their" id="theirVideo" style = "width:300px;height: 225px;"]
+[kandyVideo title="You" id="myVideo" style = "width: 300px;height: 225px;"]
+[kandyVideo title="Them" id="theirVideo" style = "width:300px;height: 225px;"]
 ```
 
 *Note*: 

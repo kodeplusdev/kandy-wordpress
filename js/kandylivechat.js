@@ -61,6 +61,7 @@ var login = function(domainApiKey, userName, password, success_callback) {
 };
 
 var loginSSO = function(userAccessToken, success_callback, failure, password) {
+    console.log('login SSO ...');
     kandy.loginSSO(userAccessToken, success_callback, failure, password);
 };
 
@@ -68,11 +69,11 @@ var logout = function(){
     kandy.logout();
 };
 var login_success_callback = function (){
-    console.log('login successful')
+    console.log('login successful');
     LiveChatUI.changeState("READY");
 };
 var login_fail_callback = function (){
-    console.log('login failed')
+    console.log('login failed');
     LiveChatUI.changeState("UNAVAILABLE");
 };
 
@@ -95,9 +96,10 @@ var getKandyUsers = function(){
         url: ajax_object.ajax_url + '?action=kandy_get_free_user',
         type: 'GET',
         dataType: 'json',
-        async: false,
         success: function(res){
-            if(checkAvailable){
+            if(!checkAvailable){
+                LiveChatUI.changeState('WAITING');
+            } else {
                 LiveChatUI.changeState('RECONNECTING');
             }
             if(res.status == 'success'){
@@ -126,6 +128,8 @@ var getKandyUsers = function(){
                 }
                 if(!checkAvailable){
                     checkAvailable = setInterval(getKandyUsers, 5000);
+                } else {
+                    LiveChatUI.changeState('RECONNECTING');
                 }
             }
         },
@@ -148,16 +152,18 @@ var endChatSession = function(){
 };
 
 var sendIM = function(username, message){
-    kandy.messaging.sendIm(username, message, function () {
-            var messageBox = jQuery("#messageBox");
-            messageBox.find("ul").append("<li class='my-message'><span class='username'>Me:</span><span class='imMessage'>"+jQuery("#messageToSend").val()+"</span></li>");
-            jQuery("#formChat")[0].reset();
-            messageBox.scrollTop(messageBox[0].scrollHeight);
-        },
-        function () {
-            alert("IM send failed");
-        }
-    );
+    if (message != '') {
+        kandy.messaging.sendIm(username, message, function () {
+                var messageBox = jQuery("#messageBox");
+                messageBox.find("ul").append("<li class='my-message'><span class='username'>You:</span><span class='imMessage'>"+jQuery("#messageToSend").val()+"</span></li>");
+                jQuery("#formChat")[0].reset();
+                messageBox.scrollTop(messageBox[0].scrollHeight);
+            },
+            function () {
+                alert("IM send failed");
+            }
+        );
+    }
 };
 
 var onMessage = function(msg){
@@ -212,7 +218,7 @@ send_file = function () {
 function onFileSendSuccess(message) {
     console.log(message.message.content_name + " sent successfully.");
     var messageBox = jQuery("#messageBox");
-    var newMessage = "<li class='my-message'><span class='username'>Me: </span>";
+    var newMessage = "<li class='my-message'><span class='username'>You: </span>";
     var fileUrl = kandy.messaging.buildFileUrl(message.message.content_uuid);
     var html = '';
     if (message.contentType == 'image') {
@@ -244,6 +250,9 @@ jQuery(function(){
     //hide vs restore box chat
     jQuery(".handle.minimize, #restoreBtn").click(function(){
         jQuery(".liveChat").toggleClass('kandy_hidden');
+        if (!jQuery(".liveChat").hasClass('kandy_hidden')) {
+            jQuery("#customerName").focus();
+        }
     });
 
     jQuery(".handle.closeChat").click(function(){
@@ -257,6 +266,9 @@ jQuery(function(){
             url: ajax_object.ajax_url + '?action=kandy_register_guest',
             data: form.serialize(),
             type: 'POST',
+            beforeSend: function (xhr) {
+                LiveChatUI.changeState('WAITING');
+            },
             success: function(res){
                 res = jQuery.parseJSON(res);
                 if(res.hasOwnProperty('errors')){
@@ -265,7 +277,6 @@ jQuery(function(){
                         form.find('span[data-input="'+e+'"]').html(res.errors[e]).show();
                     }
                 }else{
-                    LiveChatUI.changeState('WAITING');
                     getKandyUsers();
                 }
             }
@@ -275,7 +286,10 @@ jQuery(function(){
     //form chat submit handle
     jQuery("#formChat").on('submit', function(e){
         e.preventDefault();
-        sendIM(agent.full_user_id, jQuery("#messageToSend").val());
+        var message = jQuery("#messageToSend").val().trim();
+        if (message != '') {
+            sendIM(agent.full_user_id, message);
+        }
     });
     //end chat session if user close browser or tab
     window.onbeforeunload = function() {

@@ -1298,7 +1298,7 @@ class KandyShortcode
                             </div>
                             <div id="messageBox" class="" style="">
                                 <ul>
-                                    <li class="their-message"><span class="username">' . $userInfo['agent'] . '</span>: Hi ' . $userInfo['username'] . ', what brings you here?</li>
+                                    <li class="their-message"><span class="username">' . $userInfo['agent'] . '</span>: Hello' . (!empty($userInfo['username']) ? (' ' . $userInfo['username']) : '') . ', how may I help you?</li>
                                 </ul>
                             </div>
                             <div class="formChat" style="">
