@@ -25,6 +25,7 @@ LiveChatUI.changeState = function(state){
             }
             jQuery(".liveChat ul > li.their-message:first-child span.username").html(agent.username);
             jQuery(".liveChat .handle.closeChat").show();
+            jQuery("#messageToSend").focus();
             break;
         case "UNAVAILABLE":
             jQuery(".liveChat #waiting p").html('There is something wrong, please try again later.');
